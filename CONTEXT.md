@@ -6,11 +6,21 @@ Verify, wire up, test, and deploy the pre-built Psyber client portal (Next.js + 
 ## Progress
 - [x] §1 Ingest — already unzipped into this folder; README/TESTING agree with BRIEF.
 - [x] §2 Build verified — `npm install`, `typecheck`, `build` all clean (9 routes).
-- [ ] §3 Accounts & config — CREDENTIAL-GATED, needs Asher. **Region decision pending.**
-- [ ] §4 Database — supabase link + db push.
-- [ ] §5 Testing — work through TESTING.md (esp. negative tests 4 & 5).
-- [ ] §6 Deploy — private GitHub repo → Vercel Pro → Supabase redirect URL.
-- [ ] §8 ADRs + Codex + TODO/ROADMAP.
+- [x] §3 Accounts & config — Supabase project `awovtppvjifjhabuzoyg`, region London eu-west-2. `.env.local` filled (3 Supabase values + site URL).
+- [x] §4 Database — linked + `db push` applied 0001/0002/0003; seed loaded (weeks 1–2 published, 3 draft); private `worksheets` bucket live.
+- [x] §5 Testing — ALL 9 acceptance tests passed (headless harness + curl). Results recorded in TESTING.md. Test artifacts cleaned; DB back to clean seed.
+- [x] §6 Deploy — DONE. Private repo github.com/Psyber-Digital/psyber-portal → Vercel Pro at https://psyber-portal.vercel.app (Node 22) → deployed URL in Supabase redirect URLs → acceptance tests re-run against prod (all pass) → Asher promoted to admin.
+- [x] §8 ADRs (0012–0016) + ROADMAP.md + TODO.md written. Client-upload-next recorded as ADR-0016.
+
+## Email / SMTP (added post-brief — was a real go-live blocker)
+- Custom SMTP via **Resend**, sending from `noreply@psyberdigital.com`. Domain verified by DNS (DKIM/SPF/MX on `send.` + `resend._domainkey`, added in SiteGround). Supabase Auth → custom SMTP enabled; email rate limit raised to 100/hr.
+- **Email templates fixed:** default Supabase templates use a link style this app doesn't handle → login redirect loop. "Magic Link" and "Confirm signup" templates edited to `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`. Verified end-to-end in prod (session set, `/` → `/admin`). Documented in README §6.
+
+## Git
+Local repo initialised in this folder, one commit on `main`. `.env.local` git-ignored (verified). Ready to push once the GitHub repo exists.
+
+## Supabase project
+Ref `awovtppvjifjhabuzoyg` · region London (eu-west-2) · Data API on · auto-expose tables on · automatic RLS on. Personal access token used for CLI (`sbp_…`, revocable). DB password held by Asher.
 
 ## Fixes made to delivered code
 1. `src/lib/supabase/server.ts` + `src/middleware.ts` — typed the `setAll(cookiesToSet)`

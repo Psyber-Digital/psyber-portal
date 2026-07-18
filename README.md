@@ -54,6 +54,26 @@ commercial use)**, add the same env vars in the Vercel dashboard, set
 `NEXT_PUBLIC_SITE_URL` to the deployed URL. In Supabase → Auth → URL
 Configuration, add your deployed URL to the allowed redirect URLs.
 
+### 6. Email / magic links — REQUIRED before real clients (easy to miss)
+Two things must be configured in Supabase or logins break:
+
+1. **Custom SMTP.** Supabase's built-in email is rate-limited to a few messages
+   per hour and is not for production — clients will hit "email rate limit
+   exceeded". Wire in a transactional provider (we use **Resend**): verify your
+   sending domain via DNS, then Supabase → Auth → SMTP Settings → enable custom
+   SMTP with the provider's host/port/user/API-key and a sender on the verified
+   domain. Then raise Auth → Rate Limits → emails/hour.
+
+2. **Email templates MUST use the token-hash link.** This app verifies logins at
+   `/auth/confirm` via `verifyOtp({ token_hash })`. Supabase's *default* email
+   templates send a different link style that this app does not handle, causing a
+   redirect **loop** back to `/login`. In Supabase → Auth → Email Templates, edit
+   **both** "Magic Link" and "Confirm signup" so the link is:
+   `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
+   (The `pkce_`-prefixed token that this produces IS accepted by `verifyOtp` —
+   verified in production. The loop is caused only by the default template, not by
+   PKCE.)
+
 ---
 
 ## How it works
