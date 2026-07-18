@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-image:
+    radial-gradient(1100px 620px at 78% -12%, #15213b 0%, rgba(11, 18, 32, 0) 55%);
+  background-attachment: fixed;
+}
+
+/* dot-grid texture — a Psyber brand motif, used at low opacity */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(124, 138, 163, 0.1) 1px, transparent 1px);
+  background-size: 26px 26px;
+  z-index: 0;
+}
+
+@layer components {
+  .psy-card {
+    @apply rounded-[14px] border border-line bg-panel shadow-card;
+    background-image: linear-gradient(180deg, #121b2e, #0f1728);
+  }
+  .psy-eyebrow {
+    @apply font-disp text-[11px] font-medium uppercase tracking-[2.5px] text-slate;
+  }
+  .psy-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-[10px] bg-blue px-[18px]
+      py-[11px] font-disp text-sm font-semibold text-[#04122a] transition
+      hover:brightness-110 active:translate-y-px;
+  }
+  .psy-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-[10px] border border-line
+      bg-transparent px-[18px] py-[11px] font-disp text-sm font-medium text-off transition
+      hover:border-blue;
+  }
+  .psy-input {
+    @apply w-full rounded-[10px] border border-line bg-[#0a111f] px-[13px] py-[11px]
+      text-[15px] text-off outline-none transition focus:border-blue;
+  }
+  .psy-label {
+    @apply mb-[7px] mt-4 block font-disp text-[11px] uppercase tracking-[1px] text-slate;
+  }
+}
+
+/* Respect reduced-motion for the animated booking accents */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
