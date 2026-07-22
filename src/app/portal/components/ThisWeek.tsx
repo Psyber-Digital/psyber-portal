@@ -126,6 +126,28 @@ function StepP({ children }: { children: ReactNode }) {
   return <p className="mt-2 max-w-[64ch] text-[14px] leading-relaxed text-sec">{children}</p>;
 }
 
+// Standing guidance shown on every worksheet: how to do the work, not what.
+// The flow-state / deep-work method — do it in one focused sitting; if stuck,
+// skim, jot, walk, and return. (Codex: METHOD-flow-first-worksheets.)
+function FlowNote() {
+  return (
+    <div className="mt-3.5 max-w-[70ch] rounded-[10px] border border-line bg-[#0c1424] p-3.5">
+      <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-orange">
+        Do it in flow
+      </div>
+      <p className="mt-1.5 text-[13px] leading-relaxed text-sec">
+        Work through this in <strong className="text-off">one focused sitting</strong> —
+        distractions off, a single task, no multitasking. The longer you hold that focus, the more
+        the work gives back.
+      </p>
+      <p className="mt-2 text-[13px] leading-relaxed text-sec">
+        Stuck? Don&rsquo;t force it. Skim the page, jot whatever comes to mind — rough, unpressured —
+        then step away for a short walk. Come back and drop into focus again.
+      </p>
+    </div>
+  );
+}
+
 /* ---------------- step 1 · video ---------------- */
 
 function StepVideo({
@@ -187,6 +209,7 @@ function StepWorkbook({
             <span className="mt-3 inline-block rounded-lg border border-orange/40 bg-orange/[0.14] px-3 py-1.5 font-disp text-[12px] font-semibold text-orange">
               ✎ Bring it rough — question marks welcome
             </span>
+            <FlowNote />
             {s?.caveat && (
               <p className="mt-3.5 max-w-[70ch] border-t border-dashed border-line pt-3 text-[12.5px] leading-relaxed text-sec">
                 {s.caveat}
