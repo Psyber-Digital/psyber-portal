@@ -159,8 +159,8 @@ function StepP({ children }: { children: ReactNode }) {
 }
 
 // Standing guidance shown on every worksheet: how to do the work, not what.
-// The flow-state / deep-work method — do it in one focused sitting; if stuck,
-// skim, jot, walk, and return. (Codex: METHOD-flow-first-worksheets.)
+// The flow-state / deep-work method — do it in focused sittings (one or several);
+// if stuck, skim, jot, walk, and return. (Codex: METHOD-flow-first-worksheets.)
 function FlowNote() {
   return (
     <div className="mt-3.5 max-w-[70ch] rounded-[10px] border border-line bg-[#0c1424] p-3.5">
@@ -168,8 +168,9 @@ function FlowNote() {
         Do it in flow
       </div>
       <p className="mt-1.5 text-[13px] leading-relaxed text-sec">
-        Work through this in <strong className="text-off">one focused sitting</strong> —
-        distractions off, a single task, no multitasking. The longer you hold that focus, the more
+        Work through this in <strong className="text-off">focused sittings</strong> —
+        distractions off, a single task, no multitasking. One sitting or several is fine; what
+        matters is that each one is properly focused. The longer you hold that focus, the more
         the work gives back.
       </p>
       <p className="mt-2 text-[13px] leading-relaxed text-sec">
