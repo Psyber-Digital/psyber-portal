@@ -48,5 +48,35 @@ export const WEEK_RESOURCES: Record<number, PortalResource[]> = {
   ],
 };
 
+// Print-ready (black-and-white, white-background) versions of the same resources,
+// for clients who'd rather print them. Same materials, ink-friendly. Only listed
+// where a print version has actually been produced.
+export const WEEK_PRINT_RESOURCES: Record<number, PortalResource[]> = {
+  1: [
+    {
+      href: "/session-01/Session-1-Playbook-Print-BW.pdf",
+      label: "The Playbook",
+      sub: "Black & white · PDF",
+      icon: "▤",
+      open: true,
+    },
+    {
+      href: "/session-01/Resource-Mindset-Reminders-Print-BW.pdf",
+      label: "Mindset Reminders",
+      sub: "Black & white · PDF",
+      icon: "◈",
+      open: true,
+    },
+    {
+      href: "/session-01/Resource-Therapist-to-Coach-Snapshot-Print-BW.pdf",
+      label: "Therapist → Coach Snapshot",
+      sub: "Black & white · PDF",
+      icon: "⇄",
+      open: true,
+    },
+  ],
+};
+
 export const weekWorkbook = (n: number) => WEEK_WORKBOOK[n];
 export const weekResources = (n: number): PortalResource[] => WEEK_RESOURCES[n] ?? [];
+export const weekPrintResources = (n: number): PortalResource[] => WEEK_PRINT_RESOURCES[n] ?? [];

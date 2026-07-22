@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { FileRow, Settings, Week } from "@/lib/types";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { FileRow, Settings, Week, WeekOutline } from "@/lib/types";
 import { weekGuide } from "@/lib/weekGuide";
 import { Header } from "./components/Header";
 import { WelcomeBanner } from "./components/WelcomeBanner";
@@ -50,6 +51,17 @@ export default async function PortalPage() {
 
   const filesFor = (weekId: string) => visibleFiles.filter((f) => f.week_id === weekId);
 
+  // Full programme outline for the stepper — every session, including ones not yet
+  // published, so the client sees the whole path with remaining sessions greyed out.
+  // RLS hides unpublished weeks from clients, so we read the outline with the
+  // service-role client (server-only; the access check above has already run).
+  // Only number/title/published are selected — no draft content reaches the browser.
+  const { data: outlineRows } = await createAdminClient()
+    .from("weeks")
+    .select("id, number, title, published")
+    .order("number");
+  const outline = (outlineRows ?? publishedWeeks) as WeekOutline[];
+
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-5 pb-24 pt-7">
       <Header name={profile?.full_name || "Client"} role="client" />
@@ -58,7 +70,9 @@ export default async function PortalPage() {
         <WelcomeBanner week={current} intro={weekGuide(current.number)?.bannerIntro} />
       )}
 
-      {publishedWeeks.length > 0 && <Stepper weeks={publishedWeeks} currentWeek={currentWeek} />}
+      {outline.length > 0 && (
+        <Stepper weeks={outline} currentWeek={current?.number ?? currentWeek} />
+      )}
 
       {current ? (
         <>

@@ -43,5 +43,28 @@ isolated to admin.ts, never NEXT_PUBLIC_, .gitignore excludes .env*.local.
 ## Next step
 Get Asher's Supabase region decision (default London eu-west-2), then do §3–6 together.
 
+## Post-build client-portal changes (22 Jul 2026)
+Three portal tweaks requested by Don, all done + `npm run build` clean:
+1. **Programme stepper shows the whole programme.** `portal/page.tsx` now reads the
+   full week outline (all sessions incl. unpublished) via the service-role client
+   (server-only; selects only id/number/title/published — no draft content reaches
+   the browser) and feeds it to `Stepper`. Remaining/unpublished sessions render
+   greyed. NB: the stepper shows whatever weeks exist in the DB — to show all 10
+   sessions, the remaining ones must exist as *draft* weeks in the admin
+   "Weeks & Content" tab (title only is enough). New type `WeekOutline` in types.ts.
+2. **Coach note icon.** `ThisWeek.tsx` FramingNote — the "D" initial replaced with a
+   `CompassIcon` (inline SVG) in the orange disc. `note.initial` in weekGuide is now
+   unused but left in place.
+3. **Print-ready versions.** New `WEEK_PRINT_RESOURCES` in resources.ts +
+   `weekPrintResources()`; StepResources renders a "Print-ready versions" sub-section.
+   Three B&W PDFs added to `public/session-01/` (`*-Print-BW.pdf`): Playbook (pre-existing
+   from Programme assets), Mindset Reminders + Snapshot generated from the dark-themed
+   source HTML via `Programme/.../assets/make-print-bw.py` (white-page + ink palette
+   override, rendered with headless Chrome). Canonical copies live in the Programme
+   Session-1 assets folder.
+
+Changes are LOCAL only (ClientPortal git repo, uncommitted) — not pushed to the live
+Vercel portal. Awaiting Don's go-ahead to deploy.
+
 ## Node note
 Local Node is v21.6.2; some Supabase sub-packages want ≥22 (warnings only, build fine).

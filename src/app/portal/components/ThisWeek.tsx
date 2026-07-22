@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { FileRow, Week } from "@/lib/types";
 import { weekVideo } from "@/lib/videos";
-import { weekWorkbook, weekResources, type PortalResource } from "@/lib/resources";
+import { weekWorkbook, weekResources, weekPrintResources, type PortalResource } from "@/lib/resources";
 import { weekGuide, type WeekGuide } from "@/lib/weekGuide";
 import { VimeoEmbed } from "./VimeoEmbed";
 
@@ -13,6 +13,7 @@ export function ThisWeek({ week, files }: { week: Week; files: FileRow[] }) {
   const video = weekVideo(week.number);
   const workbook = weekWorkbook(week.number);
   const resources = weekResources(week.number);
+  const printResources = weekPrintResources(week.number);
   // Static config is authoritative: if a week defines its workbook/resources here,
   // we don't also pull DB files of that kind (avoids the same material showing twice
   // under two names). Weeks without static config fall back to admin-uploaded files.
@@ -25,7 +26,7 @@ export function ThisWeek({ week, files }: { week: Week; files: FileRow[] }) {
       : files.filter((f) => f.kind === "resource").sort((a, b) => a.sort_order - b.sort_order);
 
   const hasWorkbook = Boolean(workbook) || wsFiles.length > 0;
-  const hasResources = resources.length > 0 || resFiles.length > 0;
+  const hasResources = resources.length > 0 || resFiles.length > 0 || printResources.length > 0;
   const hasAny = Boolean(video) || hasWorkbook || hasResources;
 
   let step = 0;
@@ -42,7 +43,13 @@ export function ThisWeek({ week, files }: { week: Week; files: FileRow[] }) {
           <StepWorkbook n={(step += 1)} guide={guide} workbook={workbook} wsFiles={wsFiles} />
         )}
         {hasResources && (
-          <StepResources n={(step += 1)} guide={guide} resources={resources} resFiles={resFiles} />
+          <StepResources
+            n={(step += 1)}
+            guide={guide}
+            resources={resources}
+            resFiles={resFiles}
+            printResources={printResources}
+          />
         )}
         {!hasAny && (
           <div className="psy-card p-8 text-center text-sm text-mut">
@@ -65,8 +72,11 @@ function FramingNote({
 }) {
   return (
     <section className="psy-card mb-[18px] flex items-start gap-[18px] border-l-[3px] border-l-orange p-6">
-      <div className="grid h-11 w-11 flex-none place-items-center rounded-full bg-[linear-gradient(135deg,#FF8D1E,#ffb15e)] font-disp text-[16px] font-bold text-[#241100]">
-        {note.initial}
+      <div
+        className="grid h-11 w-11 flex-none place-items-center rounded-full bg-[linear-gradient(135deg,#FF8D1E,#ffb15e)] text-[#241100]"
+        aria-hidden="true"
+      >
+        <CompassIcon />
       </div>
       <div className="min-w-0 flex-1">
         <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-orange">
@@ -90,6 +100,28 @@ function FramingNote({
         )}
       </div>
     </section>
+  );
+}
+
+// A compass — guidance from your coach. Sits in the note's orange disc in place
+// of an initial, symbolising direction/advice rather than a person's name.
+function CompassIcon() {
+  return (
+    <svg
+      width="23"
+      height="23"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9.25" />
+      <polygon points="15.9 8.1 13.8 13.8 8.1 15.9 10.2 10.2" fill="currentColor" stroke="none" />
+      <polygon points="15.9 8.1 13.8 13.8 8.1 15.9 10.2 10.2" />
+    </svg>
   );
 }
 
@@ -249,11 +281,13 @@ function StepResources({
   guide,
   resources,
   resFiles,
+  printResources,
 }: {
   n: number;
   guide?: WeekGuide;
   resources: PortalResource[];
   resFiles: FileRow[];
+  printResources: PortalResource[];
 }) {
   const s = guide?.resourcesStep;
   return (
@@ -279,6 +313,29 @@ function StepResources({
               <ResourceCard key={f.id} href={`/api/download/${f.id}`} icon="▤" title={f.title} sub="PDF" />
             ))}
           </div>
+
+          {printResources.length > 0 && (
+            <div className="mt-5 border-t border-dashed border-line pt-4">
+              <div className="flex items-center gap-2 font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-mut">
+                <span aria-hidden="true">⎙</span> Print-ready versions
+              </div>
+              <p className="mt-1 max-w-[64ch] text-[12.5px] leading-relaxed text-mut">
+                The same resources in black and white, ready to print.
+              </p>
+              <div className="mt-3 grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
+                {printResources.map((r) => (
+                  <ResourceCard
+                    key={r.href}
+                    href={r.href}
+                    icon={r.icon}
+                    title={r.label}
+                    sub={r.sub}
+                    open={r.open}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -19,6 +19,11 @@ export interface Week {
   created_at: string;
 }
 
+// The programme outline shown in the stepper: every session's number + title +
+// published flag, but no draft content (description is deliberately omitted so
+// unpublished sessions never leak their content to the client).
+export type WeekOutline = Pick<Week, "id" | "number" | "title" | "published">;
+
 export interface FileRow {
   id: string;
   week_id: string;
