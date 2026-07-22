@@ -13,12 +13,16 @@ export function ThisWeek({ week, files }: { week: Week; files: FileRow[] }) {
   const video = weekVideo(week.number);
   const workbook = weekWorkbook(week.number);
   const resources = weekResources(week.number);
-  const wsFiles = files
-    .filter((f) => f.kind === "worksheet")
-    .sort((a, b) => a.sort_order - b.sort_order);
-  const resFiles = files
-    .filter((f) => f.kind === "resource")
-    .sort((a, b) => a.sort_order - b.sort_order);
+  // Static config is authoritative: if a week defines its workbook/resources here,
+  // we don't also pull DB files of that kind (avoids the same material showing twice
+  // under two names). Weeks without static config fall back to admin-uploaded files.
+  const wsFiles = workbook
+    ? []
+    : files.filter((f) => f.kind === "worksheet").sort((a, b) => a.sort_order - b.sort_order);
+  const resFiles =
+    resources.length > 0
+      ? []
+      : files.filter((f) => f.kind === "resource").sort((a, b) => a.sort_order - b.sort_order);
 
   const hasWorkbook = Boolean(workbook) || wsFiles.length > 0;
   const hasResources = resources.length > 0 || resFiles.length > 0;

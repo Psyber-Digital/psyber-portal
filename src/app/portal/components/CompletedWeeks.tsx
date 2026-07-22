@@ -47,8 +47,9 @@ function WeekMaterials({ week, files }: { week: Week; files: FileRow[] }) {
   const video = weekVideo(week.number);
   const workbook = weekWorkbook(week.number);
   const resources = weekResources(week.number);
-  const wsFiles = files.filter((f) => f.kind === "worksheet");
-  const resFiles = files.filter((f) => f.kind === "resource");
+  // Static config wins over DB files of the same kind (see ThisWeek for the rationale).
+  const wsFiles = workbook ? [] : files.filter((f) => f.kind === "worksheet");
+  const resFiles = resources.length > 0 ? [] : files.filter((f) => f.kind === "resource");
 
   return (
     <div className="grid gap-3">
