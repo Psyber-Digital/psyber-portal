@@ -71,7 +71,7 @@ function FramingNote({
   budget?: WeekGuide["budget"];
 }) {
   return (
-    <section className="psy-card mb-[18px] flex items-start gap-[18px] border-l-[3px] border-l-orange p-6">
+    <section className="psy-card mb-[18px] flex items-start gap-4 border-l-[3px] border-l-orange p-5 sm:gap-[18px] sm:p-6">
       <div
         className="grid h-11 w-11 flex-none place-items-center rounded-full bg-[linear-gradient(135deg,#FF8D1E,#ffb15e)] text-[#241100]"
         aria-hidden="true"
@@ -195,18 +195,20 @@ function StepVideo({
   title: string;
 }) {
   const s = guide?.videoStep;
+  // The video sits full card-width below the step header (not inset behind the
+  // step number) so it's as large as possible — most impactful on a phone.
   return (
-    <section className="psy-card overflow-hidden">
-      <div className="flex items-start gap-5 p-6">
+    <section className="psy-card overflow-hidden p-5 sm:p-6">
+      <div className="flex items-start gap-4 sm:gap-5">
         <StepNum n={n} />
         <div className="min-w-0 flex-1">
           <Kicker label="Watch first" mins={s?.mins ?? "video"} />
           <StepTitle>{s?.title ?? "Pre-work video"}</StepTitle>
           {s?.blurb && <StepP>{s.blurb}</StepP>}
-          <div className="mt-4">
-            <VimeoEmbed video={video} title={title} />
-          </div>
         </div>
+      </div>
+      <div className="mt-4">
+        <VimeoEmbed video={video} title={title} />
       </div>
     </section>
   );
@@ -232,8 +234,8 @@ function StepWorkbook({
       style={{ backgroundImage: "linear-gradient(125deg,#2a1c0b 0%,#171d31 52%,#0f1728 100%)" }}
     >
       <span className="absolute left-0 top-0 block h-0.5 w-full bg-[linear-gradient(90deg,transparent,#FF8D1E,transparent)] opacity-80" />
-      <div className="flex flex-col items-stretch gap-5 p-6 sm:flex-row sm:items-center">
-        <div className="flex min-w-0 flex-1 items-start gap-5">
+      <div className="flex flex-col items-stretch gap-5 p-5 sm:flex-row sm:items-center sm:p-6">
+        <div className="flex min-w-0 flex-1 items-start gap-4 sm:gap-5">
           <StepNum n={n} hero />
           <div className="min-w-0 flex-1">
             <Kicker label="Then complete" mins={s?.mins ?? "workbook"} />
@@ -293,7 +295,7 @@ function StepResources({
   const s = guide?.resourcesStep;
   return (
     <section className="psy-card overflow-hidden">
-      <div className="flex items-start gap-5 p-6">
+      <div className="flex items-start gap-4 p-5 sm:gap-5 sm:p-6">
         <StepNum n={n} />
         <div className="min-w-0 flex-1">
           <Kicker label="Keep to hand" mins="reference" />

@@ -1,13 +1,19 @@
 import type { WeekVideo } from "@/lib/videos";
 
 // Responsive 16:9 Vimeo player for a private, domain-locked session video.
-// Clean chrome (no title/byline/share), do-not-track on.
+// Clean chrome (no title/byline/share), do-not-track on. The control bar is kept
+// deliberately sparse — picture-in-picture off — so on a small phone screen the
+// fullscreen button isn't buried among other icons. playsinline keeps the video
+// in the page on tap (iOS) rather than force-launching native fullscreen, so the
+// viewer chooses when to go fullscreen.
 export function VimeoEmbed({ video, title }: { video: WeekVideo; title?: string }) {
   const params = new URLSearchParams({
     title: "0",
     byline: "0",
     portrait: "0",
     dnt: "1",
+    pip: "0",
+    playsinline: "1",
   });
   if (video.hash) params.set("h", video.hash);
   const src = `https://player.vimeo.com/video/${video.id}?${params.toString()}`;

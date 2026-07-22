@@ -63,7 +63,7 @@ export default async function PortalPage() {
   const outline = (outlineRows ?? publishedWeeks) as WeekOutline[];
 
   return (
-    <div className="relative z-10 mx-auto max-w-[1060px] px-5 pb-24 pt-7">
+    <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
       <Header name={profile?.full_name || "Client"} role="client" />
 
       {current && (

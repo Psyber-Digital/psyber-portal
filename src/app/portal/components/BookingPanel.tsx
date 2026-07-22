@@ -25,7 +25,7 @@ export function BookingPanel({ id, settings }: { id: string; settings: Settings 
   return (
     <section
       id={id}
-      className="psy-card relative mt-10 flex flex-wrap items-center justify-between gap-6 overflow-hidden p-7"
+      className="psy-card relative mt-8 flex flex-wrap items-center justify-between gap-5 overflow-hidden p-5 sm:mt-10 sm:gap-6 sm:p-7"
       style={{
         backgroundImage:
           "linear-gradient(120deg,#12203a 0%,#121B2E 55%,#0f1728 100%)",
@@ -41,7 +41,7 @@ export function BookingPanel({ id, settings }: { id: string; settings: Settings 
       />
       <span className="pointer-events-none absolute left-0 top-0 h-px w-full animate-[psySweep_5.5s_ease-in-out_infinite] bg-[linear-gradient(90deg,transparent,#1E90FF,transparent)]" />
 
-      <div className="relative min-w-[250px] flex-1">
+      <div className="relative min-w-[220px] flex-1">
         <div className="psy-eyebrow text-blue">Next Session</div>
         <h3 className="mt-2 font-disp text-[19px] font-semibold leading-tight">
           The work continues in the room.
@@ -64,8 +64,8 @@ export function BookingPanel({ id, settings }: { id: string; settings: Settings 
         </div>
       </div>
 
-      <div className="relative text-center">
-        <button onClick={openBooking} className="psy-btn group whitespace-nowrap !px-[22px] !py-[13px]">
+      <div className="relative w-full text-center sm:w-auto">
+        <button onClick={openBooking} className="psy-btn group !w-full whitespace-nowrap !px-[22px] !py-[13px] sm:!w-auto">
           Arrange your next session{" "}
           <span className="transition group-hover:translate-x-1">→</span>
         </button>

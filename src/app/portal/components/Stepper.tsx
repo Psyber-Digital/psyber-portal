@@ -8,7 +8,7 @@ import { pad, stripWeekPrefix } from "@/lib/week";
 // last week rather than a booking node.)
 export function Stepper({ weeks, currentWeek }: { weeks: WeekOutline[]; currentWeek: number }) {
   return (
-    <section className="psy-card mb-[26px] p-6">
+    <section className="psy-card mb-[26px] p-5 sm:p-6">
       <div className="mb-5">
         <div className="psy-eyebrow text-orange">The Programme</div>
         <p className="mt-1.5 max-w-[54ch] text-[13px] text-sec">

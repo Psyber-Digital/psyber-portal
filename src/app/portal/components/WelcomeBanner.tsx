@@ -5,11 +5,11 @@ import { pad, stripWeekPrefix } from "@/lib/week";
 // and a "You are here" chip. Warm orange glow bleeds in from the top-right.
 export function WelcomeBanner({ week, intro }: { week: Week; intro?: string }) {
   return (
-    <section className="psy-card relative mb-[26px] flex flex-wrap items-end justify-between gap-5 overflow-hidden p-7">
+    <section className="psy-card relative mb-[26px] flex flex-wrap items-end justify-between gap-4 overflow-hidden p-5 sm:gap-5 sm:p-7">
       <span className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(255,141,30,.16),transparent_68%)]" />
       <div className="relative">
         <div className="psy-eyebrow text-orange">This week · Therapy+</div>
-        <h1 className="mt-2 font-disp text-[26px] font-bold leading-tight tracking-[-0.3px]">
+        <h1 className="mt-2 font-disp text-[22px] font-bold leading-tight tracking-[-0.3px] sm:text-[26px]">
           Week {pad(week.number)} — {stripWeekPrefix(week.title)}
         </h1>
         {(intro || week.description) && (
