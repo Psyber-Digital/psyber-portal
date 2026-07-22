@@ -242,7 +242,7 @@ function StepWorkbook({
             <StepTitle>{s?.title ?? "Your workbook"}</StepTitle>
             {s?.blurb && <StepP>{s.blurb}</StepP>}
             <span className="mt-3 inline-block rounded-lg border border-orange/40 bg-orange/[0.14] px-3 py-1.5 font-disp text-[12px] font-semibold text-orange">
-              ✎ Bring it rough — question marks welcome
+              ✎ A loose first pass — question marks welcome
             </span>
             <FlowNote />
             {s?.caveat && (

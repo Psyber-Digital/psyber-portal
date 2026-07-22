@@ -20,6 +20,11 @@ export const WEEK_WORKBOOK: Record<number, PortalResource | undefined> = {
     label: "Open your workbook",
     open: true,
   },
+  2: {
+    href: "/session-02/Session-2-Niche-Workbook.html",
+    label: "Open your workbook",
+    open: true,
+  },
 };
 
 export const WEEK_RESOURCES: Record<number, PortalResource[]> = {
@@ -43,6 +48,50 @@ export const WEEK_RESOURCES: Record<number, PortalResource[]> = {
       label: "Therapist → Coach Snapshot",
       sub: "The lens flip at a glance · PDF",
       icon: "⇄",
+      open: true,
+    },
+  ],
+  2: [
+    {
+      href: "/session-02/Niche-Playbook.pdf",
+      label: "The Niche Playbook",
+      sub: "The session's thinking · PDF",
+      icon: "▤",
+      open: true,
+    },
+    {
+      href: "/session-02/Niche-Framework-Instructions.pdf",
+      label: "The Selection Framework",
+      sub: "The 11-step framework · PDF",
+      icon: "▦",
+      open: true,
+    },
+    {
+      href: "/session-02/Menu-Transformations.pdf",
+      label: "Transformations Menu",
+      sub: "Idea prompts · PDF",
+      icon: "☰",
+      open: true,
+    },
+    {
+      href: "/session-02/Menu-Audiences.pdf",
+      label: "Audiences Menu",
+      sub: "Idea prompts · PDF",
+      icon: "☰",
+      open: true,
+    },
+    {
+      href: "/session-02/Menu-Types-of-Coaching.pdf",
+      label: "Types of Coaching Menu",
+      sub: "Idea prompts · PDF",
+      icon: "☰",
+      open: true,
+    },
+    {
+      href: "/session-02/Niche-Examples.pdf",
+      label: "Niche Examples",
+      sub: "Worked propositions · PDF",
+      icon: "❝",
       open: true,
     },
   ],

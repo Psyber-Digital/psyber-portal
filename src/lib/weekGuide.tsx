@@ -37,7 +37,7 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
           Before our first session, watch the short video and skim the Playbook — together they lay
           out the whole picture, so we can spend our actual time together on <em>you</em>, not on
           slides. Then open the Foundations Workbook and have a first go.{" "}
-          <strong>Bring it rough</strong> — half-formed answers, question marks,{" "}
+          <strong>A loose first pass is exactly right</strong> — half-formed answers, question marks,{" "}
           &ldquo;I&rsquo;m not sure&rdquo;, all welcome. You&rsquo;re not meant to finish it alone;
           we finish it together on the call.
         </>
@@ -69,7 +69,7 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
           Four short reflective sections — mindset shifts, limiting beliefs, regulating emotions,
           and your commitment. Built for depth, not volume: a few honest, specific answers beat
           every box filled. Open it in your browser and have a first go.{" "}
-          <strong>Bring it rough</strong> — we finish it together on the call.
+          <strong>A loose first pass</strong> — we finish it together on the call.
         </>
       ),
       caveat: (
@@ -83,6 +83,56 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     resourcesStep: {
       blurb:
         "Pin these up as you work. They're your reference for the whole programme — return to them as you build.",
+    },
+  },
+  2: {
+    bannerIntro:
+      "Your niche — the who, and the what. This session is about generating options, not landing the answer: we score and choose together on the call. Work through it top to bottom, then book your call.",
+    note: {
+      fromLabel: "A Note From Your Coach",
+      initial: "D",
+      body: (
+        <>
+          Before this session, skim the <strong>Playbook</strong> and the three idea menus — they
+          lay out why a niche matters and get your thinking moving. Then open the{" "}
+          <strong>Niche Ideas Workbook</strong> and have a first go: a few transformations you&rsquo;d
+          love to deliver, a few audiences that pull at you, and some rough &ldquo;I help&hellip;&rdquo;
+          lines. <strong>A loose first pass is exactly right — and bring plenty.</strong> This is the
+          generate half; we widen the field and choose together on the call. And keep every idea in
+          the coaching lane — moving people from <em>well to better</em>, never treating a problem.
+        </>
+      ),
+    },
+    budget: {
+      total: "50 minutes",
+      parts: [
+        { value: "skim", label: "the menus first" },
+        { value: "50 min", label: "on the workbook" },
+      ],
+    },
+    workbookStep: {
+      mins: "approx 50 min",
+      title: "Your Niche Ideas Workbook",
+      blurb: (
+        <>
+          Three generative sections — the transformations you&rsquo;d love to deliver, the audiences
+          you&rsquo;re best placed to help (especially the populations you know from clinical work),
+          and the &ldquo;I help [audience] achieve [transformation]&rdquo; lines that fall out of
+          them. Draft widely; more candidates, less polish, is exactly what we want. A fourth
+          section — <em>Score &amp; Select</em> — is for our next session, so leave it for now.
+        </>
+      ),
+      caveat: (
+        <>
+          ⚠ Your answers are saved in <strong>this browser only</strong> — they won&rsquo;t follow
+          you to another device, and clearing your history erases them. When you&rsquo;re done, use{" "}
+          <strong>Save as PDF</strong> inside the workbook to keep a permanent copy.
+        </>
+      ),
+    },
+    resourcesStep: {
+      blurb:
+        "The Playbook carries the thinking; the three menus are idea prompts (not exhaustive — add your own); the examples set the bar for specificity. The Selection Framework shows all eleven steps.",
     },
   },
 };
