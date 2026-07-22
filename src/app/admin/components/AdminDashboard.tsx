@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { FileRow, Profile, Settings, Week } from "@/lib/types";
 import {
+  addClient,
   createWeek,
   deleteFile,
   deleteWeek,
@@ -88,13 +89,6 @@ function ClientsTab({
       router.refresh();
     });
 
-  if (!clients.length)
-    return (
-      <div className="psy-card p-10 text-center text-sm text-dim">
-        No clients have registered yet.
-      </div>
-    );
-
   return (
     <>
       <Hint>
@@ -102,6 +96,15 @@ function ClientsTab({
         see every week up to and including it. Bump it by one after each session.
         There are no passwords to manage — sign-in is by secure email link.
       </Hint>
+
+      <AddClientForm />
+
+      {!clients.length && (
+        <div className="psy-card p-10 text-center text-sm text-dim">
+          No clients yet — add your first above.
+        </div>
+      )}
+
       {clients.map((c) => (
         <div key={c.id} className="mb-4 rounded-xl border border-line bg-panel p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -159,6 +162,82 @@ function ClientsTab({
         </div>
       ))}
     </>
+  );
+}
+
+function AddClientForm() {
+  const router = useRouter();
+  const [pending, start] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const [added, setAdded] = useState<string | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  return (
+    <form
+      ref={formRef}
+      action={(fd) =>
+        start(async () => {
+          setError(null);
+          setAdded(null);
+          const res = await addClient(fd);
+          if (res?.error) {
+            setError(res.error);
+            return;
+          }
+          setAdded(String(fd.get("email") ?? "").trim());
+          formRef.current?.reset();
+          router.refresh();
+          setTimeout(() => setAdded(null), 4000);
+        })
+      }
+      className="mb-5 rounded-xl border border-line bg-panel p-5"
+    >
+      <h4 className="mb-1 font-disp text-sm font-semibold">Add a client</h4>
+      <p className="mb-3.5 text-[12px] leading-relaxed text-dim">
+        Creates their account with <b>Week 01 already unlocked</b>. No email is
+        sent — share the portal link and they sign in with a secure email link.
+      </p>
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <label className="psy-label">Full name</label>
+          <input name="full_name" className="psy-input" placeholder="Client name" />
+        </div>
+        <div>
+          <label className="psy-label">Email</label>
+          <input
+            name="email"
+            type="email"
+            className="psy-input"
+            placeholder="client@email.com"
+          />
+        </div>
+      </div>
+      <div className="mt-1 max-w-[200px]">
+        <label className="psy-label">Starting week</label>
+        <input
+          name="current_week"
+          type="number"
+          min={0}
+          defaultValue={1}
+          className="psy-input"
+        />
+      </div>
+
+      {error && (
+        <p className="mt-3 rounded-[9px] border border-bad/30 bg-bad/10 px-3 py-2.5 text-[13px] text-[#f0a99f]">
+          {error}
+        </p>
+      )}
+      {added && (
+        <p className="mt-3 text-[12px] text-good">
+          Added {added}. They can sign in now.
+        </p>
+      )}
+
+      <button type="submit" disabled={pending} className="psy-btn mt-4 !w-auto">
+        {pending ? "Adding…" : "Add client"}
+      </button>
+    </form>
   );
 }
 

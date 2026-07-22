@@ -23,6 +23,50 @@ async function requireAdmin() {
   return { supabase, userId: user.id };
 }
 
+export async function addClient(
+  formData: FormData,
+): Promise<{ error?: string }> {
+  await requireAdmin();
+
+  const email = String(formData.get("email") ?? "")
+    .toLowerCase()
+    .trim();
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  const weekRaw = parseInt(String(formData.get("current_week") ?? "1"), 10);
+  const week = Number.isFinite(weekRaw) ? Math.max(0, weekRaw) : 1;
+
+  if (!email) return { error: "Enter the client's email address." };
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+    return { error: "That doesn't look like a valid email address." };
+
+  const admin = createAdminClient();
+
+  // Create the auth account directly. No email is sent; email_confirm marks the
+  // address verified so there's no separate confirmation step. The
+  // on_auth_user_created trigger creates the matching profile row.
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    email_confirm: true,
+    user_metadata: { full_name: fullName },
+  });
+  if (error) {
+    const msg = /already|registered|exists/i.test(error.message)
+      ? "A client with that email already exists."
+      : error.message;
+    return { error: msg };
+  }
+
+  // Set their name and starting week. Default 1 unlocks Week 01 immediately
+  // (a week shows only when published AND number <= current_week).
+  await admin
+    .from("profiles")
+    .update({ full_name: fullName, current_week: week })
+    .eq("id", data.user.id);
+
+  revalidatePath("/admin");
+  return {};
+}
+
 export async function setCurrentWeek(clientId: string, week: number) {
   await requireAdmin();
   const admin = createAdminClient();
