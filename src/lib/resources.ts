@@ -4,21 +4,47 @@
 //
 // The workbook opens as an interactive page (new tab); resources open/download in place.
 
-export type PortalResource = { href: string; label: string; open?: boolean };
+export type PortalResource = {
+  href: string;
+  label: string;
+  open?: boolean;
+  /** Small subtitle shown under the label on the resource card. */
+  sub?: string;
+  /** Glyph shown in the card's icon tile. */
+  icon?: string;
+};
 
 export const WEEK_WORKBOOK: Record<number, PortalResource | undefined> = {
   1: {
     href: "/session-01/Session-1-Foundations-Workbook.html",
-    label: "Open your Foundations Workbook",
+    label: "Open your workbook",
     open: true,
   },
 };
 
 export const WEEK_RESOURCES: Record<number, PortalResource[]> = {
   1: [
-    { href: "/session-01/Session-1-Playbook.pdf", label: "The Playbook — four reference sheets", open: true },
-    { href: "/session-01/Resource-Mindset-Reminders.pdf", label: "Mindset Reminders", open: true },
-    { href: "/session-01/Resource-Therapist-to-Coach-Snapshot.pdf", label: "Therapist → Coach — Mindset Shift Snapshot", open: true },
+    {
+      href: "/session-01/Session-1-Playbook.pdf",
+      label: "The Playbook",
+      sub: "Four reference sheets · PDF",
+      icon: "▤",
+      open: true,
+    },
+    {
+      href: "/session-01/Resource-Mindset-Reminders-v2.pdf",
+      label: "Mindset Reminders",
+      sub: "Daily prompts · PDF",
+      icon: "◈",
+      open: true,
+    },
+    {
+      href: "/session-01/Resource-Therapist-to-Coach-Snapshot-v2.pdf",
+      label: "Therapist → Coach Snapshot",
+      sub: "The lens flip at a glance · PDF",
+      icon: "⇄",
+      open: true,
+    },
   ],
 };
 

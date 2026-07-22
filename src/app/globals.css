@@ -37,6 +37,11 @@ body::before {
       py-[11px] font-disp text-sm font-semibold text-[#04122a] transition
       hover:brightness-110 active:translate-y-px;
   }
+  .psy-btn-orange {
+    @apply inline-flex items-center justify-center gap-2 rounded-[11px] bg-orange px-[22px]
+      py-[13px] font-disp text-[15px] font-semibold text-[#241100] transition
+      hover:brightness-[1.08] active:translate-y-px;
+  }
   .psy-btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-[10px] border border-line
       bg-transparent px-[18px] py-[11px] font-disp text-sm font-medium text-off transition

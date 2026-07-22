@@ -11,8 +11,14 @@ export function Header({ name, role }: { name: string; role: "client" | "admin" 
         priority
         className="h-[30px] w-auto"
       />
-      <div className="flex items-center gap-3.5 text-[13px] text-slate">
-        <span className="rounded-full border border-blue/25 bg-blue/[0.12] px-2.5 py-1 font-disp text-[10px] uppercase tracking-[1.5px] text-blue">
+      <div className="flex items-center gap-3.5 text-[13px] text-sec">
+        <span
+          className={`rounded-full px-2.5 py-1 font-disp text-[10px] uppercase tracking-[1.5px] ${
+            role === "admin"
+              ? "border border-blue/25 bg-blue/[0.12] text-blue"
+              : "border border-orange/40 bg-orange/[0.14] text-orange"
+          }`}
+        >
           {role === "admin" ? "Admin" : "Client"}
         </span>
         <span className="font-semibold text-off">{name}</span>

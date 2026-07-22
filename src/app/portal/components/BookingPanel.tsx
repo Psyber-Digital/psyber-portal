@@ -25,7 +25,7 @@ export function BookingPanel({ id, settings }: { id: string; settings: Settings 
   return (
     <section
       id={id}
-      className="psy-card relative mb-8 flex flex-wrap items-center justify-between gap-6 overflow-hidden p-6"
+      className="psy-card relative mt-10 flex flex-wrap items-center justify-between gap-6 overflow-hidden p-7"
       style={{
         backgroundImage:
           "linear-gradient(120deg,#12203a 0%,#121B2E 55%,#0f1728 100%)",
