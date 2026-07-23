@@ -33,10 +33,13 @@ export async function addClient(
   const email = String(formData.get("email") ?? "")
     .toLowerCase()
     .trim();
-  const fullName = String(formData.get("full_name") ?? "").trim();
+  const firstName = String(formData.get("first_name") ?? "").trim();
+  const surname = String(formData.get("surname") ?? "").trim();
+  const fullName = [firstName, surname].filter(Boolean).join(" ");
   const weekRaw = parseInt(String(formData.get("current_week") ?? "1"), 10);
   const week = Number.isFinite(weekRaw) ? Math.max(0, weekRaw) : 1;
 
+  if (!firstName) return { error: "Enter the client's first name." };
   if (!email) return { error: "Enter the client's email address." };
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
     return { error: "That doesn't look like a valid email address." };

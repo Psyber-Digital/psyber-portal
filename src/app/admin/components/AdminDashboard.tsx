@@ -229,18 +229,22 @@ function AddClientForm() {
       </p>
       <div className="grid gap-4 md:grid-cols-2">
         <div>
-          <label className="psy-label">Full name</label>
-          <input name="full_name" className="psy-input" placeholder="Client name" />
+          <label className="psy-label">First name</label>
+          <input name="first_name" className="psy-input" placeholder="First name" />
         </div>
         <div>
-          <label className="psy-label">Email</label>
-          <input
-            name="email"
-            type="email"
-            className="psy-input"
-            placeholder="client@email.com"
-          />
+          <label className="psy-label">Surname</label>
+          <input name="surname" className="psy-input" placeholder="Surname" />
         </div>
+      </div>
+      <div className="mt-1">
+        <label className="psy-label">Email</label>
+        <input
+          name="email"
+          type="email"
+          className="psy-input"
+          placeholder="client@email.com"
+        />
       </div>
       <div className="mt-1 max-w-[200px]">
         <label className="psy-label">Starting week</label>

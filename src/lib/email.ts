@@ -64,11 +64,12 @@ export async function sendWeekUnlockEmail({
   weekNumber: number;
   content: WeekEmail;
 }): Promise<void> {
-  const first = (name ?? "").trim().split(/\s+/)[0] || "there";
+  const first = (name ?? "").trim().split(/\s+/)[0];
+  const greeting = first ? `Dear ${first},` : "Hello,";
   const wk = pad(weekNumber);
   const url = portalUrl("/portal");
 
-  const text = `Dear ${first},
+  const text = `${greeting}
 
 ${content.paragraphs.join("\n\n")}
 
@@ -79,7 +80,7 @@ If anything comes up or you'd like a hand, just reply to this email — it comes
 Kindest regards,
 Asher · Psyber Digital`;
 
-  const html = weekUnlockHtml({ first, wk, paragraphs: content.paragraphs, url });
+  const html = weekUnlockHtml({ greeting, wk, paragraphs: content.paragraphs, url });
   await sendEmail({ to, subject: content.subject, html, text });
 }
 
@@ -87,12 +88,12 @@ Asher · Psyber Digital`;
 // background, navy text, a single blue action button (the "path forward"
 // colour). No external images or fonts, so nothing to block or fail to load.
 function weekUnlockHtml({
-  first,
+  greeting,
   wk,
   paragraphs,
   url,
 }: {
-  first: string;
+  greeting: string;
   wk: string;
   paragraphs: string[];
   url: string;
@@ -125,7 +126,7 @@ function weekUnlockHtml({
           </tr>
           <tr>
             <td style="padding:16px 34px 0 34px;">
-              <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#28324a;">Dear ${esc(first)},</p>
+              <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#28324a;">${esc(greeting)}</p>
 ${bodyParas}
             </td>
           </tr>
