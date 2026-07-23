@@ -93,8 +93,8 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
       initial: "D",
       body: (
         <>
-          Before this session, skim the <strong>Playbook</strong> and the three idea menus — they
-          lay out why a niche matters and get your thinking moving. Then open the{" "}
+          Before this session, watch the short video, then skim the <strong>Playbook</strong> and
+          the three idea menus — they lay out why a niche matters and get your thinking moving. Then open the{" "}
           <strong>Niche Ideas Workbook</strong> and have a first go: a few transformations you&rsquo;d
           love to deliver, a few audiences that pull at you, and some rough &ldquo;I help&hellip;&rdquo;
           lines. <strong>A loose first pass is exactly right — and bring plenty.</strong> This is the
@@ -104,11 +104,23 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
       ),
     },
     budget: {
-      total: "50 minutes",
+      total: "an hour",
       parts: [
-        { value: "skim", label: "the menus first" },
+        { value: "7½ min", label: "to watch" },
         { value: "50 min", label: "on the workbook" },
       ],
+    },
+    videoStep: {
+      mins: "approx 7½ min",
+      title: "Pre-work video — finding your niche",
+      blurb: (
+        <>
+          The whole way of thinking, in a few minutes: why niching makes you more valuable, what
+          makes a good niche, the unfair advantage your clinical years give you, the coaching-lane
+          guardrail, and the one-line formula. Watch this first — it carries the teaching, so the
+          live call is spent generating <em>with</em> you.
+        </>
+      ),
     },
     workbookStep: {
       mins: "approx 50 min",
@@ -118,7 +130,7 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
           Three generative sections — the transformations you&rsquo;d love to deliver, the audiences
           you&rsquo;re best placed to help (especially the populations you know from clinical work),
           and the &ldquo;I help [audience] achieve [transformation]&rdquo; lines that fall out of
-          them. Draft widely; more candidates, less polish, is exactly what we want. A fourth
+          them. Draft widely; more ideas, less polish, is exactly what we want. A fourth
           section — <em>Score &amp; Select</em> — is for our next session, so leave it for now.
         </>
       ),

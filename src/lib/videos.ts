@@ -14,6 +14,8 @@ export const WEEK_VIDEOS: Record<number, WeekVideo> = {
   // Session 1 pre-work. Same Vimeo ID is kept stable across re-uploads (replace the source
   // file on Vimeo to swap the draft for the final render). Recorded in ../../vimeo-videos.md.
   1: { id: "1211864055", hash: "19c07e739e", title: "Session 1 · Pre-Work" },
+  // Session 2 pre-work (Niche — Ideas). Private + embed-whitelisted to the portal domain.
+  2: { id: "1212379930", hash: "c79b8e732c", title: "Session 2 · Pre-Work" },
 };
 
 export function weekVideo(weekNumber: number): WeekVideo | undefined {
