@@ -212,7 +212,7 @@ function ClientsTab({
           </div>
           <div className="mt-3 flex justify-end">
             <button
-              onClick={() => remove(c.id, c.full_name || c.email)}
+              onClick={() => remove(c.id, c.full_name || c.email || "this client")}
               disabled={pending}
               className="font-disp text-[12px] font-medium text-bad/80 transition hover:text-bad disabled:opacity-40"
             >
