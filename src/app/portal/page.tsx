@@ -9,6 +9,7 @@ import { WelcomeBanner } from "./components/WelcomeBanner";
 import { Stepper } from "./components/Stepper";
 import { SectionHead } from "./components/SectionHead";
 import { ThisWeek } from "./components/ThisWeek";
+import { PreviousWeek } from "./components/PreviousWeek";
 import { CompletedWeeks } from "./components/CompletedWeeks";
 import { BookingPanel } from "./components/BookingPanel";
 
@@ -53,6 +54,10 @@ export default async function PortalPage() {
   // The current week gets the full treatment; earlier weeks collapse below it.
   const current = unlocked[unlocked.length - 1];
   const completed = unlocked.slice(0, -1).reverse();
+  // The immediately-previous week gets a quick "revisit" toggle under The Program;
+  // any older weeks stay in the completed-weeks archive lower down (no duplication).
+  const previous = completed[0];
+  const older = completed.slice(1);
 
   const filesFor = (weekId: string) => visibleFiles.filter((f) => f.week_id === weekId);
 
@@ -81,6 +86,8 @@ export default async function PortalPage() {
         <Stepper weeks={outline} currentWeek={current?.number ?? currentWeek} />
       )}
 
+      {previous && <PreviousWeek week={previous} files={filesFor(previous.id)} />}
+
       {current ? (
         <>
           <SectionHead>Your work this week</SectionHead>
@@ -92,10 +99,10 @@ export default async function PortalPage() {
         </div>
       )}
 
-      {completed.length > 0 && (
+      {older.length > 0 && (
         <>
           <SectionHead>Completed weeks</SectionHead>
-          <CompletedWeeks weeks={completed} filesFor={filesFor} />
+          <CompletedWeeks weeks={older} filesFor={filesFor} />
         </>
       )}
 

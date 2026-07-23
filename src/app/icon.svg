@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="fg" x1="10%" y1="10%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7BC1ED"/><stop offset="40%" stop-color="#D4A754"/><stop offset="100%" stop-color="#F08328"/>
+    </linearGradient>
+    <linearGradient id="bh" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9BD2F0"/><stop offset="50%" stop-color="#4A9AD8"/><stop offset="100%" stop-color="#2E6FA8"/>
+    </linearGradient>
+    <linearGradient id="oh" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB870"/><stop offset="50%" stop-color="#F08328"/><stop offset="100%" stop-color="#B85E1A"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="44" fill="#0B1220"/>
+  <g transform="translate(2,0)">
+    <path d="M 38 28 Q 38 18 48 22 L 168 92 Q 178 100 168 108 L 48 178 Q 38 182 38 172 Z" fill="none" stroke="url(#fg)" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M 96 56 Q 80 56 70 64 Q 58 70 56 82 Q 48 86 50 96 Q 42 102 48 112 Q 46 122 56 128 Q 60 138 72 140 Q 82 146 96 144 L 96 56 Z" fill="url(#bh)"/>
+    <path d="M 104 56 Q 120 56 130 64 Q 142 70 144 82 Q 152 86 150 96 Q 158 102 152 112 Q 154 122 144 128 Q 140 138 128 140 Q 118 146 104 144 L 104 56 Z" fill="url(#oh)"/>
+    <circle cx="160" cy="100" r="8" fill="#0B1220"/>
+    <line x1="160" y1="94" x2="160" y2="106" stroke="#F08328" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="154" y1="100" x2="166" y2="100" stroke="#F08328" stroke-width="2.4" stroke-linecap="round"/>
+  </g>
+</svg>

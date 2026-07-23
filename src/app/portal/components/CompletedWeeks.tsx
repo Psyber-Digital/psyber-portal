@@ -43,7 +43,7 @@ export function CompletedWeeks({
   );
 }
 
-function WeekMaterials({ week, files }: { week: Week; files: FileRow[] }) {
+export function WeekMaterials({ week, files }: { week: Week; files: FileRow[] }) {
   const video = weekVideo(week.number);
   const workbook = weekWorkbook(week.number);
   const resources = weekResources(week.number);
