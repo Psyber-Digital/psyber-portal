@@ -1,40 +1,46 @@
-// Per-week unlock email — each one written by hand, NOT a fill-in template.
-// Sent when a client is bumped forward to that (published) week. Each email
-// encourages the client, references the session just completed, previews the
-// week now opening, and gives advice specific to that week. The greeting, the
-// portal button, the offer of help and the sign-off are added by the composer
-// in email.ts — everything here is the bespoke middle.
+// Per-week unlock email content, loaded from the editable text files at the
+// project root: emails/week-NN.txt (one file per week). Editing those files IS
+// editing the emails — see emails/README.txt for the format.
 //
-// A week with no entry here sends NO email (we never send generic filler).
-// Add a new entry as each session's content is produced.
-//
-// Copy is US-spelled (client audience is US therapists — see codex-voice
-// VOICE-20260723-4).
+// Server-only (uses fs): imported by email.ts / the admin action, never a client
+// component. A week with no file sends NO email (we never send generic filler).
+
+import fs from "node:fs";
+import path from "node:path";
 
 export type WeekEmail = {
-  /** Bespoke subject line for this week. */
   subject: string;
-  /** Bespoke body paragraphs, in order. */
   paragraphs: string[];
 };
 
-export const WEEK_EMAIL: Record<number, WeekEmail> = {
-  1: {
-    subject: "Week 01 is open — building your foundations",
-    paragraphs: [
-      "It was a real pleasure meeting you on our onboarding call. You came in with genuine clarity about why you’re doing this — that’s the best possible start, and I’m looking forward to the work ahead.",
-      "Week 01 — Foundations is now open in your portal. This first week does two things: it gives you a clear view of the whole road ahead, and it brings some honest awareness to the mindset patterns and limiting beliefs that can quietly hold a therapist back from building a coaching business.",
-      "My advice for this one: don’t rush the workbook. The reflective sections — the mindset shifts, the beliefs worth examining, how you steady yourself under pressure — reward honesty over polish. A few true, specific answers will do far more for our first session than a page of tidy ones.",
-    ],
-  },
-  2: {
-    subject: "Week 02 is open — finding your niche",
-    paragraphs: [
-      "Really good work in our first session. You’ve got the model shift clear now, and your foundations are in place — which is exactly the ground we needed before this next step.",
-      "Week 02 — Niche is now open in your portal. This week is about the who and the what: the transformation you want to deliver, and the audience you’re best placed to serve. It’s the generate half, so we’re after plenty of ideas rather than the final answer — we widen the field and choose together on our call.",
-      "A little advice for this one: go wide before you go narrow. Draft more niche ideas than feels sensible, and keep every one in the coaching lane — moving people from well to better, never treating a problem. Lean on the audiences you already know from your clinical years; that’s an advantage most coaches simply don’t have. And leave the scoring section for now — that’s for our next session together.",
-    ],
-  },
-};
+const EMAILS_DIR = path.join(process.cwd(), "emails");
 
-export const weekEmail = (n: number): WeekEmail | undefined => WEEK_EMAIL[n];
+// Parse the simple format: a "Subject:" first line, then blank-line-separated
+// paragraphs. Single newlines inside a block are treated as soft wraps (joined
+// to one paragraph), so hand-wrapped text still renders cleanly.
+function parseEmail(raw: string): WeekEmail | null {
+  const text = raw.replace(/\r\n/g, "\n").trim();
+  const firstBreak = text.indexOf("\n");
+  const firstLine = (firstBreak === -1 ? text : text.slice(0, firstBreak)).trim();
+  const subjectMatch = firstLine.match(/^Subject:\s*(.+)$/i);
+  if (!subjectMatch) return null;
+
+  const subject = subjectMatch[1].trim();
+  const body = firstBreak === -1 ? "" : text.slice(firstBreak + 1);
+  const paragraphs = body
+    .split(/\n\s*\n/)
+    .map((p) => p.replace(/\s*\n\s*/g, " ").trim())
+    .filter(Boolean);
+
+  if (!subject || paragraphs.length === 0) return null;
+  return { subject, paragraphs };
+}
+
+export function weekEmail(n: number): WeekEmail | undefined {
+  const file = path.join(EMAILS_DIR, `week-${String(n).padStart(2, "0")}.txt`);
+  try {
+    return parseEmail(fs.readFileSync(file, "utf8")) ?? undefined;
+  } catch {
+    return undefined; // no file (or unreadable) → no email for this week
+  }
+}
