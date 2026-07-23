@@ -9,14 +9,17 @@ import { WelcomeBanner } from "./components/WelcomeBanner";
 import { Stepper } from "./components/Stepper";
 import { SectionHead } from "./components/SectionHead";
 import { ThisWeek } from "./components/ThisWeek";
-import { PreviousWeek } from "./components/PreviousWeek";
-import { CompletedWeeks } from "./components/CompletedWeeks";
 import { BookingPanel } from "./components/BookingPanel";
+import { pad, stripWeekPrefix } from "@/lib/week";
 
 export const dynamic = "force-dynamic";
 const BOOK_ID = "book";
 
-export default async function PortalPage() {
+export default async function PortalPage({
+  searchParams,
+}: {
+  searchParams?: { week?: string };
+}) {
   const supabase = createClient();
 
   const {
@@ -53,11 +56,10 @@ export default async function PortalPage() {
     .sort((a, b) => a.number - b.number);
   // The current week gets the full treatment; earlier weeks collapse below it.
   const current = unlocked[unlocked.length - 1];
-  const completed = unlocked.slice(0, -1).reverse();
-  // The immediately-previous week gets a quick "revisit" toggle under The Program;
-  // any older weeks stay in the completed-weeks archive lower down (no duplication).
-  const previous = completed[0];
-  const older = completed.slice(1);
+  // A week can be opened from the Program stepper (?week=N); default to the current week.
+  const selectedNum = Number(searchParams?.week);
+  const focused = unlocked.find((w) => w.number === selectedNum) ?? current;
+  const viewingPast = Boolean(focused && current && focused.number !== current.number);
 
   const filesFor = (weekId: string) => visibleFiles.filter((f) => f.week_id === weekId);
 
@@ -83,27 +85,37 @@ export default async function PortalPage() {
       )}
 
       {outline.length > 0 && (
-        <Stepper weeks={outline} currentWeek={current?.number ?? currentWeek} />
+        <Stepper
+          weeks={outline}
+          currentWeek={current?.number ?? currentWeek}
+          selected={focused?.number}
+        />
       )}
 
-      {previous && <PreviousWeek week={previous} files={filesFor(previous.id)} />}
-
-      {current ? (
+      {focused ? (
         <>
-          <SectionHead>Your work this week</SectionHead>
-          <ThisWeek week={current} files={filesFor(current.id)} />
+          {viewingPast ? (
+            <div className="mx-0.5 mb-4 mt-9 flex flex-wrap items-center gap-x-3 gap-y-2">
+              <span className="psy-eyebrow whitespace-nowrap text-orange">
+                Viewing · Week {pad(focused.number)} — {stripWeekPrefix(focused.title)}
+              </span>
+              <span className="hidden h-px flex-1 bg-line sm:block" />
+              <a
+                href="/portal"
+                className="psy-eyebrow whitespace-nowrap text-blue hover:underline"
+              >
+                ← Back to this week
+              </a>
+            </div>
+          ) : (
+            <SectionHead>Your work this week</SectionHead>
+          )}
+          <ThisWeek week={focused} files={filesFor(focused.id)} />
         </>
       ) : (
         <div className="psy-card p-10 text-center text-sm text-mut">
           No weeks unlocked yet. Your practitioner will grant access after your first session.
         </div>
-      )}
-
-      {older.length > 0 && (
-        <>
-          <SectionHead>Completed weeks</SectionHead>
-          <CompletedWeeks weeks={older} filesFor={filesFor} />
-        </>
       )}
 
       {settings && <BookingPanel id={BOOK_ID} settings={settings as Settings} />}
