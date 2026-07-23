@@ -7,6 +7,8 @@ import { pad, stripWeekPrefix } from "@/lib/week";
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 // Verified sending identity (same domain as the Supabase auth mail).
 const FROM = "Psyber Digital <noreply@psyberdigital.com>";
+// Replies go to Asher's inbox, not the unmonitored noreply address.
+const REPLY_TO = "asher@psyberdigital.com";
 
 function portalUrl(path = "/portal") {
   const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://psyber-portal.vercel.app").replace(
@@ -38,7 +40,7 @@ export async function sendEmail({
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ from: FROM, to, subject, html, text }),
+    body: JSON.stringify({ from: FROM, reply_to: REPLY_TO, to, subject, html, text }),
   });
 
   if (!res.ok) {
