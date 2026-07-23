@@ -124,6 +124,15 @@ export const WEEK_PRINT_RESOURCES: Record<number, PortalResource[]> = {
       open: true,
     },
   ],
+  // Standard: every session provides black-and-white, print-ready versions of its resources.
+  2: [
+    { href: "/session-02/Niche-Playbook-Print-BW.pdf", label: "The Niche Playbook", sub: "Black & white · PDF", icon: "▤", open: true },
+    { href: "/session-02/Niche-Framework-Instructions-Print-BW.pdf", label: "The Selection Framework", sub: "Black & white · PDF", icon: "▦", open: true },
+    { href: "/session-02/Menu-Transformations-Print-BW.pdf", label: "Transformations Menu", sub: "Black & white · PDF", icon: "☰", open: true },
+    { href: "/session-02/Menu-Audiences-Print-BW.pdf", label: "Audiences Menu", sub: "Black & white · PDF", icon: "☰", open: true },
+    { href: "/session-02/Menu-Types-of-Coaching-Print-BW.pdf", label: "Types of Coaching Menu", sub: "Black & white · PDF", icon: "☰", open: true },
+    { href: "/session-02/Niche-Examples-Print-BW.pdf", label: "Niche Examples", sub: "Black & white · PDF", icon: "❝", open: true },
+  ],
 };
 
 export const weekWorkbook = (n: number) => WEEK_WORKBOOK[n];
