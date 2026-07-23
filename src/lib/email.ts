@@ -68,15 +68,26 @@ export async function sendWeekUnlockEmail({
   const subject = `Week ${wk} is open — ${title}`;
   const url = portalUrl("/portal");
 
-  const text = `Hi ${first},
+  const text = `Dear ${first},
 
-Week ${wk} — ${title} is now open in your portal.
+I hope you're well.
 
-When you have a focused half-hour: watch the short pre-work video first, then open the workbook and have a first go. Bring it rough — half-formed answers are exactly right; we finish it together on our call. Keep the resources to hand as you work.
+It was a real pleasure working with you — you've made a strong start, and I'm looking forward to the progress ahead.
+
+Week ${wk} — ${title} is now open in your portal. Everything for this week is in one place: a short pre-work video, your workbook, and the supporting resources.
+
+A couple of things to keep in mind as you work:
+
+- Give each task your full attention — aim for a flow state. That's where your best work comes.
+- Bring it rough — half-formed answers are exactly right, and we finish the work together on our call.
+
+When you're ready, book our next session from the portal. My advice is to keep the sessions weekly, or sooner if you're ready to move forward — momentum will be one of your best friends in this process.
 
 Open your portal: ${url}
 
-See you in the room,
+Any questions at all, just reply to this email — it comes straight to me.
+
+Kindest regards,
 Asher · Psyber Digital`;
 
   const html = weekUnlockHtml({ first, wk, title, url });
@@ -123,9 +134,12 @@ function weekUnlockHtml({
           </tr>
           <tr>
             <td style="padding:18px 34px 0 34px;">
-              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">Hi ${esc(first)},</p>
-              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">Week ${esc(wk)} — ${esc(title)} is now open in your portal.</p>
-              <p style="margin:0 0 22px 0;font-size:15px;line-height:1.6;color:#28324a;">When you have a focused half-hour: watch the short pre-work video first, then open the workbook and have a first go. Bring it rough — half-formed answers are exactly right; we finish it together on our call. Keep the resources to hand as you work.</p>
+              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">Dear ${esc(first)},</p>
+              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">I hope you&rsquo;re well. It was a real pleasure working with you — you&rsquo;ve made a strong start, and I&rsquo;m looking forward to the progress ahead.</p>
+              <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#28324a;">Week ${esc(wk)} — ${esc(title)} is now open in your portal. Everything for this week is in one place: a short pre-work video, your workbook, and the supporting resources.</p>
+              <p style="margin:0 0 8px 0;font-size:15px;line-height:1.6;color:#28324a;">A couple of things to keep in mind as you work:</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 16px 0;"><tr><td style="padding:0 0 8px 0;font-size:15px;line-height:1.55;color:#28324a;"><span style="color:#1E90FF;font-weight:700;">&bull;&nbsp;&nbsp;</span>Give each task your full attention — aim for a flow state. That&rsquo;s where your best work comes.</td></tr><tr><td style="padding:0;font-size:15px;line-height:1.55;color:#28324a;"><span style="color:#1E90FF;font-weight:700;">&bull;&nbsp;&nbsp;</span>Bring it rough — half-formed answers are exactly right, and we finish the work together on our call.</td></tr></table>
+              <p style="margin:0 0 22px 0;font-size:15px;line-height:1.6;color:#28324a;">When you&rsquo;re ready, book our next session from the portal. My advice is to keep the sessions weekly, or sooner if you&rsquo;re ready to move forward — momentum will be one of your best friends in this process.</p>
             </td>
           </tr>
           <tr>
@@ -134,8 +148,9 @@ function weekUnlockHtml({
             </td>
           </tr>
           <tr>
-            <td style="padding:22px 34px 30px 34px;">
-              <p style="margin:0;font-size:15px;line-height:1.6;color:#28324a;">See you in the room,<br><strong style="color:#0B1220;">Asher</strong> &middot; Psyber Digital</p>
+            <td style="padding:20px 34px 30px 34px;">
+              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">Any questions at all, just reply to this email — it comes straight to me.</p>
+              <p style="margin:0;font-size:15px;line-height:1.6;color:#28324a;">Kindest regards,<br><strong style="color:#0B1220;">Asher</strong> &middot; Psyber Digital</p>
             </td>
           </tr>
           <tr>
