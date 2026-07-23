@@ -94,9 +94,15 @@ function ClientsTab({
           kind: "warn",
           text: `Week ${pad(week)} set, but the unlock email didn’t send — ${res.emailError}`,
         });
+      else if (res?.emailSkipped)
+        setNotice({
+          kind: "warn",
+          text: `Week ${pad(week)} unlocked — no email is written for this week yet, so none was sent.`,
+        });
       else if (res?.emailed)
         setNotice({ kind: "ok", text: `Week ${pad(week)} unlocked — client emailed.` });
-      if (res?.emailed || res?.emailError) setTimeout(() => setNotice(null), 8000);
+      if (res?.emailed || res?.emailError || res?.emailSkipped)
+        setTimeout(() => setNotice(null), 8000);
     });
 
   return (

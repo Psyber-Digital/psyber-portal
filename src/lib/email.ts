@@ -2,7 +2,8 @@
 // Server-only: this file reads RESEND_API_KEY and must never be imported into a
 // client component. It's used from admin server actions.
 
-import { pad, stripWeekPrefix } from "@/lib/week";
+import { pad } from "@/lib/week";
+import type { WeekEmail } from "@/lib/weekEmail";
 
 const RESEND_ENDPOINT = "https://api.resend.com/emails";
 // Verified sending identity (same domain as the Supabase auth mail).
@@ -49,49 +50,37 @@ export async function sendEmail({
   }
 }
 
-// "Week NN is open" delivery email, sent when a client's week is unlocked.
-// Voice mirrors the portal's own copy so email and portal read as one hand.
+// Sends a week's hand-written unlock email. The bespoke subject + paragraphs come
+// from weekEmail.ts; this only wraps them in the greeting, portal button, offer
+// of help and sign-off that every one shares.
 export async function sendWeekUnlockEmail({
   to,
   name,
   weekNumber,
-  weekTitle,
+  content,
 }: {
   to: string;
   name?: string | null;
   weekNumber: number;
-  weekTitle: string;
+  content: WeekEmail;
 }): Promise<void> {
   const first = (name ?? "").trim().split(/\s+/)[0] || "there";
   const wk = pad(weekNumber);
-  const title = stripWeekPrefix(weekTitle);
-  const subject = `Week ${wk} is open — ${title}`;
   const url = portalUrl("/portal");
 
   const text = `Dear ${first},
 
-I hope you're well.
-
-It was a real pleasure working with you — you've made a strong start, and I'm looking forward to the progress ahead.
-
-Week ${wk} — ${title} is now open in your portal. Everything for this week is in one place: a short pre-work video, your workbook, and the supporting resources.
-
-A couple of things to keep in mind as you work:
-
-- Give each task your full attention — aim for a flow state. That's where your best work comes.
-- Bring it rough — half-formed answers are exactly right, and we finish the work together on our call.
-
-When you're ready, book our next session from the portal. My advice is to keep the sessions weekly, or sooner if you're ready to move forward — momentum will be one of your best friends in this process.
+${content.paragraphs.join("\n\n")}
 
 Open your portal: ${url}
 
-Any questions at all, just reply to this email — it comes straight to me.
+If anything comes up or you'd like a hand, just reply to this email — it comes straight to me.
 
 Kindest regards,
 Asher · Psyber Digital`;
 
-  const html = weekUnlockHtml({ first, wk, title, url });
-  await sendEmail({ to, subject, html, text });
+  const html = weekUnlockHtml({ first, wk, paragraphs: content.paragraphs, url });
+  await sendEmail({ to, subject: content.subject, html, text });
 }
 
 // Self-contained, inline-styled HTML for broad email-client support. Light
@@ -100,16 +89,24 @@ Asher · Psyber Digital`;
 function weekUnlockHtml({
   first,
   wk,
-  title,
+  paragraphs,
   url,
 }: {
   first: string;
   wk: string;
-  title: string;
+  paragraphs: string[];
   url: string;
 }): string {
   const esc = (s: string) =>
     s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const bodyParas = paragraphs
+    .map(
+      (p) =>
+        `              <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#28324a;">${esc(
+          p,
+        )}</p>`,
+    )
+    .join("\n");
   return `<!doctype html>
 <html lang="en">
 <body style="margin:0;padding:0;background:#f4f7fb;">
@@ -121,35 +118,25 @@ function weekUnlockHtml({
             <td style="height:4px;background:#1E90FF;font-size:0;line-height:0;">&nbsp;</td>
           </tr>
           <tr>
-            <td style="padding:30px 34px 8px 34px;">
+            <td style="padding:28px 34px 4px 34px;">
               <div style="font-size:12px;letter-spacing:3px;color:#5a6784;text-transform:uppercase;font-weight:700;">Psyber&nbsp;&middot;&nbsp;Digital</div>
+              <div style="margin-top:10px;font-size:12px;letter-spacing:2px;color:#1E90FF;text-transform:uppercase;font-weight:700;">Your program &middot; Week ${esc(wk)}</div>
             </td>
           </tr>
           <tr>
-            <td style="padding:6px 34px 0 34px;">
-              <div style="font-size:12px;letter-spacing:2px;color:#1E90FF;text-transform:uppercase;font-weight:700;">Your program</div>
-              <h1 style="margin:8px 0 2px 0;font-size:23px;line-height:1.25;color:#0B1220;font-weight:700;">Week ${esc(wk)} is open</h1>
-              <div style="font-size:16px;color:#465066;">${esc(title)}</div>
+            <td style="padding:16px 34px 0 34px;">
+              <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#28324a;">Dear ${esc(first)},</p>
+${bodyParas}
             </td>
           </tr>
           <tr>
-            <td style="padding:18px 34px 0 34px;">
-              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">Dear ${esc(first)},</p>
-              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">I hope you&rsquo;re well. It was a real pleasure working with you — you&rsquo;ve made a strong start, and I&rsquo;m looking forward to the progress ahead.</p>
-              <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#28324a;">Week ${esc(wk)} — ${esc(title)} is now open in your portal. Everything for this week is in one place: a short pre-work video, your workbook, and the supporting resources.</p>
-              <p style="margin:0 0 8px 0;font-size:15px;line-height:1.6;color:#28324a;">A couple of things to keep in mind as you work:</p>
-              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 16px 0;"><tr><td style="padding:0 0 8px 0;font-size:15px;line-height:1.55;color:#28324a;"><span style="color:#1E90FF;font-weight:700;">&bull;&nbsp;&nbsp;</span>Give each task your full attention — aim for a flow state. That&rsquo;s where your best work comes.</td></tr><tr><td style="padding:0;font-size:15px;line-height:1.55;color:#28324a;"><span style="color:#1E90FF;font-weight:700;">&bull;&nbsp;&nbsp;</span>Bring it rough — half-formed answers are exactly right, and we finish the work together on our call.</td></tr></table>
-              <p style="margin:0 0 22px 0;font-size:15px;line-height:1.6;color:#28324a;">When you&rsquo;re ready, book our next session from the portal. My advice is to keep the sessions weekly, or sooner if you&rsquo;re ready to move forward — momentum will be one of your best friends in this process.</p>
-            </td>
-          </tr>
-          <tr>
-            <td align="center" style="padding:2px 34px 6px 34px;">
+            <td align="center" style="padding:6px 34px 6px 34px;">
               <a href="${esc(url)}" style="display:inline-block;background:#1E90FF;color:#ffffff;text-decoration:none;font-size:15px;font-weight:700;padding:13px 26px;border-radius:10px;">Open your portal &rarr;</a>
             </td>
           </tr>
           <tr>
             <td style="padding:20px 34px 30px 34px;">
-              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">Any questions at all, just reply to this email — it comes straight to me.</p>
+              <p style="margin:0 0 14px 0;font-size:15px;line-height:1.6;color:#28324a;">If anything comes up or you&rsquo;d like a hand, just reply to this email — it comes straight to me.</p>
               <p style="margin:0;font-size:15px;line-height:1.6;color:#28324a;">Kindest regards,<br><strong style="color:#0B1220;">Asher</strong> &middot; Psyber Digital</p>
             </td>
           </tr>

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendWeekUnlockEmail } from "@/lib/email";
+import { weekEmail } from "@/lib/weekEmail";
 
 // Every action re-verifies admin on the server. RLS is the backstop, but we
 // check explicitly so the service-role client is never reached by a non-admin.
@@ -68,7 +69,11 @@ export async function addClient(
   return {};
 }
 
-export type WeekChangeResult = { emailed?: boolean; emailError?: string };
+export type WeekChangeResult = {
+  emailed?: boolean;
+  emailSkipped?: boolean;
+  emailError?: string;
+};
 
 export async function setCurrentWeek(
   clientId: string,
@@ -98,10 +103,15 @@ export async function setCurrentWeek(
 
   const { data: wk } = await admin
     .from("weeks")
-    .select("number, title, published")
+    .select("published")
     .eq("number", target)
     .maybeSingle();
   if (!wk || !wk.published) return {};
+
+  // Each week has its own hand-written email. If this week hasn't got one yet,
+  // send nothing (we never send generic filler) and tell the admin.
+  const content = weekEmail(target);
+  if (!content) return { emailSkipped: true };
 
   // Best-effort: a mail failure must never undo the week change the practitioner
   // just made. Surface it to the admin UI instead of throwing.
@@ -109,8 +119,8 @@ export async function setCurrentWeek(
     await sendWeekUnlockEmail({
       to: profile.email,
       name: profile.full_name,
-      weekNumber: wk.number,
-      weekTitle: wk.title,
+      weekNumber: target,
+      content,
     });
     return { emailed: true };
   } catch (e) {
