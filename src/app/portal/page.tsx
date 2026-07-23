@@ -56,7 +56,7 @@ export default async function PortalPage() {
 
   const filesFor = (weekId: string) => visibleFiles.filter((f) => f.week_id === weekId);
 
-  // Full programme outline for the stepper — every session, including ones not yet
+  // Full program outline for the stepper — every session, including ones not yet
   // published, so the client sees the whole path with remaining sessions greyed out.
   // RLS hides unpublished weeks from clients, so we read the outline with the
   // service-role client (server-only; the access check above has already run).

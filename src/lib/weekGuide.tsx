@@ -82,7 +82,7 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     },
     resourcesStep: {
       blurb:
-        "Pin these up as you work. They're your reference for the whole programme — return to them as you build.",
+        "Pin these up as you work. They're your reference for the whole program — return to them as you build.",
     },
   },
   2: {

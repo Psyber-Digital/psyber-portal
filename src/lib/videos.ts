@@ -1,4 +1,4 @@
-// Vimeo video IDs per programme week.
+// Vimeo video IDs per program week.
 //
 // The videos are PRIVATE + domain-locked on Vimeo (see ../../VIMEO-SETUP.md), so the id/hash
 // sitting in the page source is safe — Vimeo will only play them when embedded on the allowed

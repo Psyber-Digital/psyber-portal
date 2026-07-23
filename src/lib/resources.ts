@@ -1,5 +1,5 @@
 // Session materials hosted as static files in /public (per week). Used alongside any
-// admin-uploaded files in Supabase storage. Session 1's materials are the programme's own
+// admin-uploaded files in Supabase storage. Session 1's materials are the program's own
 // generic reference assets (not client-specific), so serving them statically is fine.
 //
 // The workbook opens as an interactive page (new tab); resources open/download in place.

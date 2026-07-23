@@ -1,16 +1,16 @@
 import type { WeekOutline } from "@/lib/types";
 import { pad, stripWeekPrefix } from "@/lib/week";
 
-// The programme as a horizontal path. Reached weeks are filled; the current week
+// The program as a horizontal path. Reached weeks are filled; the current week
 // is ringed and flagged; remaining sessions (not yet reached or not yet published)
-// dim to grey. The full outline is passed in so the whole programme is always
+// dim to grey. The full outline is passed in so the whole program is always
 // visible. (Booking now lives at the foot of the page, so the path ends at the
 // last week rather than a booking node.)
 export function Stepper({ weeks, currentWeek }: { weeks: WeekOutline[]; currentWeek: number }) {
   return (
     <section className="psy-card mb-[26px] p-5 sm:p-6">
       <div className="mb-5">
-        <div className="psy-eyebrow text-orange">The Programme</div>
+        <div className="psy-eyebrow text-orange">The Program</div>
         <p className="mt-1.5 max-w-[54ch] text-[13px] text-sec">
           Each week builds on the last. Weeks unlock as you progress — your current focus is
           highlighted.
