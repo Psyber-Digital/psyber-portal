@@ -83,20 +83,43 @@ function ClientsTab({
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const [notice, setNotice] = useState<{ kind: "ok" | "warn"; text: string } | null>(null);
   const change = (id: string, week: number) =>
     start(async () => {
-      await setCurrentWeek(id, week);
+      setNotice(null);
+      const res = await setCurrentWeek(id, week);
       router.refresh();
+      if (res?.emailError)
+        setNotice({
+          kind: "warn",
+          text: `Week ${pad(week)} set, but the unlock email didn’t send — ${res.emailError}`,
+        });
+      else if (res?.emailed)
+        setNotice({ kind: "ok", text: `Week ${pad(week)} unlocked — client emailed.` });
+      if (res?.emailed || res?.emailError) setTimeout(() => setNotice(null), 8000);
     });
 
   return (
     <>
       <Hint>
         A client’s access is a single position: set their current week and they
-        see every week up to and including it. Bump it by one after each session.
+        see every week up to and including it. Bump it by one after each session
+        — moving a client forward to a published week emails them that it’s open.
         Clients sign in with a password or a secure email link — you don’t manage
         their passwords; they set their own from their account page.
       </Hint>
+
+      {notice && (
+        <div
+          className={`mb-4 rounded-[10px] border px-3.5 py-2.5 text-[13px] ${
+            notice.kind === "ok"
+              ? "border-good/40 bg-good/[0.1] text-good"
+              : "border-orange/40 bg-orange/[0.1] text-orange"
+          }`}
+        >
+          {notice.text}
+        </div>
+      )}
 
       <AddClientForm />
 

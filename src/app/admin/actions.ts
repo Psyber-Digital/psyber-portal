@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { sendWeekUnlockEmail } from "@/lib/email";
 
 // Every action re-verifies admin on the server. RLS is the backstop, but we
 // check explicitly so the service-role client is never reached by a non-admin.
@@ -67,14 +68,55 @@ export async function addClient(
   return {};
 }
 
-export async function setCurrentWeek(clientId: string, week: number) {
+export type WeekChangeResult = { emailed?: boolean; emailError?: string };
+
+export async function setCurrentWeek(
+  clientId: string,
+  week: number,
+): Promise<WeekChangeResult> {
   await requireAdmin();
   const admin = createAdminClient();
-  await admin
+  const target = Math.max(0, week);
+
+  // Read the client's contact + prior position first, so we can tell an actual
+  // forward unlock from a correction (and know who to email).
+  const { data: profile } = await admin
     .from("profiles")
-    .update({ current_week: Math.max(0, week) })
-    .eq("id", clientId);
+    .select("email, full_name, current_week")
+    .eq("id", clientId)
+    .single();
+
+  await admin.from("profiles").update({ current_week: target }).eq("id", clientId);
   revalidatePath("/admin");
+  revalidatePath("/portal");
+
+  // Email only on a genuine step forward. No email on a downward correction, on
+  // a client with no email, or when the target week isn't published (nothing to
+  // see yet).
+  const prev = profile?.current_week ?? 0;
+  if (!profile?.email || target <= prev) return {};
+
+  const { data: wk } = await admin
+    .from("weeks")
+    .select("number, title, published")
+    .eq("number", target)
+    .maybeSingle();
+  if (!wk || !wk.published) return {};
+
+  // Best-effort: a mail failure must never undo the week change the practitioner
+  // just made. Surface it to the admin UI instead of throwing.
+  try {
+    await sendWeekUnlockEmail({
+      to: profile.email,
+      name: profile.full_name,
+      weekNumber: wk.number,
+      weekTitle: wk.title,
+    });
+    return { emailed: true };
+  } catch (e) {
+    console.error("week-unlock email failed:", e);
+    return { emailError: e instanceof Error ? e.message : "Unknown error" };
+  }
 }
 
 export async function createWeek(formData: FormData) {
