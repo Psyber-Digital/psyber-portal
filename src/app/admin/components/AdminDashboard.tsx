@@ -6,6 +6,7 @@ import type { FileRow, Profile, Settings, Week } from "@/lib/types";
 import {
   addClient,
   createWeek,
+  deleteClient,
   deleteFile,
   deleteWeek,
   saveSettings,
@@ -105,6 +106,26 @@ function ClientsTab({
         setTimeout(() => setNotice(null), 8000);
     });
 
+  const remove = (id: string, label: string) => {
+    if (
+      !confirm(
+        `Remove ${label}? This permanently deletes their account and all access, and cannot be undone.`,
+      )
+    )
+      return;
+    start(async () => {
+      setNotice(null);
+      const res = await deleteClient(id);
+      router.refresh();
+      setNotice(
+        res?.error
+          ? { kind: "warn", text: res.error }
+          : { kind: "ok", text: `${label} removed.` },
+      );
+      setTimeout(() => setNotice(null), 8000);
+    });
+  };
+
   return (
     <>
       <Hint>
@@ -188,6 +209,15 @@ function ClientsTab({
                 </span>
               );
             })}
+          </div>
+          <div className="mt-3 flex justify-end">
+            <button
+              onClick={() => remove(c.id, c.full_name || c.email)}
+              disabled={pending}
+              className="font-disp text-[12px] font-medium text-bad/80 transition hover:text-bad disabled:opacity-40"
+            >
+              Remove client
+            </button>
           </div>
         </div>
       ))}

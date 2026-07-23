@@ -72,6 +72,31 @@ export async function addClient(
   return {};
 }
 
+// Permanently removes a client: deletes their auth user, which cascades to their
+// profile (FK on delete cascade). Guarded so you can't delete yourself or any
+// admin account.
+export async function deleteClient(
+  clientId: string,
+): Promise<{ error?: string }> {
+  const { userId } = await requireAdmin();
+  if (clientId === userId) return { error: "You can’t delete your own account." };
+
+  const admin = createAdminClient();
+  const { data: target } = await admin
+    .from("profiles")
+    .select("role")
+    .eq("id", clientId)
+    .single();
+  if (target?.role === "admin")
+    return { error: "You can’t delete an admin account." };
+
+  const { error } = await admin.auth.admin.deleteUser(clientId);
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin");
+  return {};
+}
+
 export type WeekChangeResult = {
   emailed?: boolean;
   emailSkipped?: boolean;
