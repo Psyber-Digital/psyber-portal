@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { FileRow, Settings, Week, WeekOutline } from "@/lib/types";
 import { weekGuide } from "@/lib/weekGuide";
 import { Header } from "./components/Header";
+import { SetPasswordPrompt } from "./components/SetPasswordPrompt";
 import { WelcomeBanner } from "./components/WelcomeBanner";
 import { Stepper } from "./components/Stepper";
 import { SectionHead } from "./components/SectionHead";
@@ -29,6 +30,10 @@ export default async function PortalPage() {
     .single();
 
   if (profile?.role === "admin") redirect("/admin");
+
+  // Prompt users who haven't set a password yet (flag stamped on their auth
+  // metadata when they save one via /portal/account).
+  const hasPassword = user.user_metadata?.has_password === true;
 
   const currentWeek = profile?.current_week ?? 0;
 
@@ -65,6 +70,8 @@ export default async function PortalPage() {
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
       <Header name={profile?.full_name || "Client"} role="client" />
+
+      {!hasPassword && <SetPasswordPrompt />}
 
       {current && (
         <WelcomeBanner week={current} intro={weekGuide(current.number)?.bannerIntro} />

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function Header({ name, role }: { name: string; role: "client" | "admin" }) {
   return (
@@ -25,6 +26,12 @@ export function Header({ name, role }: { name: string; role: "client" | "admin" 
           {role === "admin" ? "Admin" : "Client"}
         </span>
         <span className="min-w-0 truncate font-semibold text-off">{name}</span>
+        <Link
+          href="/portal/account"
+          className="psy-btn-ghost shrink-0 !px-3.5 !py-2 !text-[13px]"
+        >
+          Account
+        </Link>
         <form action="/auth/signout" method="post" className="shrink-0">
           <button type="submit" className="psy-btn-ghost !px-3.5 !py-2 !text-[13px]">
             Sign out

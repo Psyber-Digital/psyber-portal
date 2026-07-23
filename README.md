@@ -78,7 +78,12 @@ Two things must be configured in Supabase or logins break:
 
 ## How it works
 
-- **Auth:** Supabase magic links. No passwords stored anywhere.
+- **Auth:** Supabase Auth. Password sign-in is the primary method; a magic link
+  is always available as a fallback (and doubles as password recovery — sign in
+  by link, then set/reset a password at `/portal/account`). Passwords are stored
+  hashed by Supabase; this app never stores or handles raw passwords. The
+  token-hash email template above is still required — magic links, registration
+  and link-based recovery all depend on it.
 - **Client view (`/portal`):** programme stepper, booking panel, unlocked week
   cards (worksheet + resources split), locked "upcoming" tiles.
 - **Admin (`/admin`):** set each client's current week (the weekly ritual);

@@ -94,7 +94,8 @@ function ClientsTab({
       <Hint>
         A client’s access is a single position: set their current week and they
         see every week up to and including it. Bump it by one after each session.
-        There are no passwords to manage — sign-in is by secure email link.
+        Clients sign in with a password or a secure email link — you don’t manage
+        their passwords; they set their own from their account page.
       </Hint>
 
       <AddClientForm />
