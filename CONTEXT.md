@@ -149,6 +149,20 @@ real client sessions: **20 assertions, all passed**, test artifacts deleted with
 zero leftovers. See the verification log in TESTING.md. `npm run build` and
 `tsc --noEmit` clean.
 
+**DEPLOYED 27 Jul 01:55.** Pushed `b705eca..0bad502` to `main`; Vercel built and
+shipped. Verified in production: `/api/outreach/export`, `/api/shared/[id]` and
+`/api/cron/purge-shared-files` all return 401 (they exist and demand auth); the
+cron route refuses a wrong bearer token (TESTING.md test 17 ✅); `/login` 200 and
+`/portal` + `/admin` still redirect correctly — the pre-existing portal is
+unaffected.
+
+**Git note:** the push initially failed with 403. The saved credential was the
+`QuranFam` account, which has read but not write access to
+`Psyber-Digital/psyber-portal`. Fixed by `gh auth login` as Psyber-Digital plus
+`gh auth setup-git --hostname github.com`, which sets a github.com-specific
+credential helper that takes precedence over the stale macOS keychain entry.
+Both accounts remain logged in; QuranFam is untouched.
+
 **Outstanding manual step: `CRON_SECRET` is not yet set in Vercel.** Until it is,
 the hourly purge cron returns 401 each time it fires. Not a data risk — expiry is
 enforced by RLS, and the lazy sweep on `/admin` load still removes the bytes —
