@@ -163,10 +163,10 @@ unaffected.
 credential helper that takes precedence over the stale macOS keychain entry.
 Both accounts remain logged in; QuranFam is untouched.
 
-**Outstanding manual step: `CRON_SECRET` is not yet set in Vercel.** Until it is,
-the hourly purge cron returns 401 each time it fires. Not a data risk — expiry is
-enforced by RLS, and the lazy sweep on `/admin` load still removes the bytes —
-but it will log an hourly failure.
+**`CRON_SECRET` is set** (Don, 27 Jul 02:06) and a rebuild was pushed so the
+running deployment picks it up. Confirmed in production: the purge dry run
+authenticates and reports correctly, a wrong bearer token gets 401, and no token
+gets 401 (TESTING.md tests 15 and 17 ✅). The hourly cron is live.
 
 Still unexercised: the browser-level tests (upload/download round trip, the
 Resend emails, the size/MIME rejections, the CSV round trip) — tests 10–13,

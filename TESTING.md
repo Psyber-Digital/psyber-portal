@@ -83,9 +83,22 @@ invalid values.
 - **Purge scoping** — the sweep query matched the expired `to_client` row and
   **no `to_coach` rows**.
 
-Not yet exercised (needs a browser and real files): 10–13, 15–18, 21–24, 27.
+### In production (2026-07-27, after the deploy)
+
+- **Test 15** — the purge dry run, called with the real `CRON_SECRET`, returned
+  `{"dryRun":true,"matched":0,"objectsRemoved":0,"rowsDeleted":0,"wouldDelete":[]}`.
+  Authenticates, reports, deletes nothing. ✅
+- **Test 17** — the same route with a **wrong** bearer token → **401**, and with
+  **no** token → **401**. ✅
+- New routes present and auth-gated in production: `/api/outreach/export`,
+  `/api/shared/[id]`, `/api/cron/purge-shared-files` all return 401 to an
+  unauthenticated caller (a 404 would mean the deploy had not landed).
+- Pre-existing portal unaffected: `/login` 200; `/portal` and `/admin` redirect.
+
+Not yet exercised (needs a browser and real files): 10–13, 16, 18, 21–24, 27.
 Notably the end-to-end upload/download path, the Resend emails, the 25 MB and
-MIME rejections, and the CSV round trip through Excel.
+MIME rejections, and the CSV round trip through Excel. Test 16 (a purge that
+actually deletes something) cannot be meaningful until a real file has expired.
 
 One thing the first run caught, worth recording: a batch insert whose objects
 have **different key sets** fails, because PostgREST pads the missing key with an
