@@ -41,7 +41,8 @@ admin.ts, portal page, auth). No bugs. Access model correct. Service-role key
 isolated to admin.ts, never NEXT_PUBLIC_, .gitignore excludes .env*.local.
 
 ## Next step
-Get Asher's Supabase region decision (default London eu-west-2), then do §3–6 together.
+~~Get Asher's Supabase region decision~~ — done. See "Portal v3" at the bottom for
+the live state; everything above this line is history.
 
 ## Post-build client-portal changes (22 Jul 2026)
 Three portal tweaks requested by Don, all done + `npm run build` clean:
@@ -68,3 +69,86 @@ Vercel portal. Awaiting Don's go-ahead to deploy.
 
 ## Node note
 Local Node is v21.6.2; some Supabase sub-packages want ≥22 (warnings only, build fine).
+
+## Shipped since this file was last updated (19–23 Jul 2026)
+All on `main` and live. CONTEXT.md had gone stale; recording them here.
+- Password login alongside magic links, and a `/portal/account` page to set one.
+- Bespoke per-week unlock emails, with the copy held in editable `/emails/*.txt`
+  files rather than in code. Reply-to set to asher@psyberdigital.com.
+- Clickable program stepper (open any unlocked week via `?week=N`).
+- Add Client takes first name + surname; the email greets by first name.
+- Delete-client control in `/admin`.
+- Session 2 content, its Vimeo pre-work video, and B&W print-ready resources.
+- US spelling throughout customer-facing copy ("program", not "programme").
+
+## Portal v3 — Shared Files + Outreach (26 Jul 2026) — BUILT, NOT DEPLOYED
+Full design and decisions: `PLAN-shared-files-and-outreach.md`.
+
+**Shared Files** (renamed from "pigeon-hole", now two-way):
+- `0004_shared_files.sql` — one table, both directions. Coach→client items expire
+  on a per-item window (24h/48h/7d, default 48h); client→coach uploads never
+  expire and persist until Asher deletes them.
+- **Expiry is enforced inside the RLS SELECT policy**, so an expired file is
+  invisible even if the purge never runs. The cron is data minimisation, not
+  access control.
+- Private `shared-files` bucket with `file_size_limit` (25 MB) and
+  `allowed_mime_types` set at the bucket — this is the first upload path a
+  non-admin can reach, so the limits are enforced by Supabase, not by app code.
+- Emails both ways via Resend: client notified on send (always — a 48-hour window
+  nobody is told about is a trap), Asher notified on client upload.
+- Purge: hourly Vercel cron (`vercel.json`, Pro allows per-minute) plus a lazy
+  sweep on `/admin` load. Has a `?dry=1` mode; run that first.
+
+**Outreach** — the client's own contact database (revised 27 Jul):
+- `0005_contacts.sql`. A direct port of the programme's own
+  `Session 8 - Outreach/Worksheets/Contact Database.xlsx` — same nine columns,
+  same three dropdown vocabularies (Correspondence: Message 1 / Follow Up 1 /
+  Follow Up 2 · Medium: Face-To-Face / DM / Instant Message / Email · Status:
+  Not Contacted → Converted to Client). Rendered as an editable table, not cards.
+- Added on top: `relevance` (the Outreach Strategy's relevant/connector split,
+  which the spreadsheet leaves in the client's head), `next_followup_date`, and
+  two extra Medium options (Video Call, Phone/Voice Note) because the strategy
+  ranks channels warmest-first and the sheet only lists the colder four.
+- **Target is 250 names**, shown as a circular target ring. NB the 90-Day
+  Doctrine §4.4 sets the week-four count at 100; 250 is Don's figure and
+  supersedes it in the portal.
+- The named-25-clinicians list was **removed entirely** (Don, 27 Jul) — no
+  personal/peer split anywhere.
+- A "?" opens a pop-up with the session's own explanation: the compile
+  instruction, the three steps (build → categorise → communicate), and what each
+  column is for.
+- **Framing (corrected 27 Jul, Don):** the database is NOT an evening's work.
+  Clients populate it from week one and keep adding right through the programme;
+  the outreach itself — actually contacting people — starts later, at the
+  outreach sessions. The tab is available from day one with no gate, and a
+  standing note tells the client they are not contacting anyone yet. Do not
+  reinstate the "an evening and a spreadsheet" framing.
+- A "+N this week" pill under the ring, because the list accretes over months.
+- **Owner-only RLS with no admin policy at all** — Asher has no read path to a
+  client's contact list. Deliberate (Don, 26 Jul): it names third parties who
+  never consented to be in Psyber's system.
+- CSV import (RFC 4180 — quoted commas, embedded newlines, CRLF, Excel BOM; 16
+  parser tests pass) and export (formula-injection guarded).
+
+**Structural:** the portal is no longer one page. `/portal`, `/portal/shared`,
+`/portal/outreach`, with `PortalNav` in the header (client only; the admin keeps
+its own tab strip).
+
+**Copy:** no "Asher" in client-facing text — "we" / "your coach" throughout. The
+personal email sign-off ("Kindest regards, Asher") is deliberately left as-is;
+that is a signature, not a reference.
+
+**Also fixed:** `deleteClient` removed the auth user but left their storage bytes
+orphaned. Now removes the objects first, and refuses to delete the user if that
+fails.
+
+**State: `npm run build` and `tsc --noEmit` both clean (18 routes). Nothing is
+deployed and no migration has been applied.** Blocked on Don's go-ahead for
+`supabase db push` against the live project and for the deploy. The v3 acceptance
+tests (10–28) are written into TESTING.md but **have not been run** — there is no
+local Supabase (no Docker on this machine), so they need the migrations applied
+first. Don must also add `CRON_SECRET` in the Vercel dashboard himself.
+
+Unrelated uncommitted work is sitting in
+`public/session-02/Session-2-Niche-Workbook.html` (a half-built "Validate pass")
+— must NOT ride along in the v3 commits.

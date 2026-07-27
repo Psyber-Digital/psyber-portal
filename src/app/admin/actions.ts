@@ -3,8 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendWeekUnlockEmail } from "@/lib/email";
+import { sendSharedFileEmail, sendWeekUnlockEmail } from "@/lib/email";
 import { weekEmail } from "@/lib/weekEmail";
+import {
+  EXPIRY_WINDOWS,
+  MAX_UPLOAD_BYTES,
+  SHARED_BUCKET,
+  formatBytes,
+  resolveMime,
+  safeObjectName,
+  safeTitle,
+} from "@/lib/shared";
 
 // Every action re-verifies admin on the server. RLS is the backstop, but we
 // check explicitly so the service-role client is never reached by a non-admin.
@@ -90,10 +99,138 @@ export async function deleteClient(
   if (target?.role === "admin")
     return { error: "You can’t delete an admin account." };
 
+  // Remove their Shared Files objects BEFORE deleting the user. The FK cascade
+  // takes the rows with the auth user, but storage knows nothing about the
+  // cascade — without this the bytes would be orphaned and unreachable forever.
+  const { data: shared } = await admin
+    .from("shared_files")
+    .select("storage_path")
+    .eq("client_id", clientId);
+  if (shared?.length) {
+    const { error: rmErr } = await admin.storage
+      .from(SHARED_BUCKET)
+      .remove(shared.map((f) => f.storage_path as string));
+    if (rmErr) {
+      // Stop rather than proceed: deleting the user now would strand the files
+      // with nothing pointing at them.
+      return { error: `Couldn’t remove their files: ${rmErr.message}` };
+    }
+  }
+
   const { error } = await admin.auth.admin.deleteUser(clientId);
   if (error) return { error: error.message };
 
   revalidatePath("/admin");
+  return {};
+}
+
+// SHARED FILES ---------------------------------------------------------------
+
+export type SendFileResult = { error?: string; emailed?: boolean; emailError?: string };
+
+// Coach → client. The document expires: the window is picked per item and
+// written into expires_at, which the RLS policy enforces on every read.
+export async function sendToClient(formData: FormData): Promise<SendFileResult> {
+  const { userId } = await requireAdmin();
+
+  const clientId = String(formData.get("client_id") ?? "");
+  const note = String(formData.get("note") ?? "").trim().slice(0, 300);
+  const file = formData.get("file") as File | null;
+  const hours = parseInt(String(formData.get("expiry_hours") ?? ""), 10);
+
+  if (!clientId) return { error: "Pick a client first." };
+  if (!file || !file.size) return { error: "Choose a file to send." };
+  if (!EXPIRY_WINDOWS.some((w) => w.hours === hours))
+    return { error: "Choose how long the file should stay available." };
+  if (file.size > MAX_UPLOAD_BYTES)
+    return { error: `That file is ${formatBytes(file.size)} — the limit is 25 MB.` };
+
+  // The bucket enforces the type list server-side; resolving it here means a
+  // file the browser didn't label (HEIC photos, some .docx) still goes through
+  // with the right content type instead of being rejected as octet-stream.
+  const mime = resolveMime(file.type, file.name);
+  if (!mime)
+    return {
+      error: `That file type isn’t accepted. Send a PDF, Word or Excel document, or an image.`,
+    };
+
+  const admin = createAdminClient();
+
+  const { data: client } = await admin
+    .from("profiles")
+    .select("email, full_name, role")
+    .eq("id", clientId)
+    .single();
+  if (!client || client.role !== "client") return { error: "That client no longer exists." };
+
+  const path = `${clientId}/to-client/${crypto.randomUUID()}-${safeObjectName(file.name)}`;
+  const { error: upErr } = await admin.storage
+    .from(SHARED_BUCKET)
+    .upload(path, file, { contentType: mime, upsert: false });
+  if (upErr) return { error: upErr.message };
+
+  const expiresAt = new Date(Date.now() + hours * 3600_000).toISOString();
+  const title = safeTitle(file.name);
+
+  const { error: insErr } = await admin.from("shared_files").insert({
+    client_id: clientId,
+    direction: "to_client",
+    title,
+    note,
+    storage_path: path,
+    size_bytes: file.size,
+    mime_type: mime,
+    uploaded_by: userId,
+    expires_at: expiresAt,
+  });
+  if (insErr) {
+    // Don't leave the bytes behind if the metadata row failed.
+    await admin.storage.from(SHARED_BUCKET).remove([path]);
+    return { error: insErr.message };
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/portal/shared");
+
+  // Always notify — a file that expires in 48 hours and announces itself to
+  // nobody is a trap. Best-effort: a mail failure must not undo the send.
+  if (!client.email) return { emailError: "No email address on file for this client." };
+  try {
+    await sendSharedFileEmail({
+      to: client.email,
+      name: client.full_name,
+      title,
+      note,
+      expiryLabel: EXPIRY_WINDOWS.find((w) => w.hours === hours)!.label,
+    });
+    return { emailed: true };
+  } catch (e) {
+    console.error("shared-file email failed:", e);
+    return { emailError: e instanceof Error ? e.message : "Unknown error" };
+  }
+}
+
+// Admin removal, either direction: the coach withdrawing a document early, or
+// clearing a client's upload once they've read it.
+export async function deleteSharedFile(id: string): Promise<{ error?: string }> {
+  await requireAdmin();
+  const admin = createAdminClient();
+
+  const { data: row } = await admin
+    .from("shared_files")
+    .select("storage_path")
+    .eq("id", id)
+    .single();
+  if (!row) return {};
+
+  const { error: rmErr } = await admin.storage
+    .from(SHARED_BUCKET)
+    .remove([row.storage_path as string]);
+  if (rmErr) return { error: rmErr.message };
+
+  await admin.from("shared_files").delete().eq("id", id);
+  revalidatePath("/admin");
+  revalidatePath("/portal/shared");
   return {};
 }
 

@@ -41,6 +41,55 @@ makes. See the verification log beneath the table.
 Test artifacts (one test client user, one test file) were deleted afterwards; the
 database is back to clean seed state (weeks 1–2 published, 3 draft; 0 files; 0 profiles).
 
+---
+
+## v3 acceptance tests — Shared Files + Outreach (written 2026-07-26, NOT YET RUN)
+
+These cover migrations 0004 and 0005. **Status: not run** — the migrations have
+not been applied, and there is no local Supabase (no Docker on this machine), so
+they can only be run against the live project once Don approves `db push`.
+
+Tests 14 and 19 are the important ones. Everything else can be re-created; a
+privacy failure cannot.
+
+| # | Test | Expected | Pass |
+|---|------|----------|------|
+| 10 | Admin sends a file to client A with a 24h window | Row created, `expires_at` ≈ now+24h, client A emailed via Resend | ☐ |
+| 11 | Client A opens `/portal/shared` | Sees the file, the note, and "24 hours left"; Download serves the bytes | ☐ |
+| 12 | Client A's download link, opened signed-out | 401. Signed URL itself expires after 60s | ☐ |
+| 13 | **Cross-client test:** client B requests `/api/shared/{A's id}` | 403 — RLS returns no row | ☐ |
+| 14 | **Expiry test:** backdate A's row (`update shared_files set expires_at = now() - interval '1 hour'`) | A's `/portal/shared` no longer lists it; `/api/shared/{id}` returns 403 — **before any purge has run**. This proves expiry is enforced by RLS, not by the cron | ☐ |
+| 15 | Run the purge **dry** (`/api/cron/purge-shared-files?dry=1` as admin) | Returns the expired row in `wouldDelete`, deletes nothing, `rowsDeleted: 0` | ☐ |
+| 16 | Run the purge for real | Object gone from the `shared-files` bucket, row deleted, `to_coach` rows untouched | ☐ |
+| 17 | Cron auth: call the purge route with no session and no bearer token | 401 | ☐ |
+| 18 | Client A uploads a PDF to the coach | Row created with `expires_at` NULL; Asher emailed; the file appears under "From clients" in `/admin` | ☐ |
+| 19 | **Privilege test:** as client A, insert a `shared_files` row with `direction='to_client'`, and another with `client_id` = client B's id | Both rejected by RLS. A client can never plant a file as though it came from the coach, nor into another client's exchange | ☐ |
+| 20 | As client A, attempt to delete a `to_client` row the coach sent | Rejected — the client delete policy covers `to_coach` only | ☐ |
+| 21 | Upload a 30 MB file, and a `.zip` | Both refused — size by the bucket's `file_size_limit`, type by `allowed_mime_types` | ☐ |
+| 22 | Upload an iPhone photo with no declared MIME type | Accepted — the extension resolves it to `image/heic` | ☐ |
+| 23 | Delete a client who has Shared Files | Their storage objects are removed as well as their rows — nothing orphaned in the bucket | ☐ |
+| 24 | Client A adds contacts, imports a CSV with quoted commas and an embedded newline | Rows land intact; day-first dates parsed correctly | ☐ |
+| 25 | **Privacy test:** as the admin, query `contacts` through the API | 0 rows. There is no admin policy on this table, and no UI exposes it | ☐ |
+| 26 | **Cross-client test:** client B queries `contacts` | Sees only their own rows, never client A's | ☐ |
+| 27 | Export CSV, open in Excel | Names with accents render correctly (BOM); a contact named `=SUM(1)` appears as text, not a formula | ☐ |
+| 28 | Confirm RLS is ON for `shared_files` and `contacts` | Both show RLS enabled in the Supabase dashboard | ☐ |
+
+### Test 14 — how to run it
+
+The point is to check expiry **without** relying on the purge. In the Supabase
+SQL editor, with a live file in client A's exchange:
+
+```sql
+update shared_files
+   set expires_at = now() - interval '1 hour'
+ where id = '<the row id>';
+```
+
+Then, as client A in the browser, reload `/portal/shared` and hit
+`/api/shared/<the row id>` directly. Both must behave as though the file never
+existed, even though its bytes are still sitting in the bucket. If the file is
+still visible, the SELECT policy is wrong — stop and fix before going live.
+
 ### Test 5 — how to run it
 
 In the browser console on `/portal` while signed in as a client:

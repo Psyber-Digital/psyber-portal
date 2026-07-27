@@ -1,44 +1,62 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { FileRow, Profile, Settings, Week } from "@/lib/types";
+import type { FileRow, Profile, Settings, SharedFile, Week } from "@/lib/types";
+import {
+  DEFAULT_EXPIRY_HOURS,
+  EXPIRY_WINDOWS,
+  MAX_UPLOAD_BYTES,
+  STALE_UPLOAD_DAYS,
+  UPLOAD_ACCEPT,
+  daysOld,
+  formatBytes,
+  timeLeft,
+} from "@/lib/shared";
 import {
   addClient,
   createWeek,
   deleteClient,
   deleteFile,
+  deleteSharedFile,
   deleteWeek,
   saveSettings,
+  sendToClient,
   setCurrentWeek,
   togglePublish,
   uploadFile,
 } from "../actions";
 
 const pad = (n: number) => String(n).padStart(2, "0");
-type Tab = "clients" | "weeks" | "booking";
+type Tab = "clients" | "weeks" | "shared" | "booking";
 
 export function AdminDashboard({
   clients,
   weeks,
   files,
   settings,
+  shared,
+  serverNow,
 }: {
   clients: Profile[];
   weeks: Week[];
   files: FileRow[];
   settings: Settings;
+  shared: SharedFile[];
+  serverNow: number;
 }) {
   const [tab, setTab] = useState<Tab>("clients");
   const publishedCount = weeks.filter((w) => w.published).length;
+  const awaitingReview = shared.filter((s) => s.direction === "to_coach").length;
 
   return (
     <div>
-      <div className="mb-6 flex gap-2">
+      <div className="mb-6 flex flex-wrap gap-2">
         {(
           [
             ["clients", "Clients & Access"],
             ["weeks", "Weeks & Content"],
+            ["shared", awaitingReview ? `Shared Files (${awaitingReview})` : "Shared Files"],
             ["booking", "Booking"],
           ] as [Tab, string][]
         ).map(([key, label]) => (
@@ -60,6 +78,9 @@ export function AdminDashboard({
         <ClientsTab clients={clients} weeks={weeks} publishedCount={publishedCount} />
       )}
       {tab === "weeks" && <WeeksTab weeks={weeks} files={files} />}
+      {tab === "shared" && (
+        <SharedTab clients={clients} shared={shared} serverNow={serverNow} />
+      )}
       {tab === "booking" && <BookingTab settings={settings} />}
     </div>
   );
@@ -475,6 +496,261 @@ function FileColumn({
         </form>
       )}
     </div>
+  );
+}
+
+function SharedTab({
+  clients,
+  shared,
+  serverNow,
+}: {
+  clients: Profile[];
+  shared: SharedFile[];
+  serverNow: number;
+}) {
+  const router = useRouter();
+  // Server's clock first, browser's after mount — see the note in
+  // SharedFilesView. Rendering "3 hours left" from Date.now() on the client's
+  // first pass would not match what the server sent.
+  const [now, setNow] = useState(serverNow);
+  useEffect(() => {
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  const [pending, start] = useTransition();
+  const [notice, setNotice] = useState<{ kind: "ok" | "warn"; text: string } | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const [fileName, setFileName] = useState("");
+
+  const nameOf = (id: string) => {
+    const c = clients.find((x) => x.id === id);
+    return c?.full_name || c?.email || "Unknown client";
+  };
+
+  const flash = (kind: "ok" | "warn", text: string) => {
+    setNotice({ kind, text });
+    setTimeout(() => setNotice(null), 8000);
+  };
+
+  const remove = (id: string, title: string) => {
+    if (!confirm(`Delete ${title}? This removes the file permanently.`)) return;
+    start(async () => {
+      const res = await deleteSharedFile(id);
+      router.refresh();
+      if (res?.error) flash("warn", res.error);
+      else flash("ok", `${title} deleted.`);
+    });
+  };
+
+  const incoming = shared.filter((s) => s.direction === "to_coach");
+  const outgoing = shared.filter((s) => s.direction === "to_client");
+
+  return (
+    <>
+      <Hint>
+        Files move both ways. What you <b>send down</b> expires on the window you
+        choose and is deleted automatically — the client is emailed as soon as you
+        send it, so they know to collect it. What a client <b>sends up</b> never
+        expires; it sits here until you delete it.
+      </Hint>
+
+      {notice && (
+        <div
+          className={`mb-4 rounded-[10px] border px-3.5 py-2.5 text-[13px] ${
+            notice.kind === "ok"
+              ? "border-good/40 bg-good/[0.1] text-good"
+              : "border-orange/40 bg-orange/[0.1] text-orange"
+          }`}
+        >
+          {notice.text}
+        </div>
+      )}
+
+      <form
+        ref={formRef}
+        action={(fd) =>
+          start(async () => {
+            const res = await sendToClient(fd);
+            if (res?.error) {
+              flash("warn", res.error);
+              return;
+            }
+            setFileName("");
+            formRef.current?.reset();
+            router.refresh();
+            if (res?.emailError)
+              flash("warn", `File sent, but the email didn’t go out — ${res.emailError}`);
+            else flash("ok", "File sent and the client has been emailed.");
+          })
+        }
+        className="mb-5 rounded-xl border border-line bg-panel p-5"
+      >
+        <h4 className="mb-1 font-disp text-sm font-semibold">Send a document to a client</h4>
+        <p className="mb-3.5 text-[12px] leading-relaxed text-dim">
+          They’re emailed straight away, and the file deletes itself when the
+          window closes.
+        </p>
+
+        {!clients.length ? (
+          <p className="text-[13px] text-dim">Add a client first.</p>
+        ) : (
+          <>
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="psy-label">Client</label>
+                <select name="client_id" className="psy-input" required>
+                  {clients.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.full_name || c.email}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="psy-label">Available for</label>
+                <select
+                  name="expiry_hours"
+                  className="psy-input"
+                  defaultValue={DEFAULT_EXPIRY_HOURS}
+                >
+                  {EXPIRY_WINDOWS.map((w) => (
+                    <option key={w.hours} value={w.hours}>
+                      {w.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <label className="psy-label">Note (optional — shown in the portal and the email)</label>
+            <input
+              name="note"
+              maxLength={300}
+              className="psy-input"
+              placeholder="e.g. The revised pricing sheet we talked through."
+            />
+
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <label className="psy-btn-ghost relative inline-flex cursor-pointer overflow-hidden !px-4 !py-2.5 !text-[13px]">
+                Choose a file
+                <input
+                  type="file"
+                  name="file"
+                  required
+                  accept={UPLOAD_ACCEPT}
+                  onChange={(e) => {
+                    const f = e.currentTarget.files?.[0];
+                    setFileName(f ? `${f.name} (${formatBytes(f.size)})` : "");
+                    if (f && f.size > MAX_UPLOAD_BYTES)
+                      flash("warn", `That file is ${formatBytes(f.size)} — the limit is 25 MB.`);
+                  }}
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                />
+              </label>
+              <span className="min-w-0 flex-1 truncate text-[12px] text-dim">
+                {fileName || "PDF, Word, spreadsheet or image · up to 25 MB"}
+              </span>
+            </div>
+
+            <button type="submit" disabled={pending} className="psy-btn mt-4 !w-auto">
+              {pending ? "Sending…" : "Send"}
+            </button>
+          </>
+        )}
+      </form>
+
+      <div className="mb-2.5 font-disp text-[11px] uppercase tracking-[2px] text-slate">
+        From clients {incoming.length ? `(${incoming.length})` : ""}
+      </div>
+      {!incoming.length ? (
+        <div className="psy-card mb-5 p-8 text-center text-[13px] text-dim">
+          Nothing sent up yet.
+        </div>
+      ) : (
+        <div className="mb-5 flex flex-col gap-2">
+          {incoming.map((f) => {
+            const age = daysOld(f.created_at, now);
+            return (
+              <div
+                key={f.id}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-line bg-panel px-4 py-3"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-disp text-[13px] font-semibold">{f.title}</div>
+                  <div className="mt-0.5 text-[12px] text-dim">
+                    {nameOf(f.client_id)} ·{" "}
+                    {new Date(f.created_at).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "short",
+                    })}
+                    {f.size_bytes ? ` · ${formatBytes(f.size_bytes)}` : ""}
+                  </div>
+                  {f.note && <p className="mt-1 text-[12px] text-slate">{f.note}</p>}
+                  {age >= STALE_UPLOAD_DAYS && (
+                    <p className="mt-1 text-[11.5px] font-medium text-orange">
+                      Held for {age} days — delete it if you no longer need it.
+                    </p>
+                  )}
+                </div>
+                <div className="flex shrink-0 items-center gap-3">
+                  <a href={`/api/shared/${f.id}`} className="psy-btn-ghost !px-3.5 !py-2 !text-[13px]">
+                    Open
+                  </a>
+                  <button
+                    onClick={() => remove(f.id, f.title)}
+                    disabled={pending}
+                    className="font-disp text-[12px] font-medium text-bad/80 transition hover:text-bad disabled:opacity-40"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="mb-2.5 font-disp text-[11px] uppercase tracking-[2px] text-slate">
+        Sent to clients {outgoing.length ? `(${outgoing.length})` : ""}
+      </div>
+      {!outgoing.length ? (
+        <div className="psy-card p-8 text-center text-[13px] text-dim">
+          You haven’t sent anything yet.
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          {outgoing.map((f) => {
+            const left = timeLeft(f.expires_at, now);
+            const gone = left === "Expired";
+            return (
+              <div
+                key={f.id}
+                className={`flex flex-wrap items-center justify-between gap-3 rounded-[10px] border px-4 py-3 ${
+                  gone ? "border-line bg-[#0a111f] opacity-60" : "border-line bg-panel"
+                }`}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-disp text-[13px] font-semibold">{f.title}</div>
+                  <div className="mt-0.5 text-[12px] text-dim">
+                    {nameOf(f.client_id)} · {gone ? "expired, awaiting clear-out" : left}
+                    {f.downloaded_at ? " · collected" : " · not collected yet"}
+                  </div>
+                  {f.note && <p className="mt-1 text-[12px] text-slate">{f.note}</p>}
+                </div>
+                <button
+                  onClick={() => remove(f.id, f.title)}
+                  disabled={pending}
+                  className="shrink-0 font-disp text-[12px] font-medium text-bad/80 transition hover:text-bad disabled:opacity-40"
+                >
+                  {gone ? "Clear" : "Withdraw"}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 }
 

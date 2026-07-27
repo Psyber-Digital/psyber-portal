@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { FileRow, Settings, Week, WeekOutline } from "@/lib/types";
 import { weekGuide } from "@/lib/weekGuide";
 import { Header } from "./components/Header";
+import { PortalNav } from "./components/PortalNav";
 import { SetPasswordPrompt } from "./components/SetPasswordPrompt";
 import { WelcomeBanner } from "./components/WelcomeBanner";
 import { Stepper } from "./components/Stepper";
@@ -41,12 +42,20 @@ export default async function PortalPage({
 
   const currentWeek = profile?.current_week ?? 0;
 
-  // RLS returns only published weeks; files returns only entitled rows.
-  const [{ data: weeks }, { data: files }, { data: settings }] = await Promise.all([
-    supabase.from("weeks").select("*").order("number"),
-    supabase.from("files").select("*"),
-    supabase.from("settings").select("*").single(),
-  ]);
+  // RLS returns only published weeks; files returns only entitled rows. The
+  // shared-files count powers the nav badge — RLS already excludes expired items,
+  // so this counts only what's genuinely still collectable.
+  const [{ data: weeks }, { data: files }, { data: settings }, { count: uncollected }] =
+    await Promise.all([
+      supabase.from("weeks").select("*").order("number"),
+      supabase.from("files").select("*"),
+      supabase.from("settings").select("*").single(),
+      supabase
+        .from("shared_files")
+        .select("id", { count: "exact", head: true })
+        .eq("direction", "to_client")
+        .is("downloaded_at", null),
+    ]);
 
   const publishedWeeks = (weeks ?? []) as Week[];
   const visibleFiles = (files ?? []) as FileRow[];
@@ -77,6 +86,7 @@ export default async function PortalPage({
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
       <Header name={profile?.full_name || "Client"} role="client" />
+      <PortalNav badge={uncollected ?? 0} />
 
       {!hasPassword && <SetPasswordPrompt />}
 

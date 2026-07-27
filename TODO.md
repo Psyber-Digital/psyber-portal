@@ -24,12 +24,27 @@ Look/UI changes (in mockup, awaiting sign-off):
 - [ ] Booking moved to bottom of page.
 - [ ] Mobile-friendly pass.
 Backend features to build after look sign-off:
-- [ ] **Pigeon-hole** — admin uploads per-client docs; client downloads own only. **Auto-expire + delete after 48 hours.** New table + admin UI + RLS + storage lifecycle. (Admin→client direction; distinct from the gated client→admin upload below.)
-- [ ] **Auto-email on week unlock** — when a client's `current_week` is bumped, send a "what to do this week" email (Resend). Originally requested; ties to the per-week framing note.
+- [x] ~~**Pigeon-hole**~~ — superseded and delivered as **Shared Files** (26 Jul): two-way,
+      renamed, coach→client expires on a per-item window, client→coach persists.
+      Built and building clean; **not yet migrated or deployed**. See `PLAN-shared-files-and-outreach.md`.
+- [x] **Auto-email on week unlock** — done, with bespoke per-week copy in `/emails/*.txt`.
 - [ ] **Video hosting (item 4)** — stop serving the mp4 from Vercel/Supabase; host on Vimeo unlisted / Cloudflare Stream / Mux and embed. NEEDS Don's host choice + account. Draft video is currently 4m30s (script targets 9–10m — portal length copy may need updating on final render).
 
+## Portal v3 — go-live steps (blocked on Don)
+- [ ] Approve and apply `supabase db push` (0004 + 0005) — **live project, no dev copy**.
+- [ ] Add `CRON_SECRET` in the Vercel dashboard (Settings → Environment Variables).
+- [ ] Run the v3 acceptance tests 10–28 in TESTING.md, especially 14 (expiry without purge),
+      19 (a client can't plant a file as the coach) and 25 (admin can't read contacts).
+- [ ] Run the purge **dry** (`/api/cron/purge-shared-files?dry=1`) before enabling it for real.
+- [ ] Deploy (push to `main` auto-deploys).
+
 ## Later (gated — see ROADMAP / ADR-0016)
-- [ ] Client upload — only after DPA, privacy policy, retention rule, deletion path exist, and a client asks.
+- [x] Client upload — **gate crossed deliberately on 26 Jul** as part of Shared Files.
+      Retention rule and deletion path now exist. **DPA and privacy policy still do not.**
+- [ ] **Write the DPA and privacy policy.** Now overdue: clients can upload reflective
+      personal material, and their contact database names third parties who never consented.
+- [ ] Decide a retention rule for client→coach uploads beyond "until Asher deletes it"
+      (currently just a 30-day age warning in the admin UI).
 
 ## Housekeeping / tech notes
 - [ ] Consider moving local dev to **Node 22 LTS** (Supabase packages want ≥22). Until then, local
