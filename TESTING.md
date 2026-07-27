@@ -45,12 +45,54 @@ database is back to clean seed state (weeks 1–2 published, 3 draft; 0 files; 0
 
 ## v3 acceptance tests — Shared Files + Outreach (written 2026-07-26, NOT YET RUN)
 
-These cover migrations 0004 and 0005. **Status: not run** — the migrations have
-not been applied, and there is no local Supabase (no Docker on this machine), so
-they can only be run against the live project once Don approves `db push`.
+These cover migrations 0004 and 0005.
+
+**Status: migrations applied to the live project on 2026-07-27. The security and
+privacy tests were driven programmatically against it — 20 assertions, all
+passed.** A Node harness created two throwaway clients, signed them in for real
+(password grant), exercised RLS through genuine user sessions, and deleted
+everything afterwards (verified: 0 leftover rows). Same method as the v1 run.
 
 Tests 14 and 19 are the important ones. Everything else can be re-created; a
 privacy failure cannot.
+
+### Verification log (2026-07-27, live project `awovtppvjifjhabuzoyg`)
+
+Schema (10 checks): both tables queryable · `shared-files` bucket exists, is
+private, `file_size_limit` = 26214400, `allowed_mime_types` includes
+`application/pdf` · anon role gets 0 rows from both tables · the
+`contacts.status` and `shared_files.direction` check constraints both reject
+invalid values.
+
+- **Test 19** — as client A: `direction='to_client'` **refused**; inserting with
+  another client's `client_id` **refused**; setting `expires_at` on their own
+  upload **refused**; a legitimate `to_coach` insert **accepted**. A client
+  cannot plant a document as though it came from the coach.
+- **Test 14** — coach sent a file with a 48h window; client saw it; `expires_at`
+  was backdated by an hour; the client's next select returned **0 rows** while an
+  admin read confirmed **the row was still in the table**. Expiry is enforced by
+  the RLS policy, before any purge has run. This is the assertion the whole
+  design rests on.
+- **Test 20** — the client's delete of a coach-sent file left the row intact;
+  the client's delete of their own upload succeeded.
+- **Tests 25/26** — client A added 2 contacts; A saw both; **client B saw 0**;
+  B's attempt to insert a row owned by A was **refused**. B was then promoted to
+  `admin` and re-authenticated: the admin session saw **0 contacts** while
+  successfully reading `shared_files` in the same session — so the empty result
+  is the missing admin policy, not a broken query.
+- **Purge scoping** — the sweep query matched the expired `to_client` row and
+  **no `to_coach` rows**.
+
+Not yet exercised (needs a browser and real files): 10–13, 15–18, 21–24, 27.
+Notably the end-to-end upload/download path, the Resend emails, the 25 MB and
+MIME rejections, and the CSV round trip through Excel.
+
+One thing the first run caught, worth recording: a batch insert whose objects
+have **different key sets** fails, because PostgREST pads the missing key with an
+explicit NULL instead of letting the column default apply, and these columns are
+`NOT NULL DEFAULT`. The app's own batch inserts (`addNames`, `importContacts`)
+build uniform objects and are unaffected — but anything new that batch-inserts
+contacts must do the same.
 
 | # | Test | Expected | Pass |
 |---|------|----------|------|

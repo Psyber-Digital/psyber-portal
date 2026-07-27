@@ -142,12 +142,21 @@ that is a signature, not a reference.
 orphaned. Now removes the objects first, and refuses to delete the user if that
 fails.
 
-**State: `npm run build` and `tsc --noEmit` both clean (18 routes). Nothing is
-deployed and no migration has been applied.** Blocked on Don's go-ahead for
-`supabase db push` against the live project and for the deploy. The v3 acceptance
-tests (10–28) are written into TESTING.md but **have not been run** — there is no
-local Supabase (no Docker on this machine), so they need the migrations applied
-first. Don must also add `CRON_SECRET` in the Vercel dashboard himself.
+**State (27 Jul, 01:45):** migrations 0004 + 0005 **applied to the live project**
+(`supabase db push`, both recorded remotely). Schema verified — 10 checks — and
+the security/privacy acceptance tests driven against the live project through
+real client sessions: **20 assertions, all passed**, test artifacts deleted with
+zero leftovers. See the verification log in TESTING.md. `npm run build` and
+`tsc --noEmit` clean.
+
+**Outstanding manual step: `CRON_SECRET` is not yet set in Vercel.** Until it is,
+the hourly purge cron returns 401 each time it fires. Not a data risk — expiry is
+enforced by RLS, and the lazy sweep on `/admin` load still removes the bytes —
+but it will log an hourly failure.
+
+Still unexercised: the browser-level tests (upload/download round trip, the
+Resend emails, the size/MIME rejections, the CSV round trip) — tests 10–13,
+15–18, 21–24, 27 in TESTING.md.
 
 Unrelated uncommitted work is sitting in
 `public/session-02/Session-2-Niche-Workbook.html` (a half-built "Validate pass")

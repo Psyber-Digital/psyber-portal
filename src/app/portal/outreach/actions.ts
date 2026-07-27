@@ -187,6 +187,11 @@ export async function importContacts(formData: FormData): Promise<ImportResult> 
     next_followup_date: normaliseDate(r.next_followup_date ?? ""),
   }));
 
+  // NB every object above has an identical key set, and must keep it. PostgREST
+  // pads a key missing from one object in a batch with an explicit NULL rather
+  // than letting the column default apply, and these columns are NOT NULL — so a
+  // mixed-shape batch fails outright. Verified against the live project, 27 Jul.
+  //
   // Chunked so a large import doesn't hit a single oversized request.
   let added = 0;
   for (let i = 0; i < rows.length; i += 200) {
