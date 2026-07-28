@@ -43,6 +43,17 @@ button.primary{background:var(--orange);border-color:var(--orange);color:#160a02
 button:hover{filter:brightness(1.12)}
 .saved{color:var(--ok);font-size:13px;min-width:150px}
 .note{color:var(--slate);font-size:13px;text-align:center;margin-top:26px}
+/* The block we complete together on the call. Everything else on the sheet is
+   solo work, so this one carries the accent rather than blending into the run. */
+section.live{border-color:rgba(240,131,40,.55);
+ background:linear-gradient(180deg,rgba(240,131,40,.10),var(--panel) 55%)}
+section.live h2 span{color:var(--orange)}
+.livetag{display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;
+ font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--orange);
+ background:rgba(240,131,40,.13);border:1px solid rgba(240,131,40,.45);
+ border-radius:999px;padding:7px 13px}
+.livetag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange)}
 /* the seven shifts — tick three */
 .shifts{display:flex;flex-direction:column;gap:10px;margin:4px 0 14px}
 .shift{background:#08111f;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
@@ -111,6 +122,9 @@ body.menu-open{overflow:hidden}
  .shift.on{background:#faf3ec;border-color:#9A4516}
  .shift .why{color:#555} .shift .moment{display:block}
  .shift input[type=checkbox]{border-color:#888;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ section.live{background:#faf3ec;border-color:#9A4516}
+ section.live h2 span{color:#9A4516}
+ .livetag{color:#9A4516;background:#fff;border-color:#9A4516}
 }
 </style></head><body><div class='wrap'>
 <header>

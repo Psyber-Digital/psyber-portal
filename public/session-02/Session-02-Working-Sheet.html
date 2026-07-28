@@ -43,6 +43,17 @@ button.primary{background:var(--orange);border-color:var(--orange);color:#160a02
 button:hover{filter:brightness(1.12)}
 .saved{color:var(--ok);font-size:13px;min-width:150px}
 .note{color:var(--slate);font-size:13px;text-align:center;margin-top:26px}
+/* The block we complete together on the call. Everything else on the sheet is
+   solo work, so this one carries the accent rather than blending into the run. */
+section.live{border-color:rgba(240,131,40,.55);
+ background:linear-gradient(180deg,rgba(240,131,40,.10),var(--panel) 55%)}
+section.live h2 span{color:var(--orange)}
+.livetag{display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;
+ font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--orange);
+ background:rgba(240,131,40,.13);border:1px solid rgba(240,131,40,.45);
+ border-radius:999px;padding:7px 13px}
+.livetag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange)}
 /* the seven shifts — tick three */
 .shifts{display:flex;flex-direction:column;gap:10px;margin:4px 0 14px}
 .shift{background:#08111f;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
@@ -111,6 +122,9 @@ body.menu-open{overflow:hidden}
  .shift.on{background:#faf3ec;border-color:#9A4516}
  .shift .why{color:#555} .shift .moment{display:block}
  .shift input[type=checkbox]{border-color:#888;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ section.live{background:#faf3ec;border-color:#9A4516}
+ section.live h2 span{color:#9A4516}
+ .livetag{color:#9A4516;background:#fff;border-color:#9A4516}
 }
 </style></head><body><div class='wrap'>
 <header>
@@ -118,7 +132,7 @@ body.menu-open{overflow:hidden}
 <h1>Niche</h1>
 <div class='principle'>Create a hypothesis and go to market; the market will show you the right way.</div>
 </header>
-<div class='intro'>Three stages, in order. Generate everything (45 min), narrow it down, then research your top three (15 min each). Do the stages in separate sittings if you can. Do not pick a winner — we do that together on the call.</div>
+<div class='intro'>Three stages, in order: generate everything, narrow it down, then research your top three. Finish each stage before moving on, and do them in separate sittings if you can. Do not pick a winner — we do that together on the call.</div>
 <section>
 <h2><span>01</span>Stage 1 · Generate — transformations</h2>
 <div class='help'>Changes you would be glad to deliver for the next three years. Write more than feels sensible, and judge none of it yet.</div>
@@ -285,7 +299,7 @@ body.menu-open{overflow:hidden}
 </section>
 <section>
 <h2><span>05</span>Stage 3 · Research — contender A</h2>
-<div class='help'>Fifteen minutes, timed. Search the way a client would — “how do I get promoted”, never “anxiety”. Middle column: is there a live market here? Right column: the actual thing you saw, not your impression of it. Finding other coaches already there is a good sign, not a warning.</div>
+<div class='help'>Search the way a client would — “how do I get promoted”, never “anxiety”. Middle column: is there a live market here? Right column: the actual thing you saw, not your impression of it. Finding other coaches already there is a good sign, not a warning.</div>
 <label for='f65'>Contender A — I help ___ achieve ___</label>
 <input type='text' id='f65'>
 <table><thead><tr>
@@ -319,7 +333,7 @@ body.menu-open{overflow:hidden}
 </section>
 <section>
 <h2><span>06</span>Stage 3 · Research — contender B</h2>
-<div class='help'>Same four checks, fifteen minutes.</div>
+<div class='help'>The same four checks.</div>
 <label for='f75'>Contender B — I help ___ achieve ___</label>
 <input type='text' id='f75'>
 <table><thead><tr>
@@ -353,7 +367,7 @@ body.menu-open{overflow:hidden}
 </section>
 <section>
 <h2><span>07</span>Stage 3 · Research — contender C</h2>
-<div class='help'>Same four checks, fifteen minutes.</div>
+<div class='help'>The same four checks.</div>
 <label for='f85'>Contender C — I help ___ achieve ___</label>
 <input type='text' id='f85'>
 <table><thead><tr>
@@ -386,19 +400,20 @@ body.menu-open{overflow:hidden}
 <input type='text' id='f94'>
 </section>
 <section>
-<h2><span>08</span>Decided on the call</h2>
-<div class='help'>Filled in together. Nothing to prepare.</div>
-<label for='f95'>My niche — I help ___ achieve ___</label>
-<input type='text' id='f95'>
-<label for='f96'>Why this one</label>
-<input type='text' id='f96'>
-<label for='f97'>Runner-up, parked</label>
-<input type='text' id='f97'>
-</section>
-<section>
-<h2><span>09</span>Your list</h2>
+<h2><span>08</span>Your list</h2>
 <div class='help'>Nothing goes out this week — the words come next session. Keep adding names as they come to mind.</div>
-<label for='f98'>Did you make progress on growing your list?</label>
+<label for='f95'>Did you make progress on growing your list?</label>
+<input type='text' id='f95'>
+</section>
+<section class='live'>
+<div class='livetag'>On the call &middot; together</div>
+<h2><span>09</span>Decide on the Call</h2>
+<div class='help'>This is the one thing we do together. Bring your three — do not pick before we speak.</div>
+<label for='f96'>My niche — I help ___ achieve ___</label>
+<input type='text' id='f96'>
+<label for='f97'>Why this one</label>
+<input type='text' id='f97'>
+<label for='f98'>Runner-up, parked</label>
 <input type='text' id='f98'>
 </section>
 <div class='note'>Your answers save automatically in this browser. They are not sent anywhere. Use Download / print to keep a copy, and share the PDF with your coach 24 hours before the session.</div>
