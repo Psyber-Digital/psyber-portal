@@ -24,12 +24,6 @@ export const WEEK_RESOURCES: Record<number, PortalResource[]> = {
   ],
   2: [
     { href: "/session-02/Session-02-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
-    { href: "/session-02/Menu-Transformations.pdf", label: "Menu · Transformations", sub: "Inspiration, not limits · PDF", icon: "◇", open: true },
-    { href: "/session-02/Menu-Audiences.pdf", label: "Menu · Audiences", sub: "Inspiration, not limits · PDF", icon: "◇", open: true },
-    { href: "/session-02/Menu-Types-of-Coaching.pdf", label: "Menu · Types of Coaching", sub: "The shape of the field · PDF", icon: "◇", open: true },
-    { href: "/session-02/Niche-Examples.pdf", label: "Niche Examples", sub: "The specificity bar to match · PDF", icon: "◈", open: true },
-    { href: "/session-02/Niche-Framework-Instructions.pdf", label: "The Selection Framework", sub: "The eleven steps, in full · PDF", icon: "▤", open: true },
-    { href: "/session-02/Niche-Playbook.pdf", label: "The Niche Playbook", sub: "The session's thinking · PDF", icon: "▦", open: true },
   ],
 };
 
@@ -42,12 +36,6 @@ export const WEEK_PRINT_RESOURCES: Record<number, PortalResource[]> = {
   ],
   2: [
     { href: "/session-02/Session-02-Principle-Card-Print-BW.pdf", label: "The Principle Card", sub: "Ink-friendly · PDF", icon: "▤", open: true },
-    { href: "/session-02/Menu-Transformations-Print-BW.pdf", label: "Menu · Transformations", sub: "Ink-friendly · PDF", icon: "▤", open: true },
-    { href: "/session-02/Menu-Audiences-Print-BW.pdf", label: "Menu · Audiences", sub: "Ink-friendly · PDF", icon: "▤", open: true },
-    { href: "/session-02/Menu-Types-of-Coaching-Print-BW.pdf", label: "Menu · Types of Coaching", sub: "Ink-friendly · PDF", icon: "▤", open: true },
-    { href: "/session-02/Niche-Examples-Print-BW.pdf", label: "Niche Examples", sub: "Ink-friendly · PDF", icon: "▤", open: true },
-    { href: "/session-02/Niche-Framework-Instructions-Print-BW.pdf", label: "The Selection Framework", sub: "Ink-friendly · PDF", icon: "▤", open: true },
-    { href: "/session-02/Niche-Playbook-Print-BW.pdf", label: "The Niche Playbook", sub: "Ink-friendly · PDF", icon: "▤", open: true },
   ],
 };
 
