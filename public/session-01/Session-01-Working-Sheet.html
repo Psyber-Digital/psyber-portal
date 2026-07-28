@@ -1,0 +1,300 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Session 01 · Foundations — Working Sheet</title>
+<style>
+:root{--navy:#060f1d;--panel:#0d1729;--line:#1e2b45;--off:#F4F7FB;--slate:#8FA0B8;
+ --orange:#F08328;--blue:#5DABE5;--ok:#3FB37F;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:var(--off);
+ font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ padding:32px 20px 96px;}
+.wrap{max-width:940px;margin:0 auto}
+header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+.eyebrow{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.22em;
+ text-transform:uppercase;color:var(--slate)}
+.eyebrow b{color:var(--orange);font-weight:600}
+h1{font-size:34px;line-height:1.15;margin:12px 0 10px;font-weight:700;letter-spacing:-.02em}
+h1 em{color:var(--orange);font-style:italic}
+.principle{color:var(--blue);font-style:italic;font-size:17px;max-width:70ch}
+.intro{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--orange);
+ border-radius:10px;padding:16px 18px;margin:24px 0 34px;color:#D6E0EE;max-width:78ch}
+section{margin:0 0 34px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+ padding:22px 22px 8px}
+h2{font-size:19px;margin-bottom:6px;font-weight:650}
+h2 span{color:var(--slate);font-weight:500;margin-right:10px}
+.help{color:var(--slate);font-size:14.5px;margin-bottom:16px;max-width:76ch}
+label{display:block;font-size:13.5px;color:#B9C7DA;margin:14px 0 6px}
+input[type=text],textarea{width:100%;background:#08111f;color:var(--off);
+ border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
+textarea{min-height:88px;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+table{width:100%;border-collapse:collapse;margin:8px 0 16px}
+th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);
+ font-weight:600;padding:8px 8px;border-bottom:1px solid var(--line)}
+td{padding:4px}
+td input{border-radius:6px;padding:8px 10px}
+td.fixed{color:#B9C7DA;font-size:14px;padding:10px 8px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(6,15,29,.94);
+ border-top:1px solid var(--line);padding:12px 20px;display:flex;gap:12px;align-items:center;
+ justify-content:center;backdrop-filter:blur(8px)}
+button{font:inherit;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid var(--line);
+ background:#12203a;color:var(--off);cursor:pointer}
+button.primary{background:var(--orange);border-color:var(--orange);color:#160a02;font-weight:600}
+button:hover{filter:brightness(1.12)}
+.saved{color:var(--ok);font-size:13px;min-width:150px}
+.note{color:var(--slate);font-size:13px;text-align:center;margin-top:26px}
+/* the seven shifts — tick three */
+.shifts{display:flex;flex-direction:column;gap:10px;margin:4px 0 14px}
+.shift{background:#08111f;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.shift.on{border-color:var(--orange);background:rgba(240,131,40,.07)}
+.shift .top{display:flex;gap:11px;align-items:flex-start;cursor:pointer}
+.shift input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:0 0 auto;
+ width:19px;height:19px;margin-top:2px;border:1.5px solid var(--slate);border-radius:5px;
+ background:#08111f;cursor:pointer;position:relative}
+.shift input[type=checkbox]:checked{background:var(--orange);border-color:var(--orange)}
+.shift input[type=checkbox]:checked::after{content:"";position:absolute;left:6px;top:2px;
+ width:5px;height:10px;border:solid #160a02;border-width:0 2.2px 2.2px 0;transform:rotate(42deg)}
+.shift input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.shift .nm{font-weight:600;font-size:15.5px}
+.shift .why{color:var(--slate);font-size:14px;margin-top:3px;max-width:72ch}
+.shift .moment{display:none;margin-top:10px}
+.shift.on .moment{display:block}
+.shift .moment label{margin-top:0}
+/* reference menus */
+.menus{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 16px}
+.menubtn{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;
+ border:1px solid rgba(93,171,229,.45);background:rgba(93,171,229,.09);color:var(--blue);cursor:pointer}
+.menubtn:hover{background:rgba(93,171,229,.18)}
+.modal{position:fixed;inset:0;background:rgba(3,8,16,.72);backdrop-filter:blur(4px);
+ display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
+.modal.on{display:flex}
+.modal .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+ max-width:820px;width:100%;max-height:84vh;overflow:auto;padding:26px 28px}
+.modal h3{font-size:22px;margin-bottom:6px}
+.modal .mnote{color:var(--slate);font-size:14.5px;margin-bottom:18px;max-width:74ch}
+.modal .row{display:grid;grid-template-columns:230px 1fr;gap:10px 18px;
+ padding:8px 0;border-bottom:1px solid rgba(30,43,69,.7);font-size:14.5px}
+.modal .row b{font-weight:600}
+.modal .row span{color:var(--slate)}
+@media(max-width:640px){.modal .row{grid-template-columns:1fr;gap:2px}}
+.modal .chips{display:flex;flex-wrap:wrap;gap:8px}
+.modal .chips span{background:#08111f;border:1px solid var(--line);border-radius:999px;
+ padding:6px 12px;font-size:14px;color:#D6E0EE}
+.modal .close{margin-top:20px}
+@media print{
+ body{background:#fff;color:#111;padding:0}
+ .bar,.modal,.menubtn{display:none} section{background:#fff;border:1px solid #ccc;break-inside:avoid}
+ .intro{background:#f6f6f6;color:#222} h1 em{color:#9A4516} .principle{color:#444}
+ input,textarea{background:#fff;color:#111;border:1px solid #bbb}
+ .eyebrow,.help,th{color:#555}
+ .shift{background:#fff;border:1px solid #ccc;break-inside:avoid}
+ .shift.on{background:#faf3ec;border-color:#9A4516}
+ .shift .why{color:#555} .shift .moment{display:block}
+ .shift input[type=checkbox]{border-color:#888;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style></head><body><div class='wrap'>
+<header>
+<div class='eyebrow'>Therapy<b>+</b> · Working Sheet · Session 01</div>
+<h1>Foundations</h1>
+<div class='principle'>Be decisive. It is better to make decisions and iterate. Decisiveness is like a muscle — the more you use it, the stronger it becomes.</div>
+</header>
+<div class='intro'>Four blocks, one question: what could derail you? The video walks through each block, so nothing here should be a surprise. One focused sitting, and bring it rough — we finish it together.</div>
+<section>
+<h2><span>01</span>The shifts that are live for you</h2>
+<div class='help'>Tick the three most alive for you right now — three, not seven. Each one is explained in full on your Principle Card.</div>
+<div class='shifts'>
+<div class='shift'>
+<label class='top' for='f1'>
+<input type='checkbox' id='f1'>
+<span><span class='nm'>Fixed → growth</span><span class='why'>You have no coaching experience and decades of helping people change. The second one is what counts; the first is temporary.</span></span></label>
+<div class='moment'><label for='f1m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f1m'></div>
+</div>
+<div class='shift'>
+<label class='top' for='f2'>
+<input type='checkbox' id='f2'>
+<span><span class='nm'>Unworthy → capable</span><span class='why'>Somebody better could do this. Somebody better is not sitting with your clients, hearing what you have heard, year after year.</span></span></label>
+<div class='moment'><label for='f2m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f2m'></div>
+</div>
+<div class='shift'>
+<label class='top' for='f3'>
+<input type='checkbox' id='f3'>
+<span><span class='nm'>Scarcity → abundance</span><span class='why'>There are not enough people who would pay for this. In any real market there are far more than you could ever serve.</span></span></label>
+<div class='moment'><label for='f3m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f3m'></div>
+</div>
+<div class='shift'>
+<label class='top' for='f4'>
+<input type='checkbox' id='f4'>
+<span><span class='nm'>Money is evil → money is neutral</span><span class='why'>Money is a tool, and what you do with it decides its character. Being paid well lets you give more away, not less.</span></span></label>
+<div class='moment'><label for='f4m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f4m'></div>
+</div>
+<div class='shift'>
+<label class='top' for='f5'>
+<input type='checkbox' id='f5'>
+<span><span class='nm'>Charge by time → charge by value</span><span class='why'>The hour is not the product. The change is the product, and the change is what carries a price.</span></span></label>
+<div class='moment'><label for='f5m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f5m'></div>
+</div>
+<div class='shift'>
+<label class='top' for='f6'>
+<input type='checkbox' id='f6'>
+<span><span class='nm'>You're right → the market is right</span><span class='why'>You cannot make people want something. You can find what they already want, and build for that.</span></span></label>
+<div class='moment'><label for='f6m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f6m'></div>
+</div>
+<div class='shift'>
+<label class='top' for='f7'>
+<input type='checkbox' id='f7'>
+<span><span class='nm'>Quit by feeling → adapt by feedback</span><span class='why'>Motivation rises and falls every week. Decisions get made on what the market actually did.</span></span></label>
+<div class='moment'><label for='f7m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f7m'></div>
+</div>
+</div>
+</section>
+<section>
+<h2><span>02</span>The moment behind each one</h2>
+<div class='help'>For each shift you ticked, a real moment from the last fortnight when the old version showed up. A moment, not a description.</div>
+<table><thead><tr>
+<th>The shift you ticked</th>
+<th>A real moment in the last fortnight</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f8'></td>
+<td><input type='text' id='f9'></td>
+</tr>
+<tr>
+<td><input type='text' id='f10'></td>
+<td><input type='text' id='f11'></td>
+</tr>
+<tr>
+<td><input type='text' id='f12'></td>
+<td><input type='text' id='f13'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>03</span>The sentence you would actually believe</h2>
+<div class='help'>For the shift with the most charge, write the new version as a sentence you would defend. Start with “I”.</div>
+<label for='f14'>I…</label>
+<textarea id='f14'></textarea>
+</section>
+<section>
+<h2><span>04</span>Three beliefs that will slow you down</h2>
+<div class='help'>Sentences you carry, rather than general self-criticism. The last column is the hard one: something truer that you would defend if challenged.</div>
+<table><thead><tr>
+<th>The belief</th>
+<th>Where it came from</th>
+<th>What it costs me in behavior</th>
+<th>Something truer I would defend</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f15'></td>
+<td><input type='text' id='f16'></td>
+<td><input type='text' id='f17'></td>
+<td><input type='text' id='f18'></td>
+</tr>
+<tr>
+<td><input type='text' id='f19'></td>
+<td><input type='text' id='f20'></td>
+<td><input type='text' id='f21'></td>
+<td><input type='text' id='f22'></td>
+</tr>
+<tr>
+<td><input type='text' id='f23'></td>
+<td><input type='text' id='f24'></td>
+<td><input type='text' id='f25'></td>
+<td><input type='text' id='f26'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>05</span>Three moments that could knock you off course</h2>
+<div class='help'>Named before they arrive. The last column must be physical and take under two minutes — sending one message counts, feeling more positive does not.</div>
+<table><thead><tr>
+<th>The moment</th>
+<th>The earliest sign I would notice</th>
+<th>The small action I will take instead</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f27'></td>
+<td><input type='text' id='f28'></td>
+<td><input type='text' id='f29'></td>
+</tr>
+<tr>
+<td><input type='text' id='f30'></td>
+<td><input type='text' id='f31'></td>
+<td><input type='text' id='f32'></td>
+</tr>
+<tr>
+<td><input type='text' id='f33'></td>
+<td><input type='text' id='f34'></td>
+<td><input type='text' id='f35'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>06</span>Your commitment</h2>
+<div class='help'>Read the last line out loud before you close this.</div>
+<label for='f36'>One outcome for the next ninety days</label>
+<input type='text' id='f36'>
+<label for='f37'>Why it matters — what is at stake if you build this, and if you do not</label>
+<textarea id='f37'></textarea>
+<label for='f38'>One action I will repeat — small enough to survive a full clinical week</label>
+<input type='text' id='f38'>
+<label for='f39'>When it is protected — the day, the time, and what it displaces</label>
+<input type='text' id='f39'>
+<label for='f40'>My first step, and the date I will take it by</label>
+<input type='text' id='f40'>
+</section>
+<section>
+<h2><span>07</span>Your list</h2>
+<div class='help'>This one runs across weeks, not one evening. Add people whenever they come to mind.</div>
+<label for='f41'>Names on the list so far</label>
+<input type='text' id='f41'>
+<label for='f42'>Three people I thought of who surprised me</label>
+<input type='text' id='f42'>
+<label for='f43'>All sessions booked in the diary? (yes / no)</label>
+<input type='text' id='f43'>
+</section>
+<div class='note'>Your answers save automatically in this browser. They are not sent anywhere. Use Download / print to keep a copy, and share the PDF with your coach 24 hours before the session.</div>
+</div>
+<div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
+<script>
+(function(){
+ var KEY='psyberB-wk1';
+ var els=[].slice.call(document.querySelectorAll('input,textarea'));
+ var status=document.getElementById('saved');
+ function box(e){return e.type==='checkbox';}
+ function get(e){return box(e)?e.checked:e.value;}
+ function set(e,v){if(box(e)){e.checked=!!v;}else{e.value=v;}}
+ function paint(){[].slice.call(document.querySelectorAll('.shift')).forEach(function(s){
+   var c=s.querySelector('input[type=checkbox]');s.classList.toggle('on',!!(c&&c.checked));});}
+ function load(){try{var d=JSON.parse(localStorage.getItem(KEY)||'{}');
+   els.forEach(function(e){if(d[e.id]!==undefined)set(e,d[e.id]);});}catch(e){}paint();}
+ var t;
+ function save(){var d={};els.forEach(function(e){var v=get(e);if(v)d[e.id]=v;});
+   localStorage.setItem(KEY,JSON.stringify(d));
+   status.textContent='Saved '+new Date().toLocaleTimeString();}
+ els.forEach(function(e){
+   e.addEventListener('input',function(){clearTimeout(t);t=setTimeout(save,400);});
+   if(box(e))e.addEventListener('change',function(){paint();save();});});
+ document.getElementById('save').addEventListener('click',save);
+ document.getElementById('print').addEventListener('click',function(){save();window.print();});
+ document.getElementById('clear').addEventListener('click',function(){
+   if(confirm('Clear every answer on this sheet? This cannot be undone.')){
+     localStorage.removeItem(KEY);
+     els.forEach(function(e){set(e,box(e)?false:'');});paint();status.textContent='Cleared';}});
+
+ // reference menus — open in place rather than sending anyone off to find a PDF
+ function shut(){[].slice.call(document.querySelectorAll('.modal')).forEach(function(m){
+   m.classList.remove('on');});}
+ [].slice.call(document.querySelectorAll('.menubtn')).forEach(function(b){
+   b.addEventListener('click',function(){shut();
+     var m=document.getElementById(b.getAttribute('data-menu'));
+     if(m){m.classList.add('on');m.querySelector('.close').focus();}});});
+ [].slice.call(document.querySelectorAll('.modal')).forEach(function(m){
+   m.addEventListener('click',function(ev){if(ev.target===m)shut();});});
+ [].slice.call(document.querySelectorAll('.modal .close')).forEach(function(b){
+   b.addEventListener('click',shut);});
+ document.addEventListener('keydown',function(ev){if(ev.key==='Escape')shut();});
+
+ load();
+ window.addEventListener('beforeunload',save);
+})();
+</script></body></html>

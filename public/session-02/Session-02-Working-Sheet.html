@@ -1,0 +1,541 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Session 02 · Niche — Working Sheet</title>
+<style>
+:root{--navy:#060f1d;--panel:#0d1729;--line:#1e2b45;--off:#F4F7FB;--slate:#8FA0B8;
+ --orange:#F08328;--blue:#5DABE5;--ok:#3FB37F;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:var(--off);
+ font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ padding:32px 20px 96px;}
+.wrap{max-width:940px;margin:0 auto}
+header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+.eyebrow{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.22em;
+ text-transform:uppercase;color:var(--slate)}
+.eyebrow b{color:var(--orange);font-weight:600}
+h1{font-size:34px;line-height:1.15;margin:12px 0 10px;font-weight:700;letter-spacing:-.02em}
+h1 em{color:var(--orange);font-style:italic}
+.principle{color:var(--blue);font-style:italic;font-size:17px;max-width:70ch}
+.intro{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--orange);
+ border-radius:10px;padding:16px 18px;margin:24px 0 34px;color:#D6E0EE;max-width:78ch}
+section{margin:0 0 34px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+ padding:22px 22px 8px}
+h2{font-size:19px;margin-bottom:6px;font-weight:650}
+h2 span{color:var(--slate);font-weight:500;margin-right:10px}
+.help{color:var(--slate);font-size:14.5px;margin-bottom:16px;max-width:76ch}
+label{display:block;font-size:13.5px;color:#B9C7DA;margin:14px 0 6px}
+input[type=text],textarea{width:100%;background:#08111f;color:var(--off);
+ border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
+textarea{min-height:88px;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+table{width:100%;border-collapse:collapse;margin:8px 0 16px}
+th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);
+ font-weight:600;padding:8px 8px;border-bottom:1px solid var(--line)}
+td{padding:4px}
+td input{border-radius:6px;padding:8px 10px}
+td.fixed{color:#B9C7DA;font-size:14px;padding:10px 8px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(6,15,29,.94);
+ border-top:1px solid var(--line);padding:12px 20px;display:flex;gap:12px;align-items:center;
+ justify-content:center;backdrop-filter:blur(8px)}
+button{font:inherit;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid var(--line);
+ background:#12203a;color:var(--off);cursor:pointer}
+button.primary{background:var(--orange);border-color:var(--orange);color:#160a02;font-weight:600}
+button:hover{filter:brightness(1.12)}
+.saved{color:var(--ok);font-size:13px;min-width:150px}
+.note{color:var(--slate);font-size:13px;text-align:center;margin-top:26px}
+/* the seven shifts — tick three */
+.shifts{display:flex;flex-direction:column;gap:10px;margin:4px 0 14px}
+.shift{background:#08111f;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.shift.on{border-color:var(--orange);background:rgba(240,131,40,.07)}
+.shift .top{display:flex;gap:11px;align-items:flex-start;cursor:pointer}
+.shift input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:0 0 auto;
+ width:19px;height:19px;margin-top:2px;border:1.5px solid var(--slate);border-radius:5px;
+ background:#08111f;cursor:pointer;position:relative}
+.shift input[type=checkbox]:checked{background:var(--orange);border-color:var(--orange)}
+.shift input[type=checkbox]:checked::after{content:"";position:absolute;left:6px;top:2px;
+ width:5px;height:10px;border:solid #160a02;border-width:0 2.2px 2.2px 0;transform:rotate(42deg)}
+.shift input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.shift .nm{font-weight:600;font-size:15.5px}
+.shift .why{color:var(--slate);font-size:14px;margin-top:3px;max-width:72ch}
+.shift .moment{display:none;margin-top:10px}
+.shift.on .moment{display:block}
+.shift .moment label{margin-top:0}
+/* reference menus */
+.menus{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 16px}
+.menubtn{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;
+ border:1px solid rgba(93,171,229,.45);background:rgba(93,171,229,.09);color:var(--blue);cursor:pointer}
+.menubtn:hover{background:rgba(93,171,229,.18)}
+.modal{position:fixed;inset:0;background:rgba(3,8,16,.72);backdrop-filter:blur(4px);
+ display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
+.modal.on{display:flex}
+.modal .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+ max-width:820px;width:100%;max-height:84vh;overflow:auto;padding:26px 28px}
+.modal h3{font-size:22px;margin-bottom:6px}
+.modal .mnote{color:var(--slate);font-size:14.5px;margin-bottom:18px;max-width:74ch}
+.modal .row{display:grid;grid-template-columns:230px 1fr;gap:10px 18px;
+ padding:8px 0;border-bottom:1px solid rgba(30,43,69,.7);font-size:14.5px}
+.modal .row b{font-weight:600}
+.modal .row span{color:var(--slate)}
+@media(max-width:640px){.modal .row{grid-template-columns:1fr;gap:2px}}
+.modal .chips{display:flex;flex-wrap:wrap;gap:8px}
+.modal .chips span{background:#08111f;border:1px solid var(--line);border-radius:999px;
+ padding:6px 12px;font-size:14px;color:#D6E0EE}
+.modal .close{margin-top:20px}
+@media print{
+ body{background:#fff;color:#111;padding:0}
+ .bar,.modal,.menubtn{display:none} section{background:#fff;border:1px solid #ccc;break-inside:avoid}
+ .intro{background:#f6f6f6;color:#222} h1 em{color:#9A4516} .principle{color:#444}
+ input,textarea{background:#fff;color:#111;border:1px solid #bbb}
+ .eyebrow,.help,th{color:#555}
+ .shift{background:#fff;border:1px solid #ccc;break-inside:avoid}
+ .shift.on{background:#faf3ec;border-color:#9A4516}
+ .shift .why{color:#555} .shift .moment{display:block}
+ .shift input[type=checkbox]{border-color:#888;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style></head><body><div class='wrap'>
+<header>
+<div class='eyebrow'>Therapy<b>+</b> · Working Sheet · Session 02</div>
+<h1>Niche</h1>
+<div class='principle'>Create a hypothesis and go to market; the market will show you the right way.</div>
+</header>
+<div class='intro'>Three stages, in order: generate, narrow, research. Do them in separate sittings if you can. Do not pick — we pick together on the call.</div>
+<section>
+<h2><span>01</span>Stage 1 · Generate — transformations</h2>
+<div class='help'>Changes you would be glad to deliver for the next three years. Write more than feels sensible. Judge none of it yet.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-transformations'>Transformations menu</button>
+</div>
+<table><thead><tr>
+<th>The transformation</th>
+<th>Why this one pulls at me</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f1'></td>
+<td><input type='text' id='f2'></td>
+</tr>
+<tr>
+<td><input type='text' id='f3'></td>
+<td><input type='text' id='f4'></td>
+</tr>
+<tr>
+<td><input type='text' id='f5'></td>
+<td><input type='text' id='f6'></td>
+</tr>
+<tr>
+<td><input type='text' id='f7'></td>
+<td><input type='text' id='f8'></td>
+</tr>
+<tr>
+<td><input type='text' id='f9'></td>
+<td><input type='text' id='f10'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>02</span>Stage 1 · Generate — audiences</h2>
+<div class='help'>Groups that pull at you, and groups you have some real connection to — through your own life, your interests, or the people you already know.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-audiences'>Audiences menu</button>
+<button type='button' class='menubtn' data-menu='menu-types-of-coaching'>Types of Coaching menu</button>
+</div>
+<table><thead><tr>
+<th>Audience — from the menus</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f11'></td>
+</tr>
+<tr>
+<td><input type='text' id='f12'></td>
+</tr>
+<tr>
+<td><input type='text' id='f13'></td>
+</tr>
+<tr>
+<td><input type='text' id='f14'></td>
+</tr>
+</tbody></table>
+<table><thead><tr>
+<th>A group I have a real connection to</th>
+<th>How I know them — and what they want</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f15'></td>
+<td><input type='text' id='f16'></td>
+</tr>
+<tr>
+<td><input type='text' id='f17'></td>
+<td><input type='text' id='f18'></td>
+</tr>
+<tr>
+<td><input type='text' id='f19'></td>
+<td><input type='text' id='f20'></td>
+</tr>
+<tr>
+<td><input type='text' id='f21'></td>
+<td><input type='text' id='f22'></td>
+</tr>
+<tr>
+<td><input type='text' id='f23'></td>
+<td><input type='text' id='f24'></td>
+</tr>
+<tr>
+<td><input type='text' id='f25'></td>
+<td><input type='text' id='f26'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>03</span>Stage 2 · Narrow — the propositions</h2>
+<div class='help'>Turn the strongest combinations into one line each. Mark the lane: in, needs reframing, or out.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-niche-examples'>Niche Examples menu</button>
+</div>
+<table><thead><tr>
+<th>I help ___ achieve ___</th>
+<th>In lane?</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f27'></td>
+<td><input type='text' id='f28'></td>
+</tr>
+<tr>
+<td><input type='text' id='f29'></td>
+<td><input type='text' id='f30'></td>
+</tr>
+<tr>
+<td><input type='text' id='f31'></td>
+<td><input type='text' id='f32'></td>
+</tr>
+<tr>
+<td><input type='text' id='f33'></td>
+<td><input type='text' id='f34'></td>
+</tr>
+<tr>
+<td><input type='text' id='f35'></td>
+<td><input type='text' id='f36'></td>
+</tr>
+<tr>
+<td><input type='text' id='f37'></td>
+<td><input type='text' id='f38'></td>
+</tr>
+<tr>
+<td><input type='text' id='f39'></td>
+<td><input type='text' id='f40'></td>
+</tr>
+<tr>
+<td><input type='text' id='f41'></td>
+<td><input type='text' id='f42'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>04</span>Stage 2 · Narrow — the ratings</h2>
+<div class='help'>Score each out of ten. Three columns, no more.</div>
+<table><thead><tr>
+<th>Proposition</th>
+<th>They want it</th>
+<th>They can pay</th>
+<th>I can reach them</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f43'></td>
+<td><input type='text' id='f44'></td>
+<td><input type='text' id='f45'></td>
+<td><input type='text' id='f46'></td>
+</tr>
+<tr>
+<td><input type='text' id='f47'></td>
+<td><input type='text' id='f48'></td>
+<td><input type='text' id='f49'></td>
+<td><input type='text' id='f50'></td>
+</tr>
+<tr>
+<td><input type='text' id='f51'></td>
+<td><input type='text' id='f52'></td>
+<td><input type='text' id='f53'></td>
+<td><input type='text' id='f54'></td>
+</tr>
+<tr>
+<td><input type='text' id='f55'></td>
+<td><input type='text' id='f56'></td>
+<td><input type='text' id='f57'></td>
+<td><input type='text' id='f58'></td>
+</tr>
+<tr>
+<td><input type='text' id='f59'></td>
+<td><input type='text' id='f60'></td>
+<td><input type='text' id='f61'></td>
+<td><input type='text' id='f62'></td>
+</tr>
+<tr>
+<td><input type='text' id='f63'></td>
+<td><input type='text' id='f64'></td>
+<td><input type='text' id='f65'></td>
+<td><input type='text' id='f66'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>05</span>Stage 3 · Research — contender A</h2>
+<div class='help'>Twenty minutes, timed. Aspiration language, never symptom language.</div>
+<label for='f67'>Contender A</label>
+<input type='text' id='f67'>
+<table><thead><tr>
+<th>Check</th>
+<th>Yes / maybe / no</th>
+<th>What I actually found</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Google — autocomplete, people-also-ask, plenty of content around it</td>
+<td><input type='text' id='f68'></td>
+<td><input type='text' id='f69'></td>
+</tr>
+<tr>
+<td class='fixed'>Reddit or forums — an active thread in their words</td>
+<td><input type='text' id='f70'></td>
+<td><input type='text' id='f71'></td>
+</tr>
+<tr>
+<td class='fixed'>YouTube — real views and engaged comments</td>
+<td><input type='text' id='f72'></td>
+<td><input type='text' id='f73'></td>
+</tr>
+<tr>
+<td class='fixed'>Coaches and books — people already paying</td>
+<td><input type='text' id='f74'></td>
+<td><input type='text' id='f75'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>06</span>Stage 3 · Research — contender B</h2>
+<label for='f76'>Contender B</label>
+<input type='text' id='f76'>
+<table><thead><tr>
+<th>Check</th>
+<th>Yes / maybe / no</th>
+<th>What I actually found</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Google — autocomplete, people-also-ask, plenty of content around it</td>
+<td><input type='text' id='f77'></td>
+<td><input type='text' id='f78'></td>
+</tr>
+<tr>
+<td class='fixed'>Reddit or forums — an active thread in their words</td>
+<td><input type='text' id='f79'></td>
+<td><input type='text' id='f80'></td>
+</tr>
+<tr>
+<td class='fixed'>YouTube — real views and engaged comments</td>
+<td><input type='text' id='f81'></td>
+<td><input type='text' id='f82'></td>
+</tr>
+<tr>
+<td class='fixed'>Coaches and books — people already paying</td>
+<td><input type='text' id='f83'></td>
+<td><input type='text' id='f84'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>07</span>Stage 3 · Research — contender C</h2>
+<label for='f85'>Contender C</label>
+<input type='text' id='f85'>
+<table><thead><tr>
+<th>Check</th>
+<th>Yes / maybe / no</th>
+<th>What I actually found</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Google — autocomplete, people-also-ask, plenty of content around it</td>
+<td><input type='text' id='f86'></td>
+<td><input type='text' id='f87'></td>
+</tr>
+<tr>
+<td class='fixed'>Reddit or forums — an active thread in their words</td>
+<td><input type='text' id='f88'></td>
+<td><input type='text' id='f89'></td>
+</tr>
+<tr>
+<td class='fixed'>YouTube — real views and engaged comments</td>
+<td><input type='text' id='f90'></td>
+<td><input type='text' id='f91'></td>
+</tr>
+<tr>
+<td class='fixed'>Coaches and books — people already paying</td>
+<td><input type='text' id='f92'></td>
+<td><input type='text' id='f93'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>08</span>Where they gather</h2>
+<div class='help'>Every community, forum, group or channel you found. This becomes your distribution list later.</div>
+<textarea id='f94'></textarea>
+</section>
+<section>
+<h2><span>09</span>Decided on the call</h2>
+<div class='help'>Filled in together. Nothing to prepare.</div>
+<label for='f95'>My niche — I help ___ achieve ___</label>
+<input type='text' id='f95'>
+<label for='f96'>Why this one</label>
+<input type='text' id='f96'>
+<label for='f97'>Runner-up, parked</label>
+<input type='text' id='f97'>
+</section>
+<section>
+<h2><span>10</span>Your list, meanwhile</h2>
+<div class='help'>Nothing goes out this week — you need the words first, and those come next session. Keep adding names as they come to mind.</div>
+<label for='f98'>People on the list now</label>
+<input type='text' id='f98'>
+<label for='f99'>How many I want on it before the words arrive</label>
+<input type='text' id='f99'>
+</section>
+<div class='note'>Your answers save automatically in this browser. They are not sent anywhere. Use Download / print to keep a copy, and share the PDF with your coach 24 hours before the session.</div>
+</div>
+<div class='modal' id='menu-transformations' role='dialog' aria-modal='true' aria-label='Transformations menu'><div class='box'>
+<h3>Transformations</h3>
+<div class='mnote'>The change you deliver — the "after" your client is actually buying. Not exhaustive; a prompt to spark your own.</div>
+<div class='row'><b>Leadership Development</b><span>Cultivate leadership skills, confidence, and strategic vision.</span></div>
+<div class='row'><b>Financial Literacy</b><span>Understand and manage money, budgeting, and investing.</span></div>
+<div class='row'><b>Mindfulness &amp; Meditation</b><span>Cultivate present-moment awareness and calm.</span></div>
+<div class='row'><b>Assertiveness</b><span>Communicate confidently and hold your ground without aggression.</span></div>
+<div class='row'><b>Conflict Resolution</b><span>Navigate and resolve disagreements and disputes.</span></div>
+<div class='row'><b>Emotional Intelligence</b><span>Understand, manage, and express emotions effectively.</span></div>
+<div class='row'><b>Personal Branding</b><span>Craft and project a compelling personal or professional identity.</span></div>
+<div class='row'><b>Time Management</b><span>Organize and prioritize for efficiency and calm.</span></div>
+<div class='row'><b>Physical Fitness &amp; Health</b><span>Improve strength, energy, and endurance.</span></div>
+<div class='row'><b>Dietary &amp; Nutritional Guidance</b><span>Navigate food choices for health and wellness.</span></div>
+<div class='row'><b>Public Speaking &amp; Presentation</b><span>Communicate powerfully to a room.</span></div>
+<div class='row'><b>Creative Expression</b><span>Unlock and harness creative potential.</span></div>
+<div class='row'><b>Digital Literacy</b><span>Navigate digital platforms and tools with confidence.</span></div>
+<div class='row'><b>Entrepreneurial Skills</b><span>Start and grow a business or initiative.</span></div>
+<div class='row'><b>Study &amp; Learning Techniques</b><span>Improve retention, comprehension, and performance.</span></div>
+<div class='row'><b>Relationship Building</b><span>Foster deeper, more meaningful relationships.</span></div>
+<div class='row'><b>Sales &amp; Marketing Mastery</b><span>Sharpen selling and marketing capability.</span></div>
+<div class='row'><b>Cultural Awareness</b><span>Navigate diverse environments with understanding.</span></div>
+<div class='row'><b>Spiritual Growth</b><span>Explore and deepen spiritual belief and practice.</span></div>
+<div class='row'><b>Sustainability Practices</b><span>Adopt eco-friendly lifestyles and habits.</span></div>
+<div class='row'><b>Habit Formation</b><span>Build and sustain positive habits.</span></div>
+<div class='row'><b>Resilience &amp; Grit</b><span>Cultivate the ability to bounce back from setbacks.</span></div>
+<div class='row'><b>Self-Discovery</b><span>Understand yourself — strengths, values, and direction.</span></div>
+<div class='row'><b>Communication Skills</b><span>Improve interpersonal communication.</span></div>
+<div class='row'><b>Parenting Skills</b><span>Navigate the challenges of parenting with confidence.</span></div>
+<div class='row'><b>Career Advancement</b><span>Strategise and move up the ladder.</span></div>
+<div class='row'><b>Productivity</b><span>Increase efficiency in work and daily life.</span></div>
+<div class='row'><b>Positive Psychology</b><span>Foster happiness, optimism, and well-being.</span></div>
+<div class='row'><b>Lifestyle Design</b><span>Design a life aligned with your values, desires, and goals.</span></div>
+<button type='button' class='close'>Close</button>
+</div></div>
+<div class='modal' id='menu-audiences' role='dialog' aria-modal='true' aria-label='Audiences menu'><div class='box'>
+<h3>Audiences</h3>
+<div class='mnote'>The who. A starting point rather than a list to pick from — the strongest ideas are usually the ones you add yourself.</div>
+<div class='chips'><span>CEOs &amp; CFOs</span><span>Millennial Women</span><span>Remote Workers</span><span>Retirees</span><span>Startup Founders</span><span>Teenagers</span><span>Single Parents</span><span>Digital Nomads</span><span>Freelancers &amp; Gig Workers</span><span>Artists &amp; Creatives</span><span>LGBTQ+ Community</span><span>Veterans</span><span>Athletes</span><span>Parents of Special-Needs Children</span><span>ESL Learners</span><span>Corporate Executives</span><span>Pet Owners</span><span>Academics &amp; Researchers</span><span>Teachers</span><span>Recent Graduates</span><span>Newlyweds</span><span>Immigrants</span><span>Podcasters &amp; YouTubers</span><span>Travel Enthusiasts</span><span>Food Bloggers</span><span>Real Estate Agents</span><span>Elderly Individuals</span><span>Fitness Enthusiasts</span><span>Vegans &amp; Vegetarians</span><span>Expatriates</span><span>Aspiring Politicians</span></div>
+<button type='button' class='close'>Close</button>
+</div></div>
+<div class='modal' id='menu-types-of-coaching' role='dialog' aria-modal='true' aria-label='Types of Coaching menu'><div class='box'>
+<h3>Types of Coaching</h3>
+<div class='mnote'>The shapes coaching can take. The three big domains are health and wellbeing, wealth, and relationships. Skim for the kind of change you would love to deliver, then make it yours.</div>
+<div class='row'><b>Career Coaching</b><span>Career exploration, job-search strategy, interview preparation, and advancement.</span></div>
+<div class='row'><b>Executive Coaching</b><span>Developing leadership skills for executives and senior professionals.</span></div>
+<div class='row'><b>Health &amp; Wellness Coaching</b><span>Exercise, nutrition, stress management, and overall well-being.</span></div>
+<div class='row'><b>Relationship Coaching</b><span>Building healthy relationships, resolving conflict, deepening connection.</span></div>
+<div class='row'><b>Personal Development Coaching</b><span>Discovering strengths, passions, and growth opportunities.</span></div>
+<div class='row'><b>Financial Coaching</b><span>Financial goals, budgeting, debt reduction, and wealth building.</span></div>
+<div class='row'><b>Time Management Coaching</b><span>Managing time, prioritizing tasks, and better work-life balance.</span></div>
+<div class='row'><b>Goal Setting &amp; Achievement</b><span>Setting SMART goals and building action plans to reach them.</span></div>
+<div class='row'><b>Motivation &amp; Confidence Coaching</b><span>Boosting self-confidence and the drive to pursue aspirations.</span></div>
+<div class='row'><b>Communication Skills Coaching</b><span>Interpersonal communication, public speaking, and assertiveness.</span></div>
+<div class='row'><b>Emotional Intelligence Coaching</b><span>Emotional awareness and the ability to navigate emotions well.</span></div>
+<div class='row'><b>Decision-Making Coaching</b><span>Making well-informed decisions aligned with values and goals.</span></div>
+<div class='row'><b>Transition &amp; Change Coaching</b><span>Navigating major life changes — career shifts, relocation, new chapters.</span></div>
+<div class='row'><b>Spiritual Coaching</b><span>Exploring and developing spiritual beliefs and practices.</span></div>
+<div class='row'><b>Creativity Coaching</b><span>Expanding creative expression and problem-solving.</span></div>
+<div class='row'><b>Family Coaching</b><span>Family dynamics, communication, and resolving conflict.</span></div>
+<div class='row'><b>Parenting Coaching</b><span>Effective parenting strategies and communication with children.</span></div>
+<div class='row'><b>Retirement Coaching</b><span>Planning for and navigating the transition into retirement.</span></div>
+<div class='row'><b>Positive Psychology Coaching</b><span>Fostering happiness, resilience, and well-being.</span></div>
+<div class='row'><b>Assertiveness Coaching</b><span>Expressing needs and desires with confidence.</span></div>
+<div class='row'><b>Conflict Resolution Coaching</b><span>Managing conflict and resolving disagreements in any context.</span></div>
+<div class='row'><b>Boundary-Setting Coaching</b><span>Establishing healthy boundaries in relationships and life.</span></div>
+<div class='row'><b>Life Purpose &amp; Meaning Coaching</b><span>Finding purpose and creating a sense of meaning.</span></div>
+<div class='row'><b>Academic &amp; Educational Coaching</b><span>Academic success, study skills, and test preparation.</span></div>
+<div class='row'><b>Personal Branding Coaching</b><span>Developing and showcasing a personal and professional brand.</span></div>
+<div class='row'><b>Cross-Cultural Coaching</b><span>Navigating cross-cultural situations and building awareness.</span></div>
+<div class='row'><b>Productivity Coaching</b><span>Overcoming procrastination and reclaiming focus and time.</span></div>
+<div class='row'><b>Habit &amp; Breakthrough Coaching</b><span>Building positive habits and breaking detrimental ones.</span></div>
+<div class='row'><b>Mindfulness &amp; Meditation Coaching</b><span>Mindfulness and meditation for focus, calm, and clarity.</span></div>
+<div class='row'><b>Performance Coaching</b><span>Performing at your best in personal and professional life.</span></div>
+<div class='row'><b>Entrepreneurial Coaching</b><span>Startup, growth strategy, and overcoming the founder's challenges.</span></div>
+<div class='row'><b>Team Dynamics Coaching</b><span>Collaboration, cohesion, and performance in teams.</span></div>
+<div class='row'><b>Athletic Coaching</b><span>Performance, discipline, and motivation in sport and fitness.</span></div>
+<div class='row'><b>Dating &amp; Social Coaching</b><span>Building connection, social confidence, and dating dynamics.</span></div>
+<div class='row'><b>Nutrition Coaching</b><span>Dietary choices and habits that support health and energy.</span></div>
+<div class='row'><b>Digital Detox Coaching</b><span>Reducing screen time and balancing offline and online life.</span></div>
+<button type='button' class='close'>Close</button>
+</div></div>
+<div class='modal' id='menu-niche-examples' role='dialog' aria-modal='true' aria-label='Niche Examples menu'><div class='box'>
+<h3>Niche Examples</h3>
+<div class='mnote'>Fully-formed propositions, as models for the specificity to aim at. Notice the lane: every one designs a better future rather than treating a problem.</div>
+<div class='row'><b>For Tech Start-Up Founders</b><span>“I help tech start-up founders scale efficiently while keeping their well-being and relationships intact.”</span></div>
+<div class='row'><b>For Senior Corporate Executives</b><span>“I help senior executives in high-stress industries manage pressure and sharpen decision-making for sustained success.”</span></div>
+<div class='row'><b>For Medical Professionals</b><span>“I help doctors and surgeons build a balanced lifestyle amid the demands of patient care and long hours.”</span></div>
+<div class='row'><b>For Legal Professionals</b><span>“I help lawyers manage the stress of high-stakes cases while integrating a fuller personal life.”</span></div>
+<div class='row'><b>For Finance Executives</b><span>“I help bankers and advisers build resilience and stronger client relationships in high-pressure environments.”</span></div>
+<div class='row'><b>For C-Suite Facing Burnout</b><span>“I help C-suite leaders design leadership strategies that protect their health and prevent burnout.”</span></div>
+<div class='row'><b>For High-Performance Athletes</b><span>“I help athletes manage the pressures of sport while sustaining a life beyond it.”</span></div>
+<div class='row'><b>For Entrepreneurs Seeking Purpose</b><span>“I help successful entrepreneurs find fulfilment and pursue goals beyond the business.”</span></div>
+<div class='row'><b>For Women in Leadership</b><span>“I help women in male-dominated industries overcome barriers and advance into leadership.”</span></div>
+<div class='row'><b>For Corporate Couples</b><span>“I help dual-career couples find harmony between professional ambition and their relationship.”</span></div>
+<div class='row'><b>For Single Parents Dating</b><span>“I help single parents navigate dating while honouring their family life.”</span></div>
+<div class='row'><b>For Long-Distance Couples</b><span>“I help long-distance couples strengthen their bond and manage separation.”</span></div>
+<div class='row'><b>For Newlyweds</b><span>“I help newlyweds build strong foundations, communication, and shared goals.”</span></div>
+<div class='row'><b>For Couples Facing Retirement</b><span>“I help couples plan retirement together and rediscover shared purpose.”</span></div>
+<div class='row'><b>For Military Couples</b><span>“I help military couples navigate deployment and reunion with trust and resilience.”</span></div>
+<button type='button' class='close'>Close</button>
+</div></div>
+<div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
+<script>
+(function(){
+ var KEY='psyberB-wk2';
+ var els=[].slice.call(document.querySelectorAll('input,textarea'));
+ var status=document.getElementById('saved');
+ function box(e){return e.type==='checkbox';}
+ function get(e){return box(e)?e.checked:e.value;}
+ function set(e,v){if(box(e)){e.checked=!!v;}else{e.value=v;}}
+ function paint(){[].slice.call(document.querySelectorAll('.shift')).forEach(function(s){
+   var c=s.querySelector('input[type=checkbox]');s.classList.toggle('on',!!(c&&c.checked));});}
+ function load(){try{var d=JSON.parse(localStorage.getItem(KEY)||'{}');
+   els.forEach(function(e){if(d[e.id]!==undefined)set(e,d[e.id]);});}catch(e){}paint();}
+ var t;
+ function save(){var d={};els.forEach(function(e){var v=get(e);if(v)d[e.id]=v;});
+   localStorage.setItem(KEY,JSON.stringify(d));
+   status.textContent='Saved '+new Date().toLocaleTimeString();}
+ els.forEach(function(e){
+   e.addEventListener('input',function(){clearTimeout(t);t=setTimeout(save,400);});
+   if(box(e))e.addEventListener('change',function(){paint();save();});});
+ document.getElementById('save').addEventListener('click',save);
+ document.getElementById('print').addEventListener('click',function(){save();window.print();});
+ document.getElementById('clear').addEventListener('click',function(){
+   if(confirm('Clear every answer on this sheet? This cannot be undone.')){
+     localStorage.removeItem(KEY);
+     els.forEach(function(e){set(e,box(e)?false:'');});paint();status.textContent='Cleared';}});
+
+ // reference menus — open in place rather than sending anyone off to find a PDF
+ function shut(){[].slice.call(document.querySelectorAll('.modal')).forEach(function(m){
+   m.classList.remove('on');});}
+ [].slice.call(document.querySelectorAll('.menubtn')).forEach(function(b){
+   b.addEventListener('click',function(){shut();
+     var m=document.getElementById(b.getAttribute('data-menu'));
+     if(m){m.classList.add('on');m.querySelector('.close').focus();}});});
+ [].slice.call(document.querySelectorAll('.modal')).forEach(function(m){
+   m.addEventListener('click',function(ev){if(ev.target===m)shut();});});
+ [].slice.call(document.querySelectorAll('.modal .close')).forEach(function(b){
+   b.addEventListener('click',shut);});
+ document.addEventListener('keydown',function(ev){if(ev.key==='Escape')shut();});
+
+ load();
+ window.addEventListener('beforeunload',save);
+})();
+</script></body></html>
