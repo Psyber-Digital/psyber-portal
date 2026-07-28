@@ -24,6 +24,7 @@ import {
   sendToClient,
   setCurrentWeek,
   togglePublish,
+  updateWeek,
   uploadFile,
 } from "../actions";
 
@@ -326,6 +327,121 @@ function AddClientForm() {
   );
 }
 
+// One week's header: read-only until Edit is pressed, then the same fields the
+// Add form uses. Kept separate so each row owns its own editing state.
+function WeekHeader({
+  week,
+  pending,
+  run,
+}: {
+  week: Week;
+  pending: boolean;
+  run: (fn: () => Promise<void>) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  if (editing) {
+    return (
+      <form
+        action={async (fd) => {
+          fd.set("week_id", week.id);
+          const res = await updateWeek(fd);
+          if (res?.error) {
+            setError(res.error);
+            return;
+          }
+          setError(null);
+          setEditing(false);
+          run(async () => {});
+        }}
+        className="rounded-xl border border-blue/40 bg-blue/[0.05] p-4"
+      >
+        <div className="grid gap-4 md:grid-cols-[120px_1fr]">
+          <div>
+            <label className="psy-label">Number</label>
+            <input name="number" type="number" defaultValue={week.number} className="psy-input" />
+          </div>
+          <div>
+            <label className="psy-label">Title</label>
+            <input name="title" defaultValue={week.title} className="psy-input" />
+          </div>
+        </div>
+        <label className="psy-label">Description</label>
+        <textarea
+          name="description"
+          defaultValue={week.description ?? ""}
+          className="psy-input min-h-[70px]"
+        />
+        <p className="mt-2 text-[12px] text-dim">
+          Changing the <b>number</b> changes who can see this session — clients only see
+          weeks up to the one they are on. Renaming is always safe.
+        </p>
+        {error && <p className="mt-2 text-[12.5px] text-bad">{error}</p>}
+        <div className="mt-3 flex items-center gap-2.5">
+          <button type="submit" disabled={pending} className="psy-btn !w-auto !px-4 !py-2 !text-[13px]">
+            Save changes
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setEditing(false);
+              setError(null);
+            }}
+            className="psy-btn-ghost !px-3.5 !py-2 !text-[13px]"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    );
+  }
+
+  return (
+    <>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <div className="psy-eyebrow text-blue">Week {pad(week.number)}</div>
+          <h3 className="mt-1 font-disp text-base font-semibold">{week.title}</h3>
+        </div>
+        <div className="flex items-center gap-2.5">
+          <span
+            className={`rounded-md px-2.5 py-1 font-disp text-[10px] uppercase tracking-[1px] ${
+              week.published ? "bg-good/[0.14] text-good" : "bg-slate/[0.14] text-slate"
+            }`}
+          >
+            {week.published ? "Published" : "Draft"}
+          </span>
+          <button
+            onClick={() => setEditing(true)}
+            disabled={pending}
+            className="psy-btn-ghost !px-3.5 !py-2 !text-[13px]"
+          >
+            Edit
+          </button>
+          <button
+            onClick={() => run(() => togglePublish(week.id, !week.published))}
+            disabled={pending}
+            className="psy-btn-ghost !px-3.5 !py-2 !text-[13px]"
+          >
+            {week.published ? "Unpublish" : "Publish"}
+          </button>
+          <button
+            onClick={() => {
+              if (confirm("Delete this week and its files?")) run(() => deleteWeek(week.id));
+            }}
+            disabled={pending}
+            className="rounded-[10px] border border-bad/40 bg-transparent px-3.5 py-2 font-disp text-[13px] text-bad"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+      {week.description && <p className="mt-2.5 text-[12px] text-dim">{week.description}</p>}
+    </>
+  );
+}
+
 function WeeksTab({ weeks, files }: { weeks: Week[]; files: FileRow[] }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -341,7 +457,8 @@ function WeeksTab({ weeks, files }: { weeks: Week[]; files: FileRow[] }) {
       <Hint>
         Add a week, upload its worksheet and resources, then <b>Publish</b> when the
         session is delivered. Unpublished weeks are invisible to everyone — this is
-        how future weeks stay locked.
+        how future weeks stay locked. Use <b>Edit</b> to change a name, number or
+        description; deleting a week also deletes its uploaded files.
       </Hint>
 
       <form
@@ -371,38 +488,7 @@ function WeeksTab({ weeks, files }: { weeks: Week[]; files: FileRow[] }) {
         const resources = files.filter((f) => f.week_id === w.id && f.kind === "resource");
         return (
           <div key={w.id} className="psy-card mb-3.5 p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <div className="psy-eyebrow text-blue">Week {pad(w.number)}</div>
-                <h3 className="mt-1 font-disp text-base font-semibold">{w.title}</h3>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <span
-                  className={`rounded-md px-2.5 py-1 font-disp text-[10px] uppercase tracking-[1px] ${
-                    w.published ? "bg-good/[0.14] text-good" : "bg-slate/[0.14] text-slate"
-                  }`}
-                >
-                  {w.published ? "Published" : "Draft"}
-                </span>
-                <button
-                  onClick={() => run(() => togglePublish(w.id, !w.published))}
-                  disabled={pending}
-                  className="psy-btn-ghost !px-3.5 !py-2 !text-[13px]"
-                >
-                  {w.published ? "Unpublish" : "Publish"}
-                </button>
-                <button
-                  onClick={() => {
-                    if (confirm("Delete this week and its files?")) run(() => deleteWeek(w.id));
-                  }}
-                  disabled={pending}
-                  className="rounded-[10px] border border-bad/40 bg-transparent px-3.5 py-2 font-disp text-[13px] text-bad"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-            {w.description && <p className="mt-2.5 text-[12px] text-dim">{w.description}</p>}
+            <WeekHeader week={w} pending={pending} run={run} />
             <div className="my-4 h-px bg-line" />
             <div className="grid gap-5 md:grid-cols-2">
               <FileColumn

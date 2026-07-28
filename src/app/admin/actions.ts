@@ -306,6 +306,36 @@ export async function createWeek(formData: FormData) {
   revalidatePath("/admin");
 }
 
+// Editing a week used to mean deleting it and adding it again — which destroys
+// its uploaded files and, because clients are gated on week number, briefly hides
+// the session from anyone already on it. Renaming is now a rename.
+export async function updateWeek(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("week_id") ?? "");
+  const number = parseInt(String(formData.get("number") ?? ""), 10);
+  const title = String(formData.get("title") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  if (!id) return { error: "Missing week." };
+  if (!number || !title) return { error: "Number and title are both required." };
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("weeks")
+    .update({ number, title, description })
+    .eq("id", id);
+
+  if (error) {
+    // 23505 is the unique constraint on weeks.number.
+    if (error.code === "23505") {
+      return { error: `Week ${number} already exists. Pick a different number.` };
+    }
+    return { error: error.message };
+  }
+  revalidatePath("/admin");
+  revalidatePath("/portal");
+  return {};
+}
+
 export async function togglePublish(weekId: string, published: boolean) {
   await requireAdmin();
   const admin = createAdminClient();
