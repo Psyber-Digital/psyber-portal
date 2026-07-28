@@ -68,19 +68,39 @@ button:hover{filter:brightness(1.12)}
 .modal{position:fixed;inset:0;background:rgba(3,8,16,.72);backdrop-filter:blur(4px);
  display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
 .modal.on{display:flex}
+/* Header fixed, body scrolls. A centred flex child taller than its container
+   overflows in BOTH directions and the top becomes unreachable — which is what
+   made these menus open part-way down on a phone. Capping the box to the viewport
+   and scrolling only the inner body removes that entirely, and keeps Close in
+   reach without scrolling to the end of a thirty-six-row list. */
 .modal .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;
- max-width:820px;width:100%;max-height:84vh;overflow:auto;padding:26px 28px}
-.modal h3{font-size:22px;margin-bottom:6px}
+ max-width:820px;width:100%;max-height:calc(100dvh - 48px);
+ display:flex;flex-direction:column;overflow:hidden}
+.modal .mhead{flex:0 0 auto;display:flex;align-items:flex-start;gap:16px;
+ padding:22px 26px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+.modal .mhead h3{font-size:22px;margin:0;flex:1;min-width:0}
+.modal .mbody{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;
+ padding:18px 26px 24px;overscroll-behavior:contain}
 .modal .mnote{color:var(--slate);font-size:14.5px;margin-bottom:18px;max-width:74ch}
 .modal .row{display:grid;grid-template-columns:230px 1fr;gap:10px 18px;
  padding:8px 0;border-bottom:1px solid rgba(30,43,69,.7);font-size:14.5px}
 .modal .row b{font-weight:600}
 .modal .row span{color:var(--slate)}
-@media(max-width:640px){.modal .row{grid-template-columns:1fr;gap:2px}}
 .modal .chips{display:flex;flex-wrap:wrap;gap:8px}
 .modal .chips span{background:#08111f;border:1px solid var(--line);border-radius:999px;
  padding:6px 12px;font-size:14px;color:#D6E0EE}
-.modal .close{margin-top:20px}
+.modal .close{flex:0 0 auto}
+@media(max-width:640px){
+ .modal{padding:10px}
+ .modal .box{max-height:calc(100dvh - 20px);border-radius:12px}
+ .modal .mhead{padding:16px 16px 12px;gap:10px}
+ .modal .mhead h3{font-size:19px}
+ .modal .mbody{padding:14px 16px 20px}
+ .modal .row{grid-template-columns:1fr;gap:2px;padding:10px 0}
+ .modal .close{padding:8px 13px;font-size:13.5px}
+}
+/* Stop the sheet behind scrolling while a menu is open, on iOS especially. */
+body.menu-open{overflow:hidden}
 @media print{
  body{background:#fff;color:#111;padding:0}
  .bar,.modal,.menubtn{display:none} section{background:#fff;border:1px solid #ccc;break-inside:avoid}
@@ -283,11 +303,15 @@ button:hover{filter:brightness(1.12)}
 
  // reference menus — open in place rather than sending anyone off to find a PDF
  function shut(){[].slice.call(document.querySelectorAll('.modal')).forEach(function(m){
-   m.classList.remove('on');});}
+   m.classList.remove('on');});document.body.classList.remove('menu-open');}
  [].slice.call(document.querySelectorAll('.menubtn')).forEach(function(b){
    b.addEventListener('click',function(){shut();
      var m=document.getElementById(b.getAttribute('data-menu'));
-     if(m){m.classList.add('on');m.querySelector('.close').focus();}});});
+     if(!m)return;
+     m.classList.add('on');document.body.classList.add('menu-open');
+     // Always open at the top — a reopened menu otherwise keeps its last scroll.
+     var body=m.querySelector('.mbody');if(body)body.scrollTop=0;
+     m.querySelector('.close').focus();});});
  [].slice.call(document.querySelectorAll('.modal')).forEach(function(m){
    m.addEventListener('click',function(ev){if(ev.target===m)shut();});});
  [].slice.call(document.querySelectorAll('.modal .close')).forEach(function(b){
