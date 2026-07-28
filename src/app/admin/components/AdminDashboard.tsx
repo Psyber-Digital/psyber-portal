@@ -355,8 +355,12 @@ function BuiltIn({ number }: { number: number }) {
         </span>
       </div>
       <p className="mt-1 text-[12px] text-dim">
-        Served from the app rather than uploaded here — the client sees these whether or
-        not anything is uploaded above. Changing them is a code change.
+        Served from the app rather than uploaded here. Changing them is a code change.
+      </p>
+      <p className="mt-1.5 text-[12px] text-orange">
+        These take precedence: while a session has built-in resources, anything you
+        upload above is <b>hidden from the client</b>. Uploads only show for sessions
+        with none.
       </p>
       <ul className="mt-3 grid gap-1.5 sm:grid-cols-2">
         {items.map((r) => (

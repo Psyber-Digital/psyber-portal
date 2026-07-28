@@ -1,0 +1,276 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Session 03 · Message — Working Sheet</title>
+<style>
+:root{--navy:#060f1d;--panel:#0d1729;--line:#1e2b45;--off:#F4F7FB;--slate:#8FA0B8;
+ --orange:#F08328;--blue:#5DABE5;--ok:#3FB37F;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--navy);color:var(--off);
+ font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ padding:32px 20px 96px;}
+.wrap{max-width:940px;margin:0 auto}
+header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+.eyebrow{font:600 12px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.22em;
+ text-transform:uppercase;color:var(--slate)}
+.eyebrow b{color:var(--orange);font-weight:600}
+h1{font-size:34px;line-height:1.15;margin:12px 0 10px;font-weight:700;letter-spacing:-.02em}
+h1 em{color:var(--orange);font-style:italic}
+.principle{color:var(--blue);font-style:italic;font-size:17px;max-width:70ch}
+.intro{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--orange);
+ border-radius:10px;padding:16px 18px;margin:24px 0 34px;color:#D6E0EE;max-width:78ch}
+section{margin:0 0 34px;background:var(--panel);border:1px solid var(--line);border-radius:12px;
+ padding:22px 22px 8px}
+h2{font-size:19px;margin-bottom:6px;font-weight:650}
+h2 span{color:var(--slate);font-weight:500;margin-right:10px}
+.help{color:var(--slate);font-size:14.5px;margin-bottom:16px;max-width:76ch}
+label{display:block;font-size:13.5px;color:#B9C7DA;margin:14px 0 6px}
+input[type=text],textarea{width:100%;background:#08111f;color:var(--off);
+ border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
+textarea{min-height:88px;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
+table{width:100%;border-collapse:collapse;margin:8px 0 16px}
+th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);
+ font-weight:600;padding:8px 8px;border-bottom:1px solid var(--line)}
+td{padding:4px}
+td input{border-radius:6px;padding:8px 10px}
+td.fixed{color:#B9C7DA;font-size:14px;padding:10px 8px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:rgba(6,15,29,.94);
+ border-top:1px solid var(--line);padding:12px 20px;display:flex;gap:12px;align-items:center;
+ justify-content:center;backdrop-filter:blur(8px)}
+button{font:inherit;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid var(--line);
+ background:#12203a;color:var(--off);cursor:pointer}
+button.primary{background:var(--orange);border-color:var(--orange);color:#160a02;font-weight:600}
+button:hover{filter:brightness(1.12)}
+.saved{color:var(--ok);font-size:13px;min-width:150px}
+.note{color:var(--slate);font-size:13px;text-align:center;margin-top:26px}
+/* The block we complete together on the call. Everything else on the sheet is
+   solo work, so this one carries the accent rather than blending into the run. */
+section.live{border-color:rgba(240,131,40,.55);
+ background:linear-gradient(180deg,rgba(240,131,40,.10),var(--panel) 55%)}
+section.live h2 span{color:var(--orange)}
+.livetag{display:inline-flex;align-items:center;gap:8px;margin-bottom:10px;
+ font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.18em;
+ text-transform:uppercase;color:var(--orange);
+ background:rgba(240,131,40,.13);border:1px solid rgba(240,131,40,.45);
+ border-radius:999px;padding:7px 13px}
+.livetag::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange)}
+/* the seven shifts — tick three */
+.shifts{display:flex;flex-direction:column;gap:10px;margin:4px 0 14px}
+.shift{background:#08111f;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.shift.on{border-color:var(--orange);background:rgba(240,131,40,.07)}
+.shift .top{display:flex;gap:11px;align-items:flex-start;cursor:pointer}
+.shift input[type=checkbox]{appearance:none;-webkit-appearance:none;flex:0 0 auto;
+ width:19px;height:19px;margin-top:2px;border:1.5px solid var(--slate);border-radius:5px;
+ background:#08111f;cursor:pointer;position:relative}
+.shift input[type=checkbox]:checked{background:var(--orange);border-color:var(--orange)}
+.shift input[type=checkbox]:checked::after{content:"";position:absolute;left:6px;top:2px;
+ width:5px;height:10px;border:solid #160a02;border-width:0 2.2px 2.2px 0;transform:rotate(42deg)}
+.shift input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.shift .nm{font-weight:600;font-size:15.5px}
+.shift .why{color:var(--slate);font-size:14px;margin-top:3px;max-width:72ch}
+.shift .moment{display:none;margin-top:10px}
+.shift.on .moment{display:block}
+.shift .moment label{margin-top:0}
+/* reference menus */
+.menus{display:flex;flex-wrap:wrap;gap:8px;margin:-6px 0 16px}
+.menubtn{font:inherit;font-size:13px;padding:6px 12px;border-radius:999px;
+ border:1px solid rgba(93,171,229,.45);background:rgba(93,171,229,.09);color:var(--blue);cursor:pointer}
+.menubtn:hover{background:rgba(93,171,229,.18)}
+.modal{position:fixed;inset:0;background:rgba(3,8,16,.72);backdrop-filter:blur(4px);
+ display:none;align-items:center;justify-content:center;padding:24px;z-index:50}
+.modal.on{display:flex}
+/* Header fixed, body scrolls. A centred flex child taller than its container
+   overflows in BOTH directions and the top becomes unreachable — which is what
+   made these menus open part-way down on a phone. Capping the box to the viewport
+   and scrolling only the inner body removes that entirely, and keeps Close in
+   reach without scrolling to the end of a thirty-six-row list. */
+.modal .box{background:var(--panel);border:1px solid var(--line);border-radius:14px;
+ max-width:820px;width:100%;max-height:calc(100dvh - 48px);
+ display:flex;flex-direction:column;overflow:hidden}
+.modal .mhead{flex:0 0 auto;display:flex;align-items:flex-start;gap:16px;
+ padding:22px 26px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+.modal .mhead h3{font-size:22px;margin:0;flex:1;min-width:0}
+.modal .mbody{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;
+ padding:18px 26px 24px;overscroll-behavior:contain}
+.modal .mnote{color:var(--slate);font-size:14.5px;margin-bottom:18px;max-width:74ch}
+.modal .row{display:grid;grid-template-columns:230px 1fr;gap:10px 18px;
+ padding:8px 0;border-bottom:1px solid rgba(30,43,69,.7);font-size:14.5px}
+.modal .row b{font-weight:600}
+.modal .row span{color:var(--slate)}
+.modal .chips{display:flex;flex-wrap:wrap;gap:8px}
+.modal .chips span{background:#08111f;border:1px solid var(--line);border-radius:999px;
+ padding:6px 12px;font-size:14px;color:#D6E0EE}
+.modal .close{flex:0 0 auto}
+@media(max-width:640px){
+ .modal{padding:10px}
+ .modal .box{max-height:calc(100dvh - 20px);border-radius:12px}
+ .modal .mhead{padding:16px 16px 12px;gap:10px}
+ .modal .mhead h3{font-size:19px}
+ .modal .mbody{padding:14px 16px 20px}
+ .modal .row{grid-template-columns:1fr;gap:2px;padding:10px 0}
+ .modal .close{padding:8px 13px;font-size:13.5px}
+}
+/* Stop the sheet behind scrolling while a menu is open, on iOS especially. */
+body.menu-open{overflow:hidden}
+@media print{
+ body{background:#fff;color:#111;padding:0}
+ .bar,.modal,.menubtn{display:none} section{background:#fff;border:1px solid #ccc;break-inside:avoid}
+ .intro{background:#f6f6f6;color:#222} h1 em{color:#9A4516} .principle{color:#444}
+ input,textarea{background:#fff;color:#111;border:1px solid #bbb}
+ .eyebrow,.help,th{color:#555}
+ .shift{background:#fff;border:1px solid #ccc;break-inside:avoid}
+ .shift.on{background:#faf3ec;border-color:#9A4516}
+ .shift .why{color:#555} .shift .moment{display:block}
+ .shift input[type=checkbox]{border-color:#888;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ section.live{background:#faf3ec;border-color:#9A4516}
+ section.live h2 span{color:#9A4516}
+ .livetag{color:#9A4516;background:#fff;border-color:#9A4516}
+}
+</style></head><body><div class='wrap'>
+<header>
+<div class='eyebrow'>Therapy<b>+</b> · Working Sheet · Session 03</div>
+<h1>Message</h1>
+<div class='principle'>Confused people do not buy. Resonance over persuasion.</div>
+</header>
+<div class='intro'>Work backwards from what actually gets sent. We fill only what feeds your announcement and the three answers — the rest waits until you have a real client to answer it from.</div>
+<section>
+<h2><span>01</span>Your hero</h2>
+<div class='help'>One person, specifically enough that you could picture them. Not a category.</div>
+<textarea id='f1'></textarea>
+</section>
+<section>
+<h2><span>02</span>Their pain points</h2>
+<div class='help'>More than one — people have a cluster, not a single problem. Their words, not clinical language.</div>
+<table><thead><tr>
+<th>The pain, as they would say it</th>
+<th>Practical, emotional, or “it shouldn’t be this way”</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f2'></td>
+<td><input type='text' id='f3'></td>
+</tr>
+<tr>
+<td><input type='text' id='f4'></td>
+<td><input type='text' id='f5'></td>
+</tr>
+<tr>
+<td><input type='text' id='f6'></td>
+<td><input type='text' id='f7'></td>
+</tr>
+<tr>
+<td><input type='text' id='f8'></td>
+<td><input type='text' id='f9'></td>
+</tr>
+<tr>
+<td><input type='text' id='f10'></td>
+<td><input type='text' id='f11'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>03</span>What they want instead</h2>
+<div class='help'>Specific enough that they could picture an ordinary Tuesday inside it.</div>
+<textarea id='f12'></textarea>
+</section>
+<section>
+<h2><span>04</span>What has stopped them</h2>
+<div class='help'>Including what they have already tried, and why it did not hold.</div>
+<textarea id='f13'></textarea>
+</section>
+<section>
+<h2><span>05</span>The cost of staying where they are</h2>
+<div class='help'>Honest, not dramatic.</div>
+<label for='f14'>In six months</label>
+<input type='text' id='f14'>
+<label for='f15'>In two years</label>
+<input type='text' id='f15'>
+</section>
+<section>
+<h2><span>06</span>Your one-liner</h2>
+<div class='help'>Three drafts. Circle the one you would say to a stranger without adding anything.</div>
+<table><thead><tr>
+<th>I work with ___ who ___ so that they can ___</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f16'></td>
+</tr>
+<tr>
+<td><input type='text' id='f17'></td>
+</tr>
+<tr>
+<td><input type='text' id='f18'></td>
+</tr>
+</tbody></table>
+</section>
+<section>
+<h2><span>07</span>The three answers</h2>
+<div class='help'>Write them as you would say them, then say each out loud twice.</div>
+<label for='f19'>What do you do?</label>
+<textarea id='f19'></textarea>
+<label for='f20'>Who is it for?</label>
+<textarea id='f20'></textarea>
+<label for='f21'>How is this different from therapy?</label>
+<textarea id='f21'></textarea>
+</section>
+<section>
+<h2><span>08</span>Your announcement</h2>
+<div class='help'>One message, to everyone on your list. Told as news, ending with the question. Drafted here, finished together, sent on the call.</div>
+<label for='f22'>As you know, I have been a therapist for… and I love what I do. Alongside that, I am excited to tell you…</label>
+<textarea id='f22'></textarea>
+<label for='f23'>…who want to achieve</label>
+<input type='text' id='f23'>
+<label for='f24'>Closing question — do you know anyone who might be interested in this?</label>
+<input type='text' id='f24'>
+<label for='f25'>How many will go out on the day of our session</label>
+<input type='text' id='f25'>
+</section>
+<div class='note'>Your answers save automatically in this browser. They are not sent anywhere. Use Download / print to keep a copy, and share the PDF with your coach 24 hours before the session.</div>
+</div>
+<div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
+<script>
+(function(){
+ var KEY='psyberB-wk3';
+ var els=[].slice.call(document.querySelectorAll('input,textarea'));
+ var status=document.getElementById('saved');
+ function box(e){return e.type==='checkbox';}
+ function get(e){return box(e)?e.checked:e.value;}
+ function set(e,v){if(box(e)){e.checked=!!v;}else{e.value=v;}}
+ function paint(){[].slice.call(document.querySelectorAll('.shift')).forEach(function(s){
+   var c=s.querySelector('input[type=checkbox]');s.classList.toggle('on',!!(c&&c.checked));});}
+ function load(){try{var d=JSON.parse(localStorage.getItem(KEY)||'{}');
+   els.forEach(function(e){if(d[e.id]!==undefined)set(e,d[e.id]);});}catch(e){}paint();}
+ var t;
+ function save(){var d={};els.forEach(function(e){var v=get(e);if(v)d[e.id]=v;});
+   localStorage.setItem(KEY,JSON.stringify(d));
+   status.textContent='Saved '+new Date().toLocaleTimeString();}
+ els.forEach(function(e){
+   e.addEventListener('input',function(){clearTimeout(t);t=setTimeout(save,400);});
+   if(box(e))e.addEventListener('change',function(){paint();save();});});
+ document.getElementById('save').addEventListener('click',save);
+ document.getElementById('print').addEventListener('click',function(){save();window.print();});
+ document.getElementById('clear').addEventListener('click',function(){
+   if(confirm('Clear every answer on this sheet? This cannot be undone.')){
+     localStorage.removeItem(KEY);
+     els.forEach(function(e){set(e,box(e)?false:'');});paint();status.textContent='Cleared';}});
+
+ // reference menus — open in place rather than sending anyone off to find a PDF
+ function shut(){[].slice.call(document.querySelectorAll('.modal')).forEach(function(m){
+   m.classList.remove('on');});document.body.classList.remove('menu-open');}
+ [].slice.call(document.querySelectorAll('.menubtn')).forEach(function(b){
+   b.addEventListener('click',function(){shut();
+     var m=document.getElementById(b.getAttribute('data-menu'));
+     if(!m)return;
+     m.classList.add('on');document.body.classList.add('menu-open');
+     // Always open at the top — a reopened menu otherwise keeps its last scroll.
+     var body=m.querySelector('.mbody');if(body)body.scrollTop=0;
+     m.querySelector('.close').focus();});});
+ [].slice.call(document.querySelectorAll('.modal')).forEach(function(m){
+   m.addEventListener('click',function(ev){if(ev.target===m)shut();});});
+ [].slice.call(document.querySelectorAll('.modal .close')).forEach(function(b){
+   b.addEventListener('click',shut);});
+ document.addEventListener('keydown',function(ev){if(ev.key==='Escape')shut();});
+
+ load();
+ window.addEventListener('beforeunload',save);
+})();
+</script></body></html>

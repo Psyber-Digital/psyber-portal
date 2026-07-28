@@ -12,6 +12,11 @@ export type PortalResource = {
 export const WEEK_WORKBOOK: Record<number, PortalResource | undefined> = {
   1: { href: "/session-01/Session-1-Foundations-Workbook.html", label: "Open your workbook", open: true },
   2: { href: "/session-02/Session-02-Working-Sheet.html", label: "Open your Working Sheet", open: true },
+  3: { href: "/session-03/Session-03-Working-Sheet.html", label: "Open your Working Sheet", open: true },
+  4: { href: "/session-04/Session-04-Working-Sheet.html", label: "Open your Working Sheet", open: true },
+  5: { href: "/session-05/Session-05-Working-Sheet.html", label: "Open your Working Sheet", open: true },
+  6: { href: "/session-06/Session-06-Working-Sheet.html", label: "Open your Working Sheet", open: true },
+  7: { href: "/session-07/Session-07-Working-Sheet.html", label: "Open your Working Sheet", open: true },
 };
 
 export const WEEK_RESOURCES: Record<number, PortalResource[]> = {
@@ -25,6 +30,22 @@ export const WEEK_RESOURCES: Record<number, PortalResource[]> = {
   2: [
     { href: "/session-02/Session-02-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
   ],
+  3: [
+    { href: "/session-03/Session-03-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
+  ],
+  4: [
+    { href: "/session-04/Session-04-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
+  ],
+  5: [
+    { href: "/session-05/Session-05-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
+    { href: "/session-05/Your-First-Session-Template.html", label: "Your First Session — the template", sub: "Worked example beside your version · fill it live", icon: "◆", open: true },
+  ],
+  6: [
+    { href: "/session-06/Session-06-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
+  ],
+  7: [
+    { href: "/session-07/Session-07-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
+  ],
 };
 
 export const WEEK_PRINT_RESOURCES: Record<number, PortalResource[]> = {
@@ -36,6 +57,21 @@ export const WEEK_PRINT_RESOURCES: Record<number, PortalResource[]> = {
   ],
   2: [
     { href: "/session-02/Session-02-Principle-Card-Print-BW.pdf", label: "The Principle Card", sub: "Ink-friendly · PDF", icon: "▤", open: true },
+  ],
+  3: [
+    { href: "/session-03/Session-03-Principle-Card-Print-BW.pdf", label: "The Principle Card", sub: "Ink-friendly · PDF", icon: "▤", open: true },
+  ],
+  4: [
+    { href: "/session-04/Session-04-Principle-Card-Print-BW.pdf", label: "The Principle Card", sub: "Ink-friendly · PDF", icon: "▤", open: true },
+  ],
+  5: [
+    { href: "/session-05/Session-05-Principle-Card-Print-BW.pdf", label: "The Principle Card", sub: "Ink-friendly · PDF", icon: "▤", open: true },
+  ],
+  6: [
+    { href: "/session-06/Session-06-Principle-Card-Print-BW.pdf", label: "The Principle Card", sub: "Ink-friendly · PDF", icon: "▤", open: true },
+  ],
+  7: [
+    { href: "/session-07/Session-07-Principle-Card-Print-BW.pdf", label: "The Principle Card", sub: "Ink-friendly · PDF", icon: "▤", open: true },
   ],
 };
 

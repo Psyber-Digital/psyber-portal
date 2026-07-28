@@ -52,7 +52,112 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     workbookStep: {
       mins: "25 min",
       title: "Your Working Sheet",
-      blurb: (<>{"Three stages, in order: generate, narrow, research. Do them in separate sittings if you can. Do not pick — we pick together on the call."}</>),
+      blurb: (<>{"Three stages, in order: generate everything, narrow it down, then research your top three. Finish each stage before moving on, and do them in separate sittings if you can. Do not pick a winner — we do that together on the call."}</>),
+      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
+    },
+    resourcesStep: { blurb: "The Principle Card is the one to pin up. Everything else here is optional depth." },
+  },
+  3: {
+    bannerIntro: "Your client is the hero of this story and you are the guide. This session gives you the words — and your announcement goes out at the end of it.",
+    note: {
+      fromLabel: "A Note From Your Coach",
+      initial: "D",
+      body: (<><span className="block">{"Watch the video first. It walks the Working Sheet with you and it covers the five things every message needs: the hero, their pain points, what they want instead, what is standing in the way, and what it costs them to stay where they are."}</span><span className="block mt-3">{"Then fill the sheet. The most valuable material here is their language, not yours — the exact phrases you have heard from the people you are serving."}</span><span className="block mt-3">{"By the end of our session your announcement goes out. Written together, sent the same day."}</span></>),
+    },
+    budget: { total: "40 minutes, plus your list", parts: [{ value: "8 min", label: "to watch" }, { value: "30 min", label: "for the sheet" }, { value: "ongoing", label: "your list" }] },
+    videoStep: {
+      mins: "approx 8 min",
+      title: "Pre-work video — message",
+      blurb: (<>{"Why your client is the hero and you are the guide, the five things every message needs, and the announcement that goes out at the end of this session."}</>),
+    },
+    workbookStep: {
+      mins: "30 min",
+      title: "Your Working Sheet",
+      blurb: (<>{"Work backwards from what actually gets sent. We fill only what feeds your announcement and the three answers — the rest waits until you have a real client to answer it from."}</>),
+      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
+    },
+    resourcesStep: { blurb: "The Principle Card is the one to pin up. Everything else here is optional depth." },
+  },
+  4: {
+    bannerIntro: "The map and the number. By the end of this session you have something somebody can buy.",
+    note: {
+      fromLabel: "A Note From Your Coach",
+      initial: "D",
+      body: (<><span className="block">{"Two things get decided here: the shape of your program, and the price. Neither should take long."}</span><span className="block mt-3">{"The map is one page. Modules, what changes for the client at the end of each, and how many weeks. The detail inside each module comes later, once there is a real client to build it for."}</span><span className="block mt-3">{"The video walks the sheet with you, including the four ways to make an offer more compelling and how to set your two numbers."}</span></>),
+    },
+    budget: { total: "45 minutes, plus your list", parts: [{ value: "8 min", label: "to watch" }, { value: "35 min", label: "for the sheet" }, { value: "ongoing", label: "your list" }] },
+    videoStep: {
+      mins: "approx 8 min",
+      title: "Pre-work video — structure & offer",
+      blurb: (<>{"A one-page map with an objective for every module, what actually creates value when you have no testimonials, the four offer enhancers, and how to set your price."}</>),
+    },
+    workbookStep: {
+      mins: "35 min",
+      title: "Your Working Sheet",
+      blurb: (<>{"One page for the map, two numbers for the price. If you find yourself designing slides or naming units, that is a level deeper than this session needs — come back."}</>),
+      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
+    },
+    resourcesStep: { blurb: "The Principle Card is the one to pin up. Everything else here is optional depth." },
+  },
+  5: {
+    bannerIntro: "We build your first session together, in the hour, from a template. There is a floor you only have to clear.",
+    note: {
+      fromLabel: "A Note From Your Coach",
+      initial: "D",
+      body: (<><span className="block">{"This session works differently. We build the first session of your program together, live, using a slide template with the gaps already marked. You leave the call with it finished, and we send you the file afterwards."}</span><span className="block mt-3">{"So the pre-work is deliberately light. Watch the video, open the template, and put a rough first thought in each box. Four scruffy lines is a good outcome. Please do not polish, and please do not open a design tool."}</span><span className="block mt-3">{"One thing to read before we speak, because it is the most important instruction in this program: there is a minimum standard, and once you have cleared it you are finished. Not when it feels finished. When it clears the floor."}</span></>),
+    },
+    budget: { total: "20 minutes, plus your list", parts: [{ value: "5 min", label: "to watch" }, { value: "15 min", label: "rough first pass" }, { value: "ongoing", label: "your list" }] },
+    videoStep: {
+      mins: "approx 5 min",
+      title: "Pre-work video — creation",
+      blurb: (<>{"What your first session is actually for, the minimum it has to contain, and the template we fill in together on the call."}</>),
+    },
+    workbookStep: {
+      mins: "25 min",
+      title: "Your Working Sheet",
+      blurb: (<>{"This sheet runs in the same order as the template, block for slide, so whichever you open first the other one fills in. Rough first thoughts only — four scruffy lines is a good outcome, and we build the rest together on the call."}</>),
+      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
+    },
+    resourcesStep: { blurb: "The Principle Card is the one to pin up. Everything else here is optional depth." },
+  },
+  6: {
+    bannerIntro: "The discovery call, step by step — a conversation you are already unusually good at, with a structure for the last ten minutes.",
+    note: {
+      fromLabel: "A Note From Your Coach",
+      initial: "D",
+      body: (<><span className="block">{"Watch the video. It walks the discovery call from start to finish, in order, and the Working Sheet follows exactly the same sequence so you can write your own version of each step."}</span><span className="block mt-3">{"Most of our session is rehearsal rather than discussion. Come ready to say things out loud."}</span><span className="block mt-3">{"The two parts people find hardest are saying the price and then staying quiet, and answering the two questions that only come up for therapists. We practice both."}</span><span className="block mt-3">{"If you have had any real conversations already, bring what happened — especially the ones that went badly."}</span></>),
+    },
+    budget: { total: "50 minutes", parts: [{ value: "8 min", label: "to watch" }, { value: "25 min", label: "for the sheet" }, { value: "15 min", label: "out loud" }] },
+    videoStep: {
+      mins: "approx 8 min",
+      title: "Pre-work video — the conversation",
+      blurb: (<>{"The discovery call in order, from setting the agenda to asking for the decision — including the price moment and the action-taking discount."}</>),
+    },
+    workbookStep: {
+      mins: "25 min",
+      title: "Your Working Sheet",
+      blurb: (<>{"This sheet follows the call in order. Write your own version of each step, then read the whole thing aloud twice before our session."}</>),
+      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
+    },
+    resourcesStep: { blurb: "The Principle Card is the one to pin up. Everything else here is optional depth." },
+  },
+  7: {
+    bannerIntro: "Volume, done properly. The whole list worked — and the number that makes a first client likely rather than lucky.",
+    note: {
+      fromLabel: "A Note From Your Coach",
+      initial: "D",
+      body: (<><span className="block">{"This session teaches nothing new. It is about doing more of what you started in session two, systematically, until the numbers work."}</span><span className="block mt-3">{"The video is short and it explains where the target number comes from. Most of your time this week goes on the list itself."}</span><span className="block mt-3">{"Come to our session with your list open. We work through it live, and messages go out while we are talking — including the ones you have been putting off."}</span></>),
+    },
+    budget: { total: "60 minutes", parts: [{ value: "5 min", label: "to watch" }, { value: "15 min", label: "for the sheet" }, { value: "40 min", label: "on your list" }] },
+    videoStep: {
+      mins: "approx 5 min",
+      title: "Pre-work video — launch",
+      blurb: (<>{"Where the target number comes from, why connectors do most of the work, and the rhythm that reaches 250 people without taking over your week."}</>),
+    },
+    workbookStep: {
+      mins: "15 min",
+      title: "Your Working Sheet",
+      blurb: (<>{"Short sheet, busy week. Most of your time goes on the list rather than on this page."}</>),
       caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
     },
     resourcesStep: { blurb: "The Principle Card is the one to pin up. Everything else here is optional depth." },
