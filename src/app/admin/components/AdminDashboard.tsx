@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { FileRow, Profile, Settings, SharedFile, Week } from "@/lib/types";
+import { weekWorkbook, weekResources, weekPrintResources } from "@/lib/resources";
 import {
   DEFAULT_EXPIRY_HOURS,
   EXPIRY_WINDOWS,
@@ -329,6 +330,55 @@ function AddClientForm() {
 
 // One week's header: read-only until Edit is pressed, then the same fields the
 // Add form uses. Kept separate so each row owns its own editing state.
+// What a client actually sees, beyond anything uploaded here.
+//
+// The Working Sheet, Principle Card and menus are wired in src/lib/resources.ts
+// and served from /public — they never touch Supabase storage, so the file
+// columns above showed "no files" for a session that has a complete set. That
+// read as a gap when nothing was missing. Listed read-only, because removing one
+// is a code change, not a click.
+function BuiltIn({ number }: { number: number }) {
+  const wb = weekWorkbook(number);
+  const items = [
+    ...(wb ? [{ ...wb, tag: "Workbook" }] : []),
+    ...weekResources(number).map((r) => ({ ...r, tag: "Resource" })),
+    ...weekPrintResources(number).map((r) => ({ ...r, tag: "Print" })),
+  ];
+  if (!items.length) return null;
+
+  return (
+    <div className="mt-5 rounded-xl border border-dashed border-line bg-ink/40 p-4">
+      <div className="flex items-baseline justify-between gap-3">
+        <div className="psy-eyebrow text-slate">Built into the programme</div>
+        <span className="font-disp text-[11px] text-dim">
+          {items.length} item{items.length === 1 ? "" : "s"}
+        </span>
+      </div>
+      <p className="mt-1 text-[12px] text-dim">
+        Served from the app rather than uploaded here — the client sees these whether or
+        not anything is uploaded above. Changing them is a code change.
+      </p>
+      <ul className="mt-3 grid gap-1.5 sm:grid-cols-2">
+        {items.map((r) => (
+          <li key={r.tag + r.href} className="flex items-center gap-2 text-[12.5px]">
+            <span className="rounded bg-slate/[0.14] px-1.5 py-0.5 font-disp text-[9.5px] uppercase tracking-[1px] text-slate">
+              {r.tag}
+            </span>
+            <a
+              href={r.href}
+              target="_blank"
+              rel="noreferrer"
+              className="truncate text-dim underline decoration-line underline-offset-2 hover:text-off"
+            >
+              {r.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function WeekHeader({
   week,
   pending,
@@ -511,6 +561,7 @@ function WeeksTab({ weeks, files }: { weeks: Week[]; files: FileRow[] }) {
                 pending={pending}
               />
             </div>
+            <BuiltIn number={w.number} />
           </div>
         );
       })}
