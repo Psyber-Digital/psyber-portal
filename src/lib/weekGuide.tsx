@@ -43,7 +43,7 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
       initial: "D",
       body: (<><span className="block">{"This session has more pre-work than most, and that is deliberate. Generating and researching are things you can do alone. Deciding is not — that is what our session is for."}</span><span className="block mt-3">{"The video walks the Working Sheet with you. Three stages, in order: generate everything, narrow it down, then research the last three."}</span><span className="block mt-3">{"Do the stages in separate sittings if you can. Generating and judging at the same time flattens your ideas, and a night’s gap usually produces something you would not have reached in one go."}</span><span className="block mt-3">{"Bring three to the session, with what you found. Do not pick — we pick together, and then we move straight on to your message."}</span><span className="block mt-3">{"Nothing goes out this week. You need the words before you can tell anyone, and that is the next session — so this week is yours to think in."}</span></>),
     },
-    budget: { total: "65 minutes", parts: [{ value: "7 min", label: "to watch" }, { value: "30 min", label: "generating" }, { value: "30 min", label: "researching three" }] },
+    budget: { total: "95 minutes", parts: [{ value: "7 min", label: "to watch" }, { value: "45 min", label: "generating" }, { value: "45 min", label: "researching three" }] },
     videoStep: {
       mins: "approx 7 min",
       title: "Pre-work video — niche",
