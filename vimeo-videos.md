@@ -5,12 +5,28 @@ Safe to store here: IDs/hashes only play when embedded on the whitelisted portal
 The API **access token is NOT stored in the repo** (kept in the session scratchpad only).
 
 Privacy applied to every video: `view = disable` (hidden from Vimeo & search) +
-`embed = whitelist` locked to `psyber-portal.vercel.app`.
+`embed = whitelist` locked to `psyber-portal.vercel.app` **and**
+`portal.psyberdigital.com`.
+
+This was a claim, not a fact, until 29 Jul 2026. Session 01 was sitting on
+`view = unlisted` / `embed = public` — paid pre-work watchable by anyone with the
+link and embeddable on any site — because privacy was set by hand, per video, and
+one was missed. Two commands now do it, and both must be run on every upload:
+
+```
+python3 vimeo_replace.py <id> --lock      hidden + locked to the portal domains
+python3 vimeo_replace.py <id> --player    like/share/watch-later/embed + logo off
+```
+(both live in `Programme/Flagship/build/vimeo_replace.py`)
+
+Player chrome (29 Jul 2026): the like, share, watch-later and embed-code buttons
+and the Vimeo logo are off on all three videos. Those are account-side per-video
+settings — the `title=0` style parameters in `VimeoEmbed.tsx` cannot reach them.
 
 | Session | Video ID | Private hash | Embed src | Status |
 |---|---|---|---|---|
-| Welcome — onboarding (not a session) | `1214030618` | — | `https://player.vimeo.com/video/1214030618` | **Final render** (ElevenLabs Brian + on-cue animation, 4:36). Shown above the weeks on the portal home, not as a week. Source replaced 29 Jul 2026 — opens "Welcome to Psyber Digital" and fixes "live" being read as the verb. The Vimeo-side title still reads "Welcome · Therapy+ (Onboarding)". |
-| Session 01 — Foundations (pre-work) | `1211864055` | `19c07e739e` | `https://player.vimeo.com/video/1211864055?h=19c07e739e` | Wired into portal (week 1). **Replace source with FINAL render**, then deploy. |
+| Welcome — onboarding (not a session) | `1214030618` | — | `https://player.vimeo.com/video/1214030618` | **Final render** (ElevenLabs Brian + on-cue animation, 4:36). Shown above the weeks on the portal home, not as a week. Source replaced 29 Jul 2026 — opens "Welcome to Psyber Digital" and fixes "live" being read as the verb. Renamed on Vimeo to "Welcome · Psyber Digital (Onboarding)". |
+| Session 01 — Foundations (pre-work) | `1211864055` | `19c07e739e` | `https://player.vimeo.com/video/1211864055?h=19c07e739e` | Wired into portal (week 1). **Replace source with FINAL render**, then deploy. Privacy corrected 29 Jul 2026 — was `view=unlisted` + `embed=public`. |
 | Session 02 — Niche Ideas (pre-work) | `1212379930` | `c79b8e732c` | `https://player.vimeo.com/video/1212379930?h=c79b8e732c` | **Final render** (ElevenLabs Brian + on-cue animation, 7:36). Uploaded 23 Jul 2026; privacy `view=disable` + `embed=whitelist` (psyber-portal.vercel.app + portal.psyberdigital.com). Wired into portal (week 2). |
 
 **Final render to upload (replace source, keep this ID):** `Projects/1-PsyberDigital/Programme/Session-1-Plan-and-Model-Shift/assets/video/Session-1-Prework-Video.mp4` (4:35, Brian voiceover + on-cue animation). Currently the Vimeo source is an earlier draft.
