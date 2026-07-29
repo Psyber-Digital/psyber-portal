@@ -18,6 +18,18 @@ export const WEEK_VIDEOS: Record<number, WeekVideo> = {
   2: { id: "1212379930", hash: "c79b8e732c", title: "Session 2 · Pre-Work" },
 };
 
+// The onboarding video, shown at the top of the portal home rather than as a week.
+// It is not a session: no working sheet, nothing to complete. Same privacy as the
+// rest — hidden on Vimeo, embeddable only on the portal domains.
+export const WELCOME_VIDEO: WeekVideo | undefined = {
+  id: "1214030618",
+  title: "Welcome · Therapy+",
+};
+
 export function weekVideo(weekNumber: number): WeekVideo | undefined {
   return WEEK_VIDEOS[weekNumber];
+}
+
+export function welcomeVideo(): WeekVideo | undefined {
+  return WELCOME_VIDEO;
 }

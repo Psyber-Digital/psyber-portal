@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { FileRow, Settings, Week, WeekOutline } from "@/lib/types";
 import { weekGuide } from "@/lib/weekGuide";
 import { Header } from "./components/Header";
+import { WelcomeVideo } from "./components/WelcomeVideo";
 import { PortalNav } from "./components/PortalNav";
 import { SetPasswordPrompt } from "./components/SetPasswordPrompt";
 import { WelcomeBanner } from "./components/WelcomeBanner";
@@ -94,6 +95,8 @@ export default async function PortalPage({
       <PortalNav badge={uncollected ?? 0} />
 
       {!hasPassword && <SetPasswordPrompt />}
+
+      <WelcomeVideo currentWeek={currentWeek} />
 
       {current && (
         <WelcomeBanner week={current} intro={weekGuide(current.number)?.bannerIntro} />
