@@ -175,3 +175,40 @@ Resend emails, the size/MIME rejections, the CSV round trip) — tests 10–13,
 Unrelated uncommitted work is sitting in
 `public/session-02/Session-2-Niche-Workbook.html` (a half-built "Validate pass")
 — must NOT ride along in the v3 commits.
+
+
+## State — 29 July 2026 (live portal)
+
+Verified in `/admin` against the live deployment, not inferred from the repo.
+
+- **Seven weeks in the live database**, weeks 1–2 published, 3–7 draft.
+- The live client (LK-202607) is on **week 2**, and week 2 serves the current
+  Niche pre-work. No gap between what she was told and what she sees.
+
+**`supabase/seed.sql` was stale and has been replaced.** It still described the
+original three placeholder weeks ("Foundations — Mapping Your Baseline", …) long
+after the live database moved to the seven flagship sessions, because
+`build_v3.py` writes its generated seed to `ClientPortal-B` and this copy never
+received one. Harmless in place — it used `on conflict do nothing` — but it would
+have quietly seeded the wrong programme into a fresh project, and it did mislead
+a reading of live state on 29 Jul. Now a copy of the generated seed.
+
+> **Refresh it whenever session content changes.** It is generated output living
+> in a hand-maintained repo, which is exactly the drift this codebase removed
+> everywhere else (`DESCRIPTIONS`, `WEEK_TITLES`, the time budgets). The durable
+> fix is a second output target in `build_v3.py`; not done, because that would
+> make every content build write into the live repo and that deserves a decision
+> rather than a side effect.
+
+### Uncommitted in this repo as at 29 Jul
+
+Pre-existing: `TODO.md` edit · `PreviousWeek.tsx` deleted (zero references — safe)
+· `VIMEO-SETUP.md` and `design-mockups/` untracked.
+
+Added 29 Jul, the ADR-0021 completion machinery: `0006_check_in.sql` ·
+`emails/check-in.txt` · `sendCheckInEmail` · `loadNamedEmail` · `sendCheckIn` and
+`markHeard` actions · the admin quiet strip · two optional `Profile` fields ·
+**`src/lib/activity.ts`**, which is new to both repos and stamps
+`last_activity_at` when the *client* moves (portal visit, any contact-list
+action) rather than only when the coach records something. `tsc --noEmit` and
+`npm run build` both clean.
