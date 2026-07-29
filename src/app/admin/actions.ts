@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { sendSharedFileEmail, sendWeekUnlockEmail } from "@/lib/email";
-import { weekEmail } from "@/lib/weekEmail";
+import { sendCheckInEmail, sendSharedFileEmail, sendWeekUnlockEmail } from "@/lib/email";
+import { loadNamedEmail, weekEmail } from "@/lib/weekEmail";
 import {
   EXPIRY_WINDOWS,
   MAX_UPLOAD_BYTES,
@@ -413,4 +413,61 @@ export async function saveSettings(formData: FormData) {
     .eq("id", true);
   revalidatePath("/admin");
   revalidatePath("/portal");
+}
+
+
+/* ---------------- completion machinery (ADR-0020 / ADR-0021) ---------------- */
+
+// Drift is the documented failure mechanism: sessions slip, a few weeks pass,
+// momentum goes. These two actions are the cheapest known counter — a weekly
+// "where are you?" and a way to see who has gone quiet.
+//
+// Deliberately one-click rather than automatic. A nudge that fires the morning
+// after a session reads badly and costs trust; the coach stays in the loop.
+//
+// Under ADR-0021 (rolling one-ahead booking) this stopped being one of three
+// redundant safety nets and became the only backstop against an empty diary.
+
+export async function sendCheckIn(clientId: string): Promise<{ ok: boolean; error?: string }> {
+  await requireAdmin();
+
+  const admin = createAdminClient();
+  const { data: client } = await admin
+    .from("profiles")
+    .select("id, email, full_name")
+    .eq("id", clientId)
+    .single();
+
+  if (!client?.email) return { ok: false, error: "That client has no email address." };
+
+  const content = loadNamedEmail("check-in");
+  if (!content) return { ok: false, error: "emails/check-in.txt is missing or malformed." };
+
+  try {
+    await sendCheckInEmail({ to: client.email, name: client.full_name, content });
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Send failed." };
+  }
+
+  await admin
+    .from("profiles")
+    .update({ last_nudge_at: new Date().toISOString() })
+    .eq("id", clientId);
+
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+// "I heard back from them." Resets the quiet counter without sending anything.
+export async function markHeard(clientId: string): Promise<{ ok: boolean; error?: string }> {
+  await requireAdmin();
+
+  const admin = createAdminClient();
+  await admin
+    .from("profiles")
+    .update({ last_activity_at: new Date().toISOString() })
+    .eq("id", clientId);
+
+  revalidatePath("/admin");
+  return { ok: true };
 }

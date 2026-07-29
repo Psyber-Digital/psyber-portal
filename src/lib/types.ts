@@ -8,6 +8,10 @@ export interface Profile {
   role: Role;
   current_week: number;
   created_at: string;
+  // Completion machinery (ADR-0020/0021). Nullable: the portal behaves
+  // identically when they are unset.
+  last_activity_at?: string | null;
+  last_nudge_at?: string | null;
 }
 
 export interface Week {

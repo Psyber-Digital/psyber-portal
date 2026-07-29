@@ -12,6 +12,7 @@ import { SectionHead } from "./components/SectionHead";
 import { ThisWeek } from "./components/ThisWeek";
 import { BookingPanel } from "./components/BookingPanel";
 import { pad, stripWeekPrefix } from "@/lib/week";
+import { touchActivity } from "@/lib/activity";
 
 export const dynamic = "force-dynamic";
 const BOOK_ID = "book";
@@ -35,6 +36,10 @@ export default async function PortalPage({
     .single();
 
   if (profile?.role === "admin") redirect("/admin");
+
+  // Completion machinery: record that the client actually moved. Throttled and
+  // silent — see src/lib/activity.ts.
+  await touchActivity(user.id, profile?.role, profile?.last_activity_at);
 
   // Prompt users who haven't set a password yet (flag stamped on their auth
   // metadata when they save one via /portal/account).

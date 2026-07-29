@@ -105,6 +105,41 @@ ${CLIENT_CLOSING_TEXT}`;
   await sendEmail({ to, subject: content.subject, html, text });
 }
 
+// The weekly check-in. Systematises the one intervention with a track record:
+// the clients who finished were the ones who got a short "where are you?" every
+// week. Copy lives in emails/check-in.txt so it can be edited without a deploy.
+export async function sendCheckInEmail({
+  to,
+  name,
+  content,
+}: {
+  to: string;
+  name?: string | null;
+  content: WeekEmail;
+}): Promise<void> {
+  const first = (name ?? "").trim().split(/\s+/)[0];
+  const greeting = first ? `Dear ${first},` : "Hello,";
+  const url = portalUrl("/portal");
+
+  const text = `${greeting}
+
+${content.paragraphs.join("\n\n")}
+
+Open your portal: ${url}
+
+${CLIENT_CLOSING_TEXT}`;
+
+  const html = emailShellHtml({
+    eyebrow: "Your program &middot; check-in",
+    greeting,
+    paragraphs: content.paragraphs,
+    ctaLabel: "Open your portal &rarr;",
+    url,
+    closingHtml: CLIENT_CLOSING_HTML,
+  });
+  await sendEmail({ to, subject: content.subject, html, text });
+}
+
 // Tells a client the coach has left them a document, and — because these expire —
 // how long they have to collect it. Sent every time, by design: a 48-hour window
 // with no notification is a trap.

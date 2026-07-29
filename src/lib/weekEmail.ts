@@ -44,3 +44,13 @@ export function weekEmail(n: number): WeekEmail | undefined {
     return undefined; // no file (or unreadable) → no email for this week
   }
 }
+
+// Named (non-week) email copy, same editable-file convention: emails/<name>.txt.
+// Used by the check-in nudge (ADR-0021), whose copy lives in emails/check-in.txt.
+export function loadNamedEmail(name: string): WeekEmail | null {
+  try {
+    return parseEmail(fs.readFileSync(path.join(EMAILS_DIR, `${name}.txt`), "utf8"));
+  } catch {
+    return null;
+  }
+}

@@ -12,6 +12,7 @@ import {
   normaliseStatus,
 } from "@/lib/contacts";
 import type { Contact } from "@/lib/types";
+import { touchActivity } from "@/lib/activity";
 
 // Every action here runs entirely through the USER-SCOPED Supabase client. The
 // service role is never touched — the contacts table has one owner-only RLS
@@ -28,6 +29,18 @@ async function requireUser() {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not signed in");
+
+  // Completion machinery: every action in this file is a client adding to or
+  // working their list, which is unambiguous movement. Throttled and silent —
+  // see src/lib/activity.ts. Read the role first so an admin poking at the
+  // page does not reset a client's quiet counter.
+  const { data: p } = await supabase
+    .from("profiles")
+    .select("role, last_activity_at")
+    .eq("id", user.id)
+    .single();
+  await touchActivity(user.id, p?.role, p?.last_activity_at);
+
   return { supabase, user };
 }
 

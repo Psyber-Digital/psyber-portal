@@ -21,7 +21,9 @@ import {
   deleteFile,
   deleteSharedFile,
   deleteWeek,
+  markHeard,
   saveSettings,
+  sendCheckIn,
   sendToClient,
   setCurrentWeek,
   togglePublish,
@@ -233,6 +235,7 @@ function ClientsTab({
               );
             })}
           </div>
+          <CheckInStrip client={c} />
           <div className="mt-3 flex justify-end">
             <button
               onClick={() => remove(c.id, c.full_name || c.email || "this client")}
@@ -938,5 +941,88 @@ function BookingTab({ settings }: { settings: Settings }) {
         </div>
       </form>
     </>
+  );
+}
+
+
+/* ---------------- completion machinery (ADR-0020 / ADR-0021) ---------------- */
+
+// Drift is what kills clients: sessions slip, a few weeks pass, momentum goes.
+// This strip makes "gone quiet" visible and gives the two cheapest answers —
+// a one-click check-in, and a way to reset the counter when they reply.
+//
+// Ten days is the threshold from ADR-0020. Past it the row turns orange and the
+// program's own rule applies: book a clinic and spend it breaking the stuck
+// thing into something smaller.
+const QUIET_DAYS = 10;
+
+function daysSince(iso?: string | null): number | null {
+  if (!iso) return null;
+  const ms = Date.now() - new Date(iso).getTime();
+  return Math.max(0, Math.floor(ms / 86_400_000));
+}
+
+function CheckInStrip({ client }: { client: Profile }) {
+  const [pending, start] = useTransition();
+  const [note, setNote] = useState<string | null>(null);
+
+  const quiet = daysSince(client.last_activity_at);
+  const nudged = daysSince(client.last_nudge_at);
+  const isQuiet = quiet !== null && quiet >= QUIET_DAYS;
+
+  return (
+    <div
+      className={`mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[10px] border px-3.5 py-2.5 text-[12.5px] ${
+        isQuiet ? "border-orange/50 bg-orange/[0.09]" : "border-line bg-ink/40"
+      }`}
+    >
+      <span className={isQuiet ? "font-semibold text-orange" : "text-dim"}>
+        {quiet === null
+          ? "No activity recorded yet"
+          : quiet === 0
+            ? "Active today"
+            : `Quiet for ${quiet} day${quiet === 1 ? "" : "s"}`}
+      </span>
+
+      {isQuiet && (
+        <span className="text-dim">— book a clinic and shrink the stuck thing</span>
+      )}
+
+      <span className="flex-1" />
+
+      {note && <span className="text-dim">{note}</span>}
+
+      {nudged !== null && (
+        <span className="text-dim">
+          Last check-in {nudged === 0 ? "today" : `${nudged}d ago`}
+        </span>
+      )}
+
+      <button
+        onClick={() =>
+          start(async () => {
+            const r = await markHeard(client.id);
+            setNote(r.ok ? "Reset" : (r.error ?? "Failed"));
+          })
+        }
+        disabled={pending}
+        className="psy-btn-ghost !px-3 !py-1 !text-[12px] disabled:opacity-40"
+      >
+        Heard from them
+      </button>
+
+      <button
+        onClick={() =>
+          start(async () => {
+            const r = await sendCheckIn(client.id);
+            setNote(r.ok ? "Check-in sent" : (r.error ?? "Failed"));
+          })
+        }
+        disabled={pending}
+        className="psy-btn !px-3 !py-1 !text-[12px] disabled:opacity-40"
+      >
+        {pending ? "Sending…" : "Send check-in"}
+      </button>
+    </div>
   );
 }
