@@ -200,15 +200,26 @@ a reading of live state on 29 Jul. Now a copy of the generated seed.
 > make every content build write into the live repo and that deserves a decision
 > rather than a side effect.
 
-### Uncommitted in this repo as at 29 Jul
+### Shipped 29 Jul, 02:00–02:12 — verified in production
 
-Pre-existing: `TODO.md` edit · `PreviousWeek.tsx` deleted (zero references — safe)
-· `VIMEO-SETUP.md` and `design-mockups/` untracked.
+The ADR-0021 completion machinery is **live and tested end to end**:
+`0006_check_in.sql` applied to the remote database (confirmed via
+`supabase migration list --linked`, local *and* remote now show 0006) ·
+`emails/check-in.txt` · `sendCheckInEmail` · `loadNamedEmail` · `sendCheckIn`
+and `markHeard` · the admin quiet strip · two optional `Profile` fields ·
+**`src/lib/activity.ts`**, new to both repos, stamping `last_activity_at` on
+real client movement rather than only on the coach's own button.
 
-Added 29 Jul, the ADR-0021 completion machinery: `0006_check_in.sql` ·
-`emails/check-in.txt` · `sendCheckInEmail` · `loadNamedEmail` · `sendCheckIn` and
-`markHeard` actions · the admin quiet strip · two optional `Profile` fields ·
-**`src/lib/activity.ts`**, which is new to both repos and stamps
-`last_activity_at` when the *client* moves (portal visit, any contact-list
-action) rather than only when the coach records something. `tsc --noEmit` and
-`npm run build` both clean.
+Three commits — `3817359` tidy-up, `fa2fa83` seed + context, `5ec8522` the
+machinery — kept separate so the machinery can be reverted alone. Deployed via
+push to `main`; a live test send was confirmed received.
+
+Also committed in the same pass: the deletion of `PreviousWeek.tsx` (no
+remaining references), `VIMEO-SETUP.md`, and `design-mockups/`.
+
+**Practical gotcha, cost about half an hour:** local previews of this portal need
+**password** sign-in. Magic links redirect to the Supabase Site URL, which is
+production, so they always take you off localhost. And check what is on port
+3000 first — `ClientPortal-B` runs there with `NEXT_PUBLIC_PREVIEW=1`, which
+short-circuits the auth gate in middleware and serves fixtures, so it looks like
+a working portal while checking nothing.
