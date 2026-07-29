@@ -23,7 +23,9 @@ export const WEEK_VIDEOS: Record<number, WeekVideo> = {
 // rest — hidden on Vimeo, embeddable only on the portal domains.
 export const WELCOME_VIDEO: WeekVideo | undefined = {
   id: "1214030618",
-  title: "Welcome · Therapy+",
+  // VimeoEmbed prefers this over the title prop, so it is the one that reaches
+  // the iframe's accessible name. It must match the video's own opening line.
+  title: "Welcome · Psyber Digital",
 };
 
 export function weekVideo(weekNumber: number): WeekVideo | undefined {

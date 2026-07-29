@@ -25,7 +25,7 @@ export function WelcomeVideo({ currentWeek }: { currentWeek: number }) {
           <span className="ml-3">Watch the welcome video again</span>
         </summary>
         <div className="mt-4">
-          <VimeoEmbed video={video} title="Welcome to Therapy+" />
+          <VimeoEmbed video={video} title="Welcome to Psyber Digital" />
         </div>
       </details>
     );
@@ -36,14 +36,14 @@ export function WelcomeVideo({ currentWeek }: { currentWeek: number }) {
       <div className="p-5 sm:p-6">
         <div className="psy-eyebrow text-blue">Start here</div>
         <h2 className="mt-1.5 font-disp text-lg font-semibold sm:text-xl">
-          Welcome to Therapy<span className="text-orange">+</span>
+          Welcome to Psyber Digital
         </h2>
         <p className="mt-2 max-w-[68ch] text-[13.5px] leading-relaxed text-dim">
-          Four minutes on where the program goes and how each session runs. Nothing to
+          A few minutes on where the program goes and how each session runs. Nothing to
           fill in — watch it before you open Session 01.
         </p>
         <div className="mt-4">
-          <VimeoEmbed video={video} title="Welcome to Therapy+" />
+          <VimeoEmbed video={video} title="Welcome to Psyber Digital" />
         </div>
       </div>
     </section>

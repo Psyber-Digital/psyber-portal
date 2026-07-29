@@ -9,6 +9,7 @@ Privacy applied to every video: `view = disable` (hidden from Vimeo & search) +
 
 | Session | Video ID | Private hash | Embed src | Status |
 |---|---|---|---|---|
+| Welcome — onboarding (not a session) | `1214030618` | — | `https://player.vimeo.com/video/1214030618` | **Final render** (ElevenLabs Brian + on-cue animation, 4:36). Shown above the weeks on the portal home, not as a week. Source replaced 29 Jul 2026 — opens "Welcome to Psyber Digital" and fixes "live" being read as the verb. The Vimeo-side title still reads "Welcome · Therapy+ (Onboarding)". |
 | Session 01 — Foundations (pre-work) | `1211864055` | `19c07e739e` | `https://player.vimeo.com/video/1211864055?h=19c07e739e` | Wired into portal (week 1). **Replace source with FINAL render**, then deploy. |
 | Session 02 — Niche Ideas (pre-work) | `1212379930` | `c79b8e732c` | `https://player.vimeo.com/video/1212379930?h=c79b8e732c` | **Final render** (ElevenLabs Brian + on-cue animation, 7:36). Uploaded 23 Jul 2026; privacy `view=disable` + `embed=whitelist` (psyber-portal.vercel.app + portal.psyberdigital.com). Wired into portal (week 2). |
 
