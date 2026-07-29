@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Psyber Digital — Client Portal (mockup v2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220;
+    --panel:#131d33;
+    --panel2:#16213a;
+    --line:#26365a;              /* clearer border than the old #1F2B45 */
+    --off:#F4F7FB;               /* primary text */
+    --sec:#C2CEE2;               /* secondary text — much clearer than old slate #7C8AA3 */
+    --mut:#94A2BC;               /* muted text — clearer than old dim #5a6784 */
+    --blue:#1E90FF;
+    --orange:#FF8D1E;
+    --orange-soft:rgba(255,141,30,.14);
+    --orange-line:rgba(255,141,30,.42);
+    --good:#3fbf8f;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    min-height:100vh;
+    background:var(--ink);
+    background-image:radial-gradient(1100px 620px at 80% -14%, #1a2947 0%, rgba(11,18,32,0) 55%);
+    background-attachment:fixed;
+    color:var(--off);
+    font-family:'Open Sans',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  /* brand dot-grid texture */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;opacity:.4;z-index:0;
+    background-image:radial-gradient(rgba(124,138,163,.12) 1px, transparent 1px);
+    background-size:26px 26px;
+  }
+  .wrap{position:relative;z-index:1;max-width:1060px;margin:0 auto;padding:28px 20px 96px}
+  h1,h2,h3,h4,.disp{font-family:'Poppins',system-ui,sans-serif}
+
+  /* ---------- header ---------- */
+  header.top{display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px;gap:16px;flex-wrap:wrap}
+  header.top img{height:30px;width:auto}
+  .who{display:flex;align-items:center;gap:14px;font-size:13px;color:var(--sec)}
+  .pill{border:1px solid var(--orange-line);background:var(--orange-soft);color:var(--orange);
+    padding:4px 10px;border-radius:999px;font-family:'Poppins';font-size:10px;font-weight:600;
+    text-transform:uppercase;letter-spacing:1.5px}
+  .who .nm{font-weight:600;color:var(--off)}
+  .btn-ghost{border:1px solid var(--line);background:transparent;color:var(--off);
+    padding:8px 14px;border-radius:10px;font-family:'Poppins';font-size:13px;font-weight:500;
+    cursor:pointer;transition:.15s}
+  .btn-ghost:hover{border-color:var(--orange)}
+
+  /* ---------- shared bits ---------- */
+  .card{border:1px solid var(--line);border-radius:16px;background:var(--panel);
+    background-image:linear-gradient(180deg,#141f37,#0f1728);
+    box-shadow:0 24px 70px rgba(0,0,0,.5)}
+  .eyebrow{font-family:'Poppins';font-size:11px;font-weight:600;text-transform:uppercase;
+    letter-spacing:2.5px;color:var(--orange)}
+  .eyebrow.blue{color:var(--blue)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:none;cursor:pointer;
+    border-radius:11px;background:var(--orange);color:#241100;padding:13px 22px;
+    font-family:'Poppins';font-size:15px;font-weight:600;text-decoration:none;transition:.15s}
+  .btn:hover{filter:brightness(1.08)}
+  .btn:active{transform:translateY(1px)}
+  .btn.blue{background:var(--blue);color:#04122a}
+  .btn.sec{background:transparent;border:1px solid var(--line);color:var(--off)}
+  .btn.sec:hover{border-color:var(--orange)}
+  .btn .arrow{transition:.15s}
+  .btn:hover .arrow{transform:translateX(3px)}
+
+  /* ---------- welcome banner ---------- */
+  .welcome{padding:26px 28px;margin-bottom:26px;display:flex;justify-content:space-between;
+    align-items:flex-end;gap:20px;flex-wrap:wrap;overflow:hidden;position:relative}
+  .welcome::after{content:"";position:absolute;right:-40px;top:-40px;width:220px;height:220px;
+    background:radial-gradient(circle,rgba(255,141,30,.16),transparent 68%);pointer-events:none}
+  .welcome h1{font-size:26px;font-weight:700;margin-top:8px;letter-spacing:-.3px}
+  .welcome p{color:var(--sec);font-size:14.5px;margin-top:8px;max-width:56ch}
+  .weekchip{font-family:'Poppins';font-size:12px;font-weight:600;color:var(--orange);
+    background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:999px;
+    padding:6px 14px;white-space:nowrap}
+
+  /* ---------- stepper ---------- */
+  .stepper{padding:24px 24px 20px;margin-bottom:26px}
+  .stepper .lead{margin-bottom:18px}
+  .stepper .lead p{color:var(--sec);font-size:13px;margin-top:6px;max-width:54ch}
+  .track{display:flex;align-items:flex-start;overflow-x:auto;padding-bottom:6px}
+  .node{position:relative;min-width:104px;flex:none;padding-top:26px;text-align:center}
+  .node .bar{position:absolute;left:0;right:0;top:13px;height:3px;border-radius:2px}
+  .node .dot{position:absolute;left:50%;top:0;transform:translateX(-50%);width:28px;height:28px;
+    display:grid;place-items:center;border-radius:50%;border:2px solid;
+    font-family:'Poppins';font-size:11px;font-weight:700}
+  .node .lab{display:block;margin-top:8px;font-family:'Poppins';font-size:11px;text-transform:uppercase;
+    letter-spacing:1px;color:var(--sec)}
+  .node .ttl{display:block;margin-top:3px;font-size:12.5px;line-height:1.3;padding:0 6px}
+  .node .flag{display:block;margin-top:5px;font-family:'Poppins';font-size:9px;font-weight:600;
+    text-transform:uppercase;letter-spacing:1px;color:var(--orange)}
+  /* states */
+  .node.done .bar{background:var(--orange)}
+  .node.done .dot{background:var(--orange);border-color:var(--orange);color:#241100}
+  .node.done .ttl{color:var(--off)}
+  .node.current .bar{background:var(--orange)}
+  .node.current .dot{background:var(--ink);border-color:var(--orange);color:var(--orange);
+    box-shadow:0 0 0 5px rgba(255,141,30,.16)}
+  .node.current .ttl{color:var(--off);font-weight:600}
+  .node.locked{opacity:.5}
+  .node.locked .bar{background:var(--line)}
+  .node.locked .dot{background:var(--panel);border-color:var(--line);color:var(--mut)}
+  .node.locked .ttl{color:var(--sec)}
+
+  /* ---------- section heading ---------- */
+  .sec-head{display:flex;align-items:center;gap:12px;margin:38px 2px 16px}
+  .sec-head .eyebrow{white-space:nowrap}
+  .sec-head .rule{height:1px;flex:1;background:var(--line)}
+
+  /* ---------- framing note from practitioner ---------- */
+  .note-card{padding:22px 24px;margin-bottom:18px;border-left:3px solid var(--orange);
+    display:flex;gap:18px;align-items:flex-start}
+  .note-card .av{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;
+    font-family:'Poppins';font-weight:700;font-size:16px;color:#241100;
+    background:linear-gradient(135deg,var(--orange),#ffb15e)}
+  .note-card .nc-body{flex:1;min-width:0}
+  .note-card .nc-from{font-family:'Poppins';font-size:11px;font-weight:600;text-transform:uppercase;
+    letter-spacing:1.5px;color:var(--orange)}
+  .note-card p{color:var(--off);font-size:14.5px;margin-top:8px;line-height:1.6;max-width:70ch}
+  .note-card .budget{margin-top:14px;display:inline-flex;flex-wrap:wrap;gap:8px 16px;align-items:center;
+    background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:10px;
+    padding:9px 14px;font-family:'Poppins';font-size:13px;font-weight:600;color:var(--off)}
+  .note-card .budget b{color:var(--orange)}
+  .note-card .budget .sep{color:var(--mut);font-weight:400}
+
+  /* ---------- the 3-step "this week" flow ---------- */
+  .steps{display:grid;gap:16px}
+  .step{padding:0;overflow:hidden;position:relative}
+  .step .inner{display:flex;gap:20px;padding:22px 24px}
+  .step .num{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+    font-family:'Poppins';font-weight:700;font-size:15px;
+    background:var(--orange-soft);border:1px solid var(--orange-line);color:var(--orange)}
+  .step .body{flex:1;min-width:0}
+  .step .kicker{font-family:'Poppins';font-size:11px;font-weight:600;text-transform:uppercase;
+    letter-spacing:1.5px;color:var(--orange);display:flex;align-items:center;gap:8px}
+  .step .kicker .mins{color:var(--mut);font-weight:500;letter-spacing:1px}
+  .step h3{font-size:18px;font-weight:600;margin-top:6px}
+  .step p{color:var(--sec);font-size:14px;margin-top:8px;max-width:64ch}
+
+  /* video */
+  .video-frame{margin-top:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:#000;max-width:100%}
+  .video-frame video{display:block;width:100%;height:auto}
+  .video-note{font-size:12px;color:var(--mut);margin-top:9px;line-height:1.5;max-width:70ch}
+  .video-note strong{color:var(--sec)}
+
+  /* workbook hero — the prominent one */
+  .workbook{border:1px solid var(--orange-line);
+    background:linear-gradient(125deg,#2a1c0b 0%,#171d31 52%,#0f1728 100%);position:relative}
+  .workbook::before{content:"";position:absolute;left:0;top:0;height:2px;width:100%;
+    background:linear-gradient(90deg,transparent,var(--orange),transparent);opacity:.8}
+  .workbook .inner{align-items:center}
+  .workbook .num{background:var(--orange);border-color:var(--orange);color:#241100}
+  .wb-cta{display:flex;flex-direction:column;gap:8px;align-items:stretch;min-width:210px;text-align:center}
+  .wb-cta .note{font-size:11.5px;color:var(--mut)}
+  .rough{display:inline-block;margin-top:12px;font-family:'Poppins';font-size:12px;font-weight:600;
+    color:var(--orange);background:var(--orange-soft);border:1px solid var(--orange-line);
+    border-radius:8px;padding:6px 12px}
+  .wb-caveat{font-size:12.5px;color:var(--sec);margin-top:14px;line-height:1.55;
+    border-top:1px dashed var(--line);padding-top:12px;max-width:70ch}
+  .wb-caveat strong{color:var(--off)}
+
+  /* resources grid */
+  .res-grid{margin-top:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+  .res{display:flex;align-items:center;gap:13px;text-decoration:none;color:var(--off);
+    border:1px solid var(--line);background:#0c1424;border-radius:12px;padding:14px 15px;transition:.15s}
+  .res:hover{border-color:var(--orange);transform:translateY(-1px)}
+  .res .ico{flex:none;width:38px;height:38px;border-radius:9px;display:grid;place-items:center;
+    font-size:17px;background:var(--orange-soft);color:var(--orange)}
+  .res .rt{font-family:'Poppins';font-weight:600;font-size:14px;line-height:1.25}
+  .res .rs{font-size:12px;color:var(--mut);margin-top:2px}
+
+  /* ---------- pigeon-hole ---------- */
+  .pigeon .inner{padding:22px 24px}
+  .pigeon-list{margin-top:14px;display:grid;gap:10px}
+  .doc{display:flex;align-items:center;gap:13px;border:1px solid var(--line);background:#0c1424;
+    border-radius:11px;padding:12px 15px;text-decoration:none;color:var(--off);transition:.15s}
+  .doc:hover{border-color:var(--blue)}
+  .doc .ico{flex:none;width:34px;height:34px;border-radius:8px;display:grid;place-items:center;
+    background:rgba(30,144,255,.14);color:var(--blue);font-size:15px}
+  .doc .dt{font-family:'Poppins';font-weight:600;font-size:14px}
+  .doc .dm{font-size:12px;color:var(--mut);margin-top:1px}
+  .doc .expiry{margin-left:auto;font-family:'Poppins';font-size:11px;font-weight:600;
+    color:var(--mut);background:#0a111f;border:1px solid var(--line);border-radius:7px;
+    padding:4px 9px;white-space:nowrap}
+  .doc .expiry.soon{color:var(--orange);border-color:var(--orange-line);background:var(--orange-soft)}
+  .doc .dl{color:var(--blue);font-size:18px}
+  .pigeon-notice{margin-top:14px;font-size:12.5px;color:var(--sec);line-height:1.5;
+    background:rgba(30,144,255,.09);border:1px solid rgba(30,144,255,.24);border-radius:10px;
+    padding:10px 14px}
+  .pigeon-notice strong{color:var(--off)}
+  .empty{color:var(--mut);font-size:13.5px;font-style:italic;border:1px dashed var(--line);
+    border-radius:11px;padding:18px;text-align:center}
+
+  /* ---------- previous weeks ---------- */
+  .prev{padding:20px 24px;opacity:.92}
+  .prev .rowline{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .prev .rowline:last-child{border-bottom:none}
+  .prev .tick{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+    background:var(--orange-soft);color:var(--orange);border:1px solid var(--orange-line);font-size:12px;font-weight:700}
+  .prev .pw-t{font-family:'Poppins';font-weight:600;font-size:14.5px}
+  .prev .pw-s{font-size:12.5px;color:var(--sec)}
+  .prev a.reopen{margin-left:auto;color:var(--orange);font-family:'Poppins';font-size:12.5px;
+    font-weight:600;text-decoration:none}
+  .prev a.reopen:hover{text-decoration:underline}
+
+  /* ---------- booking (bottom) ---------- */
+  .booking{margin-top:40px;padding:28px;display:flex;justify-content:space-between;align-items:center;
+    gap:24px;flex-wrap:wrap;position:relative;overflow:hidden;
+    background:linear-gradient(120deg,#12203a 0%,#131d33 55%,#0f1728 100%)}
+  .booking .b-l{flex:1;min-width:250px}
+  .booking h3{font-size:20px;font-weight:600;margin-top:8px}
+  .booking p{color:var(--sec);font-size:14px;margin-top:8px;max-width:52ch}
+  .booking .chips{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+  .booking .chip{border:1px solid var(--line);border-radius:7px;padding:5px 11px;font-family:'Poppins';
+    font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--sec)}
+  .booking .b-r{text-align:center}
+  .booking .b-r .note{margin-top:10px;font-size:11.5px;color:var(--mut)}
+
+  .foot{margin-top:40px;text-align:center;color:var(--mut);font-size:12px}
+  .foot a{color:var(--sec)}
+
+  /* mockup ribbon */
+  .ribbon{position:fixed;z-index:5;left:12px;bottom:12px;background:var(--orange);color:#241100;
+    font-family:'Poppins';font-weight:700;font-size:11px;padding:7px 13px;border-radius:8px;
+    box-shadow:0 8px 24px rgba(0,0,0,.4)}
+
+  /* ---------- mobile ---------- */
+  @media(max-width:720px){
+    .wrap{padding:20px 15px 72px}
+    .welcome{padding:22px 20px}
+    .welcome h1{font-size:22px}
+    .welcome .weekchip{order:-1}
+    .stepper,.prev{padding:20px 18px}
+    .step .inner{flex-direction:column;gap:14px}
+    .step .num{width:34px;height:34px;font-size:14px}
+    .wb-cta{min-width:0}
+    .wb-cta .btn{width:100%}
+    .workbook .inner{align-items:stretch}
+    .booking{padding:22px 20px}
+    .booking .b-r,.booking .b-r .btn{width:100%}
+    .res-grid{grid-template-columns:1fr}
+    /* pigeon-hole rows: let the expiry chip drop below the name */
+    .doc{flex-wrap:wrap}
+    .doc .expiry{order:3;margin-left:47px}
+    .doc .dl{margin-left:auto}
+  }
+  @media(max-width:480px){
+    header.top{gap:12px}
+    header.top img{height:26px}
+    .who{gap:10px;font-size:12px}
+    .who .btn-ghost{padding:7px 11px}
+    .welcome{flex-direction:column;align-items:flex-start}
+    .sec-head{margin:30px 2px 14px}
+    .note-card{padding:18px;gap:14px}
+    .note-card .av{width:38px;height:38px;font-size:14px}
+    .step .inner{padding:20px 18px}
+    .step h3{font-size:16.5px}
+  }
+</style>
+</head>
+<body>
+<div class="ribbon">DESIGN MOCKUP v2 — not live</div>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="top">
+    <img src="file:///Users/asher/HQ/Projects/1-PsyberDigital/ClientPortal/public/wordmark.png" alt="Psyber Digital">
+    <div class="who">
+      <span class="pill">Client</span>
+      <span class="nm">Dr Sarah Chen</span>
+      <button class="btn-ghost">Sign out</button>
+    </div>
+  </header>
+
+  <!-- WELCOME -->
+  <section class="card welcome">
+    <div>
+      <div class="eyebrow">This week · Therapy+</div>
+      <h1>Week 01 — Foundations</h1>
+      <p>Mapping your baseline, and the shift from therapist to coach. Everything you need for this session is below — work through it top to bottom, then book your live call.</p>
+    </div>
+    <span class="weekchip">★ You are here</span>
+  </section>
+
+  <!-- STEPPER -->
+  <section class="card stepper">
+    <div class="lead">
+      <div class="eyebrow">The Programme</div>
+      <p>Each week builds on the last. Weeks unlock as you progress — your current focus is highlighted.</p>
+    </div>
+    <div class="track">
+      <div class="node done">
+        <span class="bar"></span><span class="dot">✓</span>
+        <span class="lab">Week 00</span><span class="ttl">Welcome &amp; setup</span>
+      </div>
+      <div class="node current">
+        <span class="bar"></span><span class="dot">★</span>
+        <span class="lab">Week 01</span><span class="ttl">Foundations</span>
+        <span class="flag">You are here</span>
+      </div>
+      <div class="node locked">
+        <span class="bar"></span><span class="dot">02</span>
+        <span class="lab">Week 02</span><span class="ttl">Patterns</span>
+      </div>
+      <div class="node locked">
+        <span class="bar"></span><span class="dot">03</span>
+        <span class="lab">Week 03</span><span class="ttl">Leverage</span>
+      </div>
+      <div class="node locked">
+        <span class="bar"></span><span class="dot">04</span>
+        <span class="lab">Week 04</span><span class="ttl">The Offer</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- THIS WEEK'S WORK -->
+  <div class="sec-head">
+    <span class="eyebrow">Your work this week</span>
+    <span class="rule"></span>
+  </div>
+
+  <!-- FRAMING NOTE FROM DON -->
+  <section class="card note-card">
+    <div class="av">D</div>
+    <div class="nc-body">
+      <div class="nc-from">A Note From Your Coach</div>
+      <p>Before our first session, watch the short video and skim the Playbook — together they lay out the whole picture, so we can spend our actual time together on <em>you</em>, not on slides. Then open the Foundations Workbook and have a first go. <strong>Bring it rough</strong> — half-formed answers, question marks, "I'm not sure", all welcome. You're not meant to finish it alone; we finish it together on the call.</p>
+      <div class="budget">
+        <span>⏱ About <b>55 minutes</b> this week</span>
+        <span class="sep">·</span>
+        <span><b>4½ min</b> to watch</span>
+        <span class="sep">·</span>
+        <span><b>50 min</b> for the workbook</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="steps">
+
+    <!-- STEP 1 — VIDEO -->
+    <section class="card step">
+      <div class="inner">
+        <div class="num">1</div>
+        <div class="body">
+          <div class="kicker">Watch first <span class="mins">· approx 4½ min</span></div>
+          <h3>Pre-work video — the model shift</h3>
+          <p>The whole picture in a few minutes: the lens flip from therapist to coach, the four pillars, the offer ladder and the five-stage build. Watch this before you open the workbook — it carries all the teaching, so our live hour is spent on <em>you</em>.</p>
+          <div class="video-frame">
+            <video
+              controls
+              preload="metadata"
+              poster="file:///Users/asher/HQ/Projects/1-PsyberDigital/Programme/Session-1-Plan-and-Model-Shift/assets/video/slides/slide-01.png"
+              src="file:///Users/asher/HQ/Projects/1-PsyberDigital/Programme/Session-1-Plan-and-Model-Shift/assets/video/Session-1-Prework-DRAFT.mp4">
+            </video>
+          </div>
+          <p class="video-note">▶ In the live portal this is the private <strong>Vimeo</strong> player (ID 1211864055), locked so it only plays on your portal — it won't even play on this local preview, which is the domain-lock doing its job. The local file above is just so you can review the look now.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2 — WORKBOOK (prominent) -->
+    <section class="card step workbook">
+      <div class="inner">
+        <div class="num">2</div>
+        <div class="body">
+          <div class="kicker">Then complete <span class="mins">· approx 50 min</span></div>
+          <h3>Your Foundations Workbook</h3>
+          <p>Four short reflective sections — mindset shifts, limiting beliefs, regulating emotions, and your commitment. Built for depth, not volume: a few honest, specific answers beat every box filled. Open it in your browser and have a first go. <strong>Bring it rough</strong> — we finish it together on the call.</p>
+          <span class="rough">✎ Bring it rough — question marks welcome</span>
+          <p class="wb-caveat">⚠ Your answers are saved in <strong>this browser only</strong> — they won't follow you to another device, and clearing your history erases them. When you're done, use <strong>Download PDF</strong> inside the workbook to keep a permanent copy.</p>
+        </div>
+        <div class="wb-cta">
+          <a class="btn" target="_blank" href="workbook-Session-1.html">
+             Open your workbook <span class="arrow">→</span></a>
+          <span class="note">Opens in a new tab · download a PDF copy when done</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3 — RESOURCES -->
+    <section class="card step">
+      <div class="inner">
+        <div class="num">3</div>
+        <div class="body">
+          <div class="kicker">Keep to hand <span class="mins">· reference</span></div>
+          <h3>Additional resources</h3>
+          <p>Pin these up as you work. They're your reference for the whole programme — return to them as you build.</p>
+          <div class="res-grid">
+            <a class="res" target="_blank"
+               href="file:///Users/asher/HQ/Projects/1-PsyberDigital/Programme/Session-1-Plan-and-Model-Shift/assets/Session-1-Playbook.pdf">
+              <span class="ico">▤</span>
+              <span><span class="rt">The Playbook</span><span class="rs">Four reference sheets · PDF</span></span>
+            </a>
+            <a class="res" target="_blank"
+               href="file:///Users/asher/HQ/Projects/1-PsyberDigital/Programme/Session-1-Plan-and-Model-Shift/assets/Resource-Mindset-Reminders-v2.pdf">
+              <span class="ico">◈</span>
+              <span><span class="rt">Mindset Reminders</span><span class="rs">Daily prompts · PDF</span></span>
+            </a>
+            <a class="res" target="_blank"
+               href="file:///Users/asher/HQ/Projects/1-PsyberDigital/Programme/Session-1-Plan-and-Model-Shift/assets/Resource-Therapist-to-Coach-Snapshot-v2.pdf">
+              <span class="ico">⇄</span>
+              <span><span class="rt">Therapist → Coach Snapshot</span><span class="rs">The lens flip at a glance · PDF</span></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- PIGEON HOLE -->
+  <div class="sec-head">
+    <span class="eyebrow blue">From your practitioner</span>
+    <span class="rule"></span>
+  </div>
+  <section class="card pigeon">
+    <div class="inner">
+      <div class="body">
+        <h3 style="font-family:'Poppins';font-size:17px;font-weight:600">Your pigeon-hole</h3>
+        <p style="color:var(--sec);font-size:14px;margin-top:7px;max-width:66ch">
+          Documents shared with you personally — session notes, tailored plans, anything Don sends after your call. Only you can see these.</p>
+        <div class="pigeon-notice">🕑 For your privacy, files here are available for <strong>48 hours</strong>, then automatically removed. Download anything you want to keep.</div>
+        <div class="pigeon-list">
+          <a class="doc" href="#">
+            <span class="ico">▤</span>
+            <span><span class="dt">Your Session 1 recap &amp; actions.pdf</span><span class="dm">Shared 2h ago · 240 KB</span></span>
+            <span class="expiry">Expires in 46h</span>
+            <span class="dl">⤓</span>
+          </a>
+          <a class="doc" href="#">
+            <span class="ico">▤</span>
+            <span><span class="dt">Personalised niche shortlist.pdf</span><span class="dm">Shared 9h ago · 96 KB</span></span>
+            <span class="expiry soon">Expires in 39h</span>
+            <span class="dl">⤓</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREVIOUS WEEKS -->
+  <div class="sec-head">
+    <span class="eyebrow">Completed weeks</span>
+    <span class="rule"></span>
+  </div>
+  <section class="card prev">
+    <div class="rowline">
+      <span class="tick">✓</span>
+      <span>
+        <span class="pw-t">Week 00 — Welcome &amp; setup</span><br>
+        <span class="pw-s">Orientation, expectations, and how the portal works.</span>
+      </span>
+      <a class="reopen" href="#">Reopen →</a>
+    </div>
+  </section>
+
+  <!-- BOOKING (BOTTOM) -->
+  <section class="card booking" id="book">
+    <div class="b-l">
+      <div class="eyebrow blue">Next session</div>
+      <h3>The work continues in the room.</h3>
+      <p>Once you've watched the video and had a first go at the workbook, book your live call. Your next week unlocks after we meet.</p>
+      <div class="chips">
+        <span class="chip">50 minutes</span>
+        <span class="chip">Zoom</span>
+        <span class="chip">Confirmed instantly</span>
+      </div>
+    </div>
+    <div class="b-r">
+      <a class="btn blue" href="#">Arrange your next session <span class="arrow">→</span></a>
+      <div class="note">Opens your booking calendar</div>
+    </div>
+  </section>
+
+  <div class="foot">
+    Psyber Digital · Client Portal — design mockup v2 · <a href="#">psyberdigital.com</a>
+  </div>
+
+</div>
+</body>
+</html>

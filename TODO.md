@@ -43,8 +43,20 @@ Backend features to build after look sign-off:
       Retention rule and deletion path now exist. **DPA and privacy policy still do not.**
 - [ ] **Write the DPA and privacy policy.** Now overdue: clients can upload reflective
       personal material, and their contact database names third parties who never consented.
-- [ ] Decide a retention rule for client→coach uploads beyond "until Asher deletes it"
-      (currently just a 30-day age warning in the admin UI).
+- [x] ~~Decide a retention rule for client→coach uploads~~ — **DECIDED 28 Jul 2026: 90 days from
+      upload, then delete.** Recorded in `Compliance/retention-schedule.md` R2 and published in the
+      privacy policy. **The build is now outstanding** ↓
+- [ ] **BUILD: implement the 90-day rule for `to_coach` uploads.** Today they never expire —
+      `expires_at` is null by design and the hourly purge only sweeps rows where it is non-null
+      (`shared_files_expiry_idx` is a partial index that excludes them). Two routes, and they are
+      **not** equivalent:
+      - Set `expires_at = now() + 90 days` on insert → simplest, but the RLS SELECT policy treats a
+        non-null expiry as an access gate, so the file would also become **invisible to the client**
+        at 90 days.
+      - Add a separate age-based sweep that deletes `to_coach` rows on `created_at` → changes
+        retention without changing what the client can see. **Take this one.**
+      Live schema change: needs a proper reviewed build, not a quick edit. Keep the admin UI's
+      existing 30-day age warning either way.
 
 ## Housekeeping / tech notes
 - [ ] Consider moving local dev to **Node 22 LTS** (Supabase packages want ≥22). Until then, local
