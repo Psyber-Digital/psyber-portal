@@ -112,9 +112,23 @@ section.live h2 span{color:var(--orange)}
 }
 /* Stop the sheet behind scrolling while a menu is open, on iOS especially. */
 body.menu-open{overflow:hidden}
+/* Add-a-row. Every generating table is open-ended — a client who needs eighty
+   ideas to reach three should never be stopped by the number of boxes on the
+   page. The starting rows are only a prompt for how much to write. */
+.addwrap{margin:-8px 0 18px}
+.addrow{font:inherit;font-size:13px;padding:7px 13px;border-radius:8px;
+ border:1px dashed rgba(93,171,229,.5);background:rgba(93,171,229,.07);color:var(--blue);cursor:pointer}
+.addrow:hover{background:rgba(93,171,229,.16);filter:none}
+td.xlast{position:relative;padding-right:32px}
+.rmrow{position:absolute;right:6px;top:50%;transform:translateY(-50%);
+ width:23px;height:23px;padding:0;line-height:1;border-radius:6px;font-size:15px;
+ border:1px solid var(--line);background:#08111f;color:var(--slate);cursor:pointer}
+.rmrow:hover{color:var(--orange);border-color:var(--orange);filter:none}
 @media print{
  body{background:#fff;color:#111;padding:0}
- .bar,.modal,.menubtn{display:none} section{background:#fff;border:1px solid #ccc;break-inside:avoid}
+ .bar,.modal,.menubtn,.addwrap,.rmrow{display:none}
+ td.xlast{padding-right:4px}
+ section{background:#fff;border:1px solid #ccc;break-inside:avoid}
  .intro{background:#f6f6f6;color:#222} h1 em{color:#9A4516} .principle{color:#444}
  input,textarea{background:#fff;color:#111;border:1px solid #bbb}
  .eyebrow,.help,th{color:#555}
@@ -184,7 +198,7 @@ body.menu-open{overflow:hidden}
 <section>
 <h2><span>02</span>The moment behind each one</h2>
 <div class='help'>For each shift you ticked, a real moment from the last fortnight when the old version showed up. A moment, not a description.</div>
-<table><thead><tr>
+<table data-x='1' data-cols='2'><thead><tr>
 <th>The shift you ticked</th>
 <th>A real moment in the last fortnight</th>
 </tr></thead><tbody>
@@ -201,6 +215,7 @@ body.menu-open{overflow:hidden}
 <td><input type='text' id='f13'></td>
 </tr>
 </tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='1'>+ Add row</button></div>
 </section>
 <section>
 <h2><span>03</span>The sentence you would actually believe</h2>
@@ -211,7 +226,7 @@ body.menu-open{overflow:hidden}
 <section>
 <h2><span>04</span>Three beliefs that will slow you down</h2>
 <div class='help'>Sentences you carry, rather than general self-criticism. The last column is the hard one: something truer that you would defend if challenged.</div>
-<table><thead><tr>
+<table data-x='2' data-cols='4'><thead><tr>
 <th>The belief</th>
 <th>Where it came from</th>
 <th>What it costs me in behavior</th>
@@ -236,11 +251,12 @@ body.menu-open{overflow:hidden}
 <td><input type='text' id='f26'></td>
 </tr>
 </tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add row</button></div>
 </section>
 <section>
 <h2><span>05</span>Three moments that could knock you off course</h2>
 <div class='help'>Named before they arrive. The last column must be physical and take under two minutes — sending one message counts, feeling more positive does not.</div>
-<table><thead><tr>
+<table data-x='3' data-cols='3'><thead><tr>
 <th>The moment</th>
 <th>The earliest sign I would notice</th>
 <th>The small action I will take instead</th>
@@ -261,6 +277,7 @@ body.menu-open{overflow:hidden}
 <td><input type='text' id='f35'></td>
 </tr>
 </tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='3'>+ Add row</button></div>
 </section>
 <section>
 <h2><span>06</span>Your commitment</h2>
@@ -292,28 +309,95 @@ body.menu-open{overflow:hidden}
 <script>
 (function(){
  var KEY='psyberB-wk1';
- var els=[].slice.call(document.querySelectorAll('input,textarea'));
+ // Re-read the DOM rather than caching the field list. Rows can be added at any
+ // time, and a list captured at load would silently drop everything typed into
+ // them — saved, restored and cleared alike.
+ function all(){return [].slice.call(document.querySelectorAll('input,textarea'));}
  var status=document.getElementById('saved');
  function box(e){return e.type==='checkbox';}
  function get(e){return box(e)?e.checked:e.value;}
  function set(e,v){if(box(e)){e.checked=!!v;}else{e.value=v;}}
  function paint(){[].slice.call(document.querySelectorAll('.shift')).forEach(function(s){
    var c=s.querySelector('input[type=checkbox]');s.classList.toggle('on',!!(c&&c.checked));});}
- function load(){try{var d=JSON.parse(localStorage.getItem(KEY)||'{}');
-   els.forEach(function(e){if(d[e.id]!==undefined)set(e,d[e.id]);});}catch(e){}paint();}
  var t;
- function save(){var d={};els.forEach(function(e){var v=get(e);if(v)d[e.id]=v;});
+ function save(){var d={};all().forEach(function(e){var v=get(e);if(v)d[e.id]=v;});
    localStorage.setItem(KEY,JSON.stringify(d));
    status.textContent='Saved '+new Date().toLocaleTimeString();}
- els.forEach(function(e){
-   e.addEventListener('input',function(){clearTimeout(t);t=setTimeout(save,400);});
-   if(box(e))e.addEventListener('change',function(){paint();save();});});
+
+ // ── added rows ─────────────────────────────────────────────────────────────
+ // Added fields are ids 'x<table>_<row>_<col>', a namespace of their own. The
+ // rows printed on the page keep their original f1..fN ids untouched, so a sheet
+ // filled in before this existed reloads exactly as it was left. Row numbers are
+ // never reused or renumbered — remove row 2 of 4 and rows 1, 3, 4 keep their
+ // answers.
+ function tables(){return [].slice.call(document.querySelectorAll('table[data-x]'));}
+ function rowsIn(tb){return [].slice.call(tb.querySelectorAll('tr.xrow'));}
+ function addRow(tb,r){
+   var cols=parseInt(tb.getAttribute('data-cols'),10)||1;
+   var tid=tb.getAttribute('data-x');
+   var body=tb.querySelector('tbody');if(!body)return null;
+   var tr=document.createElement('tr');tr.className='xrow';
+   for(var c=1;c<=cols;c++){
+     var td=document.createElement('td');
+     var inp=document.createElement('input');inp.type='text';
+     inp.id='x'+tid+'_'+r+'_'+c;
+     td.appendChild(inp);
+     if(c===cols){
+       td.className='xlast';
+       var b=document.createElement('button');
+       b.type='button';b.className='rmrow';b.title='Remove this row';
+       b.setAttribute('aria-label','Remove this row');
+       b.innerHTML='&times;';
+       b.addEventListener('click',function(){
+         var row=this.parentNode.parentNode;row.parentNode.removeChild(row);save();});
+       td.appendChild(b);
+     }
+     tr.appendChild(td);
+   }
+   body.appendChild(tr);
+   return tr;
+ }
+ function nextRow(tb){
+   var top=0;
+   rowsIn(tb).forEach(function(tr){
+     var inp=tr.querySelector('input');if(!inp)return;
+     var m=inp.id.match(/_(\d+)_\d+$/);if(m&&+m[1]>top)top=+m[1];});
+   return top+1;
+ }
+ function restoreRows(d){
+   tables().forEach(function(tb){
+     var tid=tb.getAttribute('data-x');
+     var re=new RegExp('^x'+tid+'_(\\d+)_\\d+$');
+     var seen={};
+     Object.keys(d).forEach(function(k){var m=k.match(re);if(m)seen[+m[1]]=1;});
+     Object.keys(seen).map(Number).sort(function(a,b){return a-b;})
+       .forEach(function(r){addRow(tb,r);});});
+ }
+ [].slice.call(document.querySelectorAll('.addrow')).forEach(function(b){
+   b.addEventListener('click',function(){
+     var tb=document.querySelector("table[data-x='"+b.getAttribute('data-addrow')+"']");
+     if(!tb)return;
+     var tr=addRow(tb,nextRow(tb));
+     if(tr){var f=tr.querySelector('input');if(f)f.focus();}});});
+
+ function load(){var d={};try{d=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+   restoreRows(d);
+   all().forEach(function(e){if(d[e.id]!==undefined)set(e,d[e.id]);});
+   paint();}
+
+ // Delegated, so rows added after load save exactly like the printed ones.
+ document.addEventListener('input',function(){clearTimeout(t);t=setTimeout(save,400);});
+ document.addEventListener('change',function(ev){
+   if(ev.target&&box(ev.target)){paint();save();}});
  document.getElementById('save').addEventListener('click',save);
  document.getElementById('print').addEventListener('click',function(){save();window.print();});
  document.getElementById('clear').addEventListener('click',function(){
    if(confirm('Clear every answer on this sheet? This cannot be undone.')){
      localStorage.removeItem(KEY);
-     els.forEach(function(e){set(e,box(e)?false:'');});paint();status.textContent='Cleared';}});
+     tables().forEach(function(tb){rowsIn(tb).forEach(function(tr){
+       tr.parentNode.removeChild(tr);});});
+     all().forEach(function(e){set(e,box(e)?false:'');});paint();
+     status.textContent='Cleared';}});
 
  // reference menus — open in place rather than sending anyone off to find a PDF
  function shut(){[].slice.call(document.querySelectorAll('.modal')).forEach(function(m){

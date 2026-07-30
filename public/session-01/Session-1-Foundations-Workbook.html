@@ -233,7 +233,7 @@ const ADMIN="admin@psyberdigital.com";
 const STEPS=["Mindset","Beliefs","Emotions","Commitment"];
 const SHIFTS=["— choose a shift —","Fixed → Growth","Unworthy & incapable → Deserving & capable","Scarcity → Abundance",
 "Money is evil → Money is neutral","Price by time → Price by value","You're right → The market is right","Decide by feeling → Adapt to feedback"];
-const KEY="psyber-s1-foundations-v4", MAXROWS=5;
+const KEY="psyber-s1-foundations-v4";
 const isMac=/Mac|iPhone|iPad/i.test(navigator.platform||navigator.userAgent||"");
 document.getElementById('expDoc').textContent = isMac ? "Export to Pages" : "Export to Word";
 
@@ -295,11 +295,10 @@ function makeRow(sec,idx){
   rc.querySelector('.rmv').onclick=()=>{rc.remove();renumber(sec);save();};
   wire(rc);if(idx>counters[sec])counters[sec]=idx;renumber(sec);return rc;
 }
-function addRow(sec){if(document.getElementById(sec).children.length>=MAXROWS)return;makeRow(sec,counters[sec]+1);save();}
+function addRow(sec){makeRow(sec,counters[sec]+1);save();}
 function renumber(sec){const kids=[...document.getElementById(sec).children];
   kids.forEach((rc,i)=>rc.querySelector('.rn').textContent=i+1);
-  kids.forEach(rc=>{const b=rc.querySelector('.rmv');b.style.display=kids.length>1?'':'none';});
-  document.querySelector(`[data-add="${sec}"]`).disabled=kids.length>=MAXROWS;}
+  kids.forEach(rc=>{const b=rc.querySelector('.rmv');b.style.display=kids.length>1?'':'none';});}
 document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addRow(b.dataset.add));
 
 const stepper=document.getElementById('stepper');

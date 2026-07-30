@@ -217,6 +217,44 @@ push to `main`; a live test send was confirmed received.
 Also committed in the same pass: the deletion of `PreviousWeek.tsx` (no
 remaining references), `VIMEO-SETUP.md`, and `design-mockups/`.
 
+## Working sheets: rows are now open-ended (30 Jul 2026)
+
+Liljana wrote in: the generating tables run out of rows. She brainstorms 50–80
+niche ideas to get to three, and the sheet prints six. Every table on every
+Working Sheet that asks the client to generate a list now carries a **+ Add row**
+button with no ceiling, and each added row a **×** to remove it.
+
+- **Fixed in the generator** — `build_v3.py` (`WB_CSS`, `WB_JS`, `gen_workbook`).
+  A table gets the button when it has no `prefill`; a prefilled table is a fixed
+  checklist (the four research checks) where one more row means nothing.
+- **The live sheets were patched, not regenerated.** `content_v3.py` has drifted
+  from live Session 01 in wording *and* field count (f37–f40 live, f37 in
+  content), so a regeneration would have carried a content change into the live
+  portal and renumbered fields a client has already filled in. The patcher
+  applies the same three edits and nothing else; it was proved by running it on
+  the live sheets for weeks 02–07 and comparing byte-for-byte with the
+  generator's own output for those weeks — identical in all six.
+- **Added fields live in their own id namespace**, `x<table>_<row>_<col>`. The
+  printed rows keep `f1..fN` untouched, so a sheet filled in before this change
+  reloads exactly as it was left. Row numbers are never renumbered, so removing
+  row 2 of 4 leaves rows 1, 3 and 4 holding their own answers.
+- **The field list is now read from the DOM on every save/load** rather than
+  captured once at startup — the previous `var els = …` would have silently
+  discarded everything typed into an added row.
+- Row caps also removed from the two hand-written workbooks:
+  `Session-1-Foundations-Workbook.html` (`MAXROWS=5`) and
+  `Session-2-Niche-Workbook.html` (`MAXROWS={trans:6,auds:6,props:10}`), in both
+  `/public` and their `Programme/Session-*/assets` originals.
+
+**Verified in headless Chrome against the real files**, not by inspection: 25
+checks on the week-02 sheet (legacy data restored, 75 rows added with no ceiling,
+added rows surviving reload, removal not shifting neighbours, Clear wiping added
+rows), 7 on week 01 including the shift checkboxes, a 30-rows-per-table sweep
+across all seven weeks, and 14 on the two workbooks at 60 rows a section. All
+pass. Field ids, on-page copy and the `psyberB-wkN` storage keys are unchanged on
+all seven sheets — checked programmatically against the pre-change files.
+`tsc --noEmit` and `npm run build` clean.
+
 **Practical gotcha, cost about half an hour:** local previews of this portal need
 **password** sign-in. Magic links redirect to the Supabase Site URL, which is
 production, so they always take you off localhost. And check what is on port

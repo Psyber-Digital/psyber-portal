@@ -304,7 +304,7 @@ a.booklink:hover{filter:brightness(1.06);}
 const ADMIN="admin@psyberdigital.com";
 const STEPS=["Transformations","Audiences & Pain","Propositions","Score & Select"];
 const SCPARAMS=["pass","mkt","inv","acc","diff"];
-const KEY="psyber-s2-niche-v1", MAXROWS={trans:6,auds:6,props:10};
+const KEY="psyber-s2-niche-v1";
 const isMac=/Mac|iPhone|iPad/i.test(navigator.platform||navigator.userAgent||"");
 document.getElementById('expDoc').textContent = isMac ? "Export to Pages" : "Export to Word";
 
@@ -396,11 +396,10 @@ function makeRow(sec,idx){
   }
   wire(rc);if(idx>counters[sec])counters[sec]=idx;renumber(sec);return rc;
 }
-function addRow(sec){if(document.getElementById(sec).children.length>=MAXROWS[sec])return;makeRow(sec,counters[sec]+1);save();}
+function addRow(sec){makeRow(sec,counters[sec]+1);save();}
 function renumber(sec){const kids=[...document.getElementById(sec).children];
   kids.forEach((rc,i)=>rc.querySelector('.rn').textContent=i+1);
-  kids.forEach(rc=>{const b=rc.querySelector('.rmv');b.style.display=kids.length>1?'':'none';});
-  document.querySelector(`[data-add="${sec}"]`).disabled=kids.length>=MAXROWS[sec];}
+  kids.forEach(rc=>{const b=rc.querySelector('.rmv');b.style.display=kids.length>1?'':'none';});}
 document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addRow(b.dataset.add));
 
 // keep the propositions' audience datalist in sync with the audiences picked in Step 2
