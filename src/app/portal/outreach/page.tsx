@@ -51,6 +51,11 @@ export default async function OutreachPage() {
         blank page. Everyone on it is either a possible client or a possible
         connector, so put them all down first and categorise afterwards.
       </p>
+      <p className="mx-0.5 mb-4 max-w-[74ch] rounded-[10px] border border-orange/30 bg-orange/[0.06] px-4 py-3 text-[12.5px] leading-relaxed text-sec">
+        <b className="text-off">One rule, and it is the only one:</b> no current
+        therapy clients on this list. That relationship has its own standing while
+        it is live. Everyone else counts.
+      </p>
       <p className="mx-0.5 mb-5 max-w-[74ch] rounded-[10px] border border-blue/30 bg-blue/[0.07] px-4 py-3 text-[12.5px] leading-relaxed text-sec">
         <b className="text-off">You’re not contacting anyone yet.</b> Reaching out
         comes later in the program, and we’ll cover exactly how. For now this is

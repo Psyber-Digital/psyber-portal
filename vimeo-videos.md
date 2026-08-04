@@ -25,14 +25,23 @@ settings — the `title=0` style parameters in `VimeoEmbed.tsx` cannot reach the
 
 | Session | Video ID | Private hash | Embed src | Status |
 |---|---|---|---|---|
-| Welcome — onboarding (not a session) | `1214030618` | — | `https://player.vimeo.com/video/1214030618` | **Final render** (ElevenLabs Brian + on-cue animation, 4:36). Shown above the weeks on the portal home, not as a week. Source replaced 29 Jul 2026 — opens "Welcome to Psyber Digital" and fixes "live" being read as the verb. Renamed on Vimeo to "Welcome · Psyber Digital (Onboarding)". |
+| Welcome — onboarding (not a session) | `1214030618` | — | `https://player.vimeo.com/video/1214030618` | **Final render** (Adam — Conversational on `eleven_v3`, on-cue animation, 4:49). Shown above the weeks on the portal home, not as a week. Source replaced 4 Aug 2026 for the voice change; before that, 29 Jul for the "Welcome to Psyber Digital" opening and the "live" pronunciation fix. |
 | Session 01 — Foundations (pre-work) | `1211864055` | `19c07e739e` | `https://player.vimeo.com/video/1211864055?h=19c07e739e` | Wired into portal (week 1). **Replace source with FINAL render**, then deploy. Privacy corrected 29 Jul 2026 — was `view=unlisted` + `embed=public`. |
-| Session 02 — Niche Ideas (pre-work) | `1212379930` | `c79b8e732c` | `https://player.vimeo.com/video/1212379930?h=c79b8e732c` | **Final render** (ElevenLabs Brian + on-cue animation, 7:36). Uploaded 23 Jul 2026; privacy `view=disable` + `embed=whitelist` (psyber-portal.vercel.app + portal.psyberdigital.com). Wired into portal (week 2). |
+| Session 02 — Niche Ideas (pre-work) | `1212379930` | `c79b8e732c` | `https://player.vimeo.com/video/1212379930?h=c79b8e732c` | **Final render** (Adam — Conversational on `eleven_v3`, on-cue animation, 7:17). Source replaced 4 Aug 2026 for the voice change; originally uploaded 23 Jul 2026; privacy `view=disable` + `embed=whitelist` (psyber-portal.vercel.app + portal.psyberdigital.com). Wired into portal (week 2). |
 
 **Final render to upload (replace source, keep this ID):** `Projects/1-PsyberDigital/Programme/Session-1-Plan-and-Model-Shift/assets/video/Session-1-Prework-Video.mp4` (4:35, Brian voiceover + on-cue animation). Currently the Vimeo source is an earlier draft.
 
 Sessions 02–09 + 2 bonus: to upload when produced. Vimeo can replace a video's source
 file while keeping the same ID, so the DRAFT slot above stays stable when the final render lands.
+
+## The voice
+
+Every video is **Adam — Conversational** (`zKTOd8cxZlIf5EKC5Giv`) on the **`eleven_v3`**
+engine, from 3 Aug 2026. Brian on `eleven_multilingual_v2` was used before that and is
+recorded as `PREVIOUS` in `Programme/Flagship/build/el_voice.py`.
+
+Re-voicing a session means replacing the Vimeo source on the **same ID** — the portal
+embeds a fixed id, so nothing in code changes and no deploy is needed.
 
 ## To embed in the real app (React)
 ```html
