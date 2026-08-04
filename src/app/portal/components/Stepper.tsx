@@ -17,11 +17,16 @@ export function Stepper({
 }) {
   return (
     <section className="psy-card mb-[22px] p-4 sm:mb-[26px] sm:p-6">
+      {/* The explainer under this heading said what the rail already shows — ticks
+          for done, a ring for now, grey for locked. Two lines of instruction for a
+          picture that needs none. The hint moved into the heading. */}
       <div className="mb-4 sm:mb-5">
-        <div className="psy-eyebrow text-orange">The Program</div>
-        <p className="mt-1.5 max-w-[54ch] text-[12.5px] leading-relaxed text-sec sm:text-[13px]">
-          Each week builds on the last. Weeks unlock as you progress — tap any unlocked week to open it.
-        </p>
+        <div className="psy-eyebrow text-mut">
+          The Program
+          <span className="ml-2 font-normal normal-case tracking-normal text-mut/70">
+            tap any unlocked week to open it
+          </span>
+        </div>
       </div>
 
       <div className="-mx-1 flex items-start overflow-x-auto px-1 pb-1.5 [-webkit-overflow-scrolling:touch]">
@@ -64,13 +69,17 @@ function Node({
   selected?: boolean;
   flag?: string;
 }) {
+  // Completed sessions were filled orange — six or seven solid accent dots across
+  // the rail, all shouting as loudly as the one week the client is actually in.
+  // Done is now quiet and self-evident (a tick); only "current" carries the accent,
+  // which is the whole point of a "you are here" marker.
   const dot =
     state === "done"
-      ? "bg-orange border-orange text-[#241100]"
+      ? "bg-[#16233a] border-line text-mut"
       : state === "current"
         ? "bg-ink border-orange text-orange shadow-[0_0_0_5px_rgba(255,141,30,.16)]"
         : "bg-panel border-line text-mut";
-  const bar = state === "locked" ? "bg-line" : "bg-orange";
+  const bar = state === "locked" ? "bg-line" : "bg-[#22405f]";
   const text = state === "locked" ? "text-sec" : "text-off";
 
   const inner = (

@@ -8,7 +8,7 @@ export function WelcomeBanner({ week, intro }: { week: Week; intro?: string }) {
     <section className="psy-card relative mb-[26px] flex flex-wrap items-end justify-between gap-4 overflow-hidden p-5 sm:gap-5 sm:p-7">
       <span className="pointer-events-none absolute -right-10 -top-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(255,141,30,.16),transparent_68%)]" />
       <div className="relative">
-        <div className="psy-eyebrow text-orange">This week · Therapy+</div>
+        <div className="psy-eyebrow text-mut">This week · Therapy+</div>
         <h1 className="mt-2 font-disp text-[22px] font-bold leading-tight tracking-[-0.3px] sm:text-[26px]">
           Week {pad(week.number)} — {stripWeekPrefix(week.title)}
         </h1>
@@ -16,9 +16,11 @@ export function WelcomeBanner({ week, intro }: { week: Week; intro?: string }) {
           <p className="mt-2 max-w-[56ch] text-[14.5px] text-sec">{intro || week.description}</p>
         )}
       </div>
-      <span className="relative whitespace-nowrap rounded-full border border-orange/40 bg-orange/[0.14] px-3.5 py-1.5 font-disp text-[12px] font-semibold text-orange">
-        ★ You are here
-      </span>
+      {/* The "★ You are here" chip that sat here said the same thing as the marker on
+          the programme rail two hundred pixels below — twice on one screen, in the
+          same colour. The rail's version is the better one: it shows position among
+          seven, not just presence. The orange glow behind this block already says
+          "this is the live one". */}
     </section>
   );
 }

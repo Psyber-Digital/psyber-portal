@@ -72,31 +72,46 @@ function FramingNote({
 }) {
   return (
     <section className="psy-card mb-[18px] flex items-start gap-4 border-l-[3px] border-l-orange p-5 sm:gap-[18px] sm:p-6">
+      {/* The note carried four accent treatments at once — a filled orange disc, an
+          orange left border, an orange eyebrow and an orange figure — and sat second
+          on the page, so it competed with the step it was introducing. The left
+          border is kept: it is the coach's signature down the side, and one mark is
+          enough to say whose voice this is. The disc drops to an outline. */}
       <div
-        className="grid h-11 w-11 flex-none place-items-center rounded-full bg-[linear-gradient(135deg,#FF8D1E,#ffb15e)] text-[#241100]"
+        className="grid h-11 w-11 flex-none place-items-center rounded-full border border-orange/40 bg-orange/[0.10] text-orange"
         aria-hidden="true"
       >
         <CompassIcon />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-orange">
+        <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-mut">
           {note.fromLabel}
         </div>
         <p className="mt-2 max-w-[70ch] text-[14.5px] leading-relaxed text-off">{note.body}</p>
+        {/* One number, not four. The strip used to show the total and every part at
+            once — "60 minutes · 5 min to watch · 15 min for the sheet · 40 min on
+            your list" — which is four figures to reconcile before you know whether
+            you have time this week. The total answers that; the breakdown is a
+            click away for anyone planning their week around it. */}
         {budget && (
-          <div className="mt-3.5 inline-flex flex-wrap items-center gap-x-4 gap-y-2 rounded-[10px] border border-orange/40 bg-orange/[0.14] px-3.5 py-2.5 font-disp text-[13px] font-semibold text-off">
-            <span>
-              ⏱ About <b className="text-orange">{budget.total}</b> this week
-            </span>
-            {budget.parts.map((p) => (
-              <span key={p.label} className="inline-flex items-center gap-x-4">
-                <span className="font-normal text-mut">·</span>
-                <span>
-                  <b className="text-orange">{p.value}</b> {p.label}
-                </span>
+          <details className="group mt-3.5 max-w-[70ch]">
+            <summary className="inline-flex cursor-pointer list-none flex-wrap items-baseline gap-x-2.5 font-disp text-[13.5px] font-semibold text-off marker:hidden">
+              <span>
+                ⏱ About <b className="text-orange">{budget.total}</b> this week
               </span>
-            ))}
-          </div>
+              <span className="text-[11.5px] font-normal text-mut underline decoration-dotted underline-offset-2">
+                <span className="group-open:hidden">what that&rsquo;s made of</span>
+                <span className="hidden group-open:inline">hide</span>
+              </span>
+            </summary>
+            <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] leading-relaxed text-mut">
+              {budget.parts.map((p) => (
+                <span key={p.label}>
+                  <b className="font-semibold text-sec">{p.value}</b> {p.label}
+                </span>
+              ))}
+            </div>
+          </details>
         )}
       </div>
     </section>
@@ -127,15 +142,15 @@ function CompassIcon() {
 
 /* ---------------- step scaffolding ---------------- */
 
-function StepNum({ n, hero }: { n: number; hero?: boolean }) {
+// Step numbers are wayfinding, not emphasis. They were accented — filled orange for
+// the workbook, tinted orange for the others — which put three more accent marks on
+// a page that already had thirty-one. Testers called the portal overwhelming, and
+// this is a large part of why: when everything is accented, nothing leads.
+//
+// The accent is now spent in one place per week: the button that opens the sheet.
+function StepNum({ n }: { n: number; hero?: boolean }) {
   return (
-    <div
-      className={`grid h-[38px] w-[38px] flex-none place-items-center rounded-full font-disp text-[15px] font-bold ${
-        hero
-          ? "border border-orange bg-orange text-[#241100]"
-          : "border border-orange/40 bg-orange/[0.14] text-orange"
-      }`}
-    >
+    <div className="grid h-[38px] w-[38px] flex-none place-items-center rounded-full border border-line bg-[#0c1424] font-disp text-[15px] font-semibold text-mut">
       {n}
     </div>
   );
@@ -143,9 +158,9 @@ function StepNum({ n, hero }: { n: number; hero?: boolean }) {
 
 function Kicker({ label, mins }: { label: string; mins?: string }) {
   return (
-    <div className="flex items-center gap-2 font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-orange">
+    <div className="flex items-center gap-2 font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-mut">
       {label}
-      {mins && <span className="font-medium tracking-[1px] text-mut">· {mins}</span>}
+      {mins && <span className="font-medium tracking-[1px] text-mut/70">· {mins}</span>}
     </div>
   );
 }
@@ -161,13 +176,21 @@ function StepP({ children }: { children: ReactNode }) {
 // Standing guidance shown on every worksheet: how to do the work, not what.
 // The flow-state / deep-work method — do it in focused sittings (one or several);
 // if stuck, skim, jot, walk, and return. (Codex: METHOD-flow-first-worksheets.)
+//
+// Folded behind a disclosure. It is standing guidance — the same words every week —
+// and it was sitting open inside the step, two paragraphs deep, between the client
+// and the button they came to press. Kept in full for whoever wants it, closed for
+// whoever already knows.
 function FlowNote() {
   return (
-    <div className="mt-3.5 max-w-[70ch] rounded-[10px] border border-line bg-[#0c1424] p-3.5">
-      <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-orange">
+    <details className="group mt-3.5 max-w-[70ch] rounded-[10px] border border-line bg-[#0c1424] p-3.5">
+      <summary className="flex cursor-pointer list-none items-center gap-2 font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-mut marker:hidden">
         Do it in flow
-      </div>
-      <p className="mt-1.5 text-[13px] leading-relaxed text-sec">
+        <span className="text-[10px] font-normal tracking-normal text-mut/70 group-open:hidden">
+          — how to work through it
+        </span>
+      </summary>
+      <p className="mt-2 text-[13px] leading-relaxed text-sec">
         Work through this in <strong className="text-off">focused sittings</strong> —
         distractions off, a single task, no multitasking. One sitting or several is fine; what
         matters is that each one is properly focused. The longer you hold that focus, the more
@@ -177,7 +200,7 @@ function FlowNote() {
         Stuck? Don&rsquo;t force it. Skim the page, jot whatever comes to mind — rough, unpressured —
         then step away for a short walk. Come back and drop into focus again.
       </p>
-    </div>
+    </details>
   );
 }
 
@@ -229,19 +252,19 @@ function StepWorkbook({
 }) {
   const s = guide?.workbookStep;
   return (
-    <section
-      className="psy-card relative overflow-hidden border-orange/40"
-      style={{ backgroundImage: "linear-gradient(125deg,#2a1c0b 0%,#171d31 52%,#0f1728 100%)" }}
-    >
-      <span className="absolute left-0 top-0 block h-0.5 w-full bg-[linear-gradient(90deg,transparent,#FF8D1E,transparent)] opacity-80" />
+    // The card carried an orange border, an orange top-edge gradient and a warm
+    // gradient background, on top of a filled orange step number and an orange chip
+    // — five accent treatments competing inside one card. The button is the thing
+    // to press, so the button is what stays coloured.
+    <section className="psy-card relative overflow-hidden">
       <div className="flex flex-col items-stretch gap-5 p-5 sm:flex-row sm:items-center sm:p-6">
         <div className="flex min-w-0 flex-1 items-start gap-4 sm:gap-5">
-          <StepNum n={n} hero />
+          <StepNum n={n} />
           <div className="min-w-0 flex-1">
             <Kicker label="Then complete" mins={s?.mins ?? "workbook"} />
             <StepTitle>{s?.title ?? "Your workbook"}</StepTitle>
             {s?.blurb && <StepP>{s.blurb}</StepP>}
-            <span className="mt-3 inline-block rounded-lg border border-orange/40 bg-orange/[0.14] px-3 py-1.5 font-disp text-[12px] font-semibold text-orange">
+            <span className="mt-3 inline-block rounded-lg border border-line bg-[#0c1424] px-3 py-1.5 font-disp text-[12px] font-medium text-sec">
               ✎ A loose first pass — question marks welcome
             </span>
             <FlowNote />
@@ -317,26 +340,26 @@ function StepResources({
             ))}
           </div>
 
+          {/* The print versions used to repeat every resource as a second full card
+              under its own heading — so "The Principle Card" appeared twice on the
+              page and read as two things to read. They are the same documents in
+              black and white, so they belong as links, not as cards. */}
           {printResources.length > 0 && (
-            <div className="mt-5 border-t border-dashed border-line pt-4">
-              <div className="flex items-center gap-2 font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-mut">
-                <span aria-hidden="true">⎙</span> Print-ready versions
-              </div>
-              <p className="mt-1 max-w-[64ch] text-[12.5px] leading-relaxed text-mut">
-                The same resources in black and white, ready to print.
-              </p>
-              <div className="mt-3 grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
-                {printResources.map((r) => (
-                  <ResourceCard
-                    key={r.href}
-                    href={r.href}
-                    icon={r.icon}
-                    title={r.label}
-                    sub={r.sub}
-                    open={r.open}
-                  />
-                ))}
-              </div>
+            <div className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 border-t border-dashed border-line pt-3 text-[12px] text-mut">
+              <span className="font-disp uppercase tracking-[1.2px]">
+                <span aria-hidden="true">⎙</span> Print versions
+              </span>
+              {printResources.map((r) => (
+                <a
+                  key={r.href}
+                  href={r.href}
+                  target={r.open ? "_blank" : undefined}
+                  rel={r.open ? "noopener noreferrer" : undefined}
+                  className="underline decoration-dotted underline-offset-2 transition hover:text-off"
+                >
+                  {r.label}
+                </a>
+              ))}
             </div>
           )}
         </div>
@@ -365,7 +388,7 @@ function ResourceCard({
       rel={open ? "noopener noreferrer" : undefined}
       className="flex items-center gap-3 rounded-xl border border-line bg-[#0c1424] p-3.5 text-off transition hover:-translate-y-px hover:border-orange"
     >
-      <span className="grid h-[38px] w-[38px] flex-none place-items-center rounded-[9px] bg-orange/[0.14] text-[17px] text-orange">
+      <span className="grid h-[38px] w-[38px] flex-none place-items-center rounded-[9px] border border-line bg-[#0c1424] text-[17px] text-mut">
         {icon ?? "▤"}
       </span>
       <span className="min-w-0">
