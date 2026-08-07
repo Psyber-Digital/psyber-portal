@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 const TABS = [
   { href: "/portal", label: "This week" },
   { href: "/portal/shared", label: "Shared Files" },
-  { href: "/portal/outreach", label: "Outreach" },
+  { href: "/portal/outreach", label: "The List" },
 ];
 
 export function PortalNav({ badge }: { badge?: number }) {
