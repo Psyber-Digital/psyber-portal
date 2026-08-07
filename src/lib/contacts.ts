@@ -38,6 +38,16 @@ export const CORRESPONDENCES: { value: ContactCorrespondence; label: string }[] 
 // spreadsheet lists Email / DM / Instant Message / Face-To-Face; video and voice
 // are added here because the strategy ranks them and the first wave of contacts
 // is meant to use the warm end of this list, not the cold end.
+// ORDER IS MEANINGFUL — do not sort this list alphabetically or "tidy" it.
+//
+// It runs from the most effective medium to the least, and the client is meant to
+// pick the highest one the relationship will carry: face-to-face beats a video call,
+// a video call beats a voice call, and all of them beat something written. How far up
+// somebody can reach depends on how well they know the person, which is why this is a
+// per-contact choice rather than one setting for the whole list.
+//
+// That ranking was implicit in the order for weeks with nothing on screen saying so —
+// the field carried no explanation at all until 7 Aug 2026.
 export const MEDIUMS: { value: ContactMedium; label: string }[] = [
   { value: "", label: "—" },
   { value: "face_to_face", label: "Face-To-Face" },

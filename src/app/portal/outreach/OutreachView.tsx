@@ -468,7 +468,7 @@ function GuideDialog({ onClose }: { onClose: () => void }) {
               {[
                 ["Relevance", "Could the program be for them, or are they a connector?"],
                 ["Correspondence", "Which message they're on — first message, or follow-up one or two."],
-                ["Medium", "How you reached them. Warmer channels get better replies."],
+                ["Medium", "The best way to reach this person, not the easiest — face-to-face, then video, then voice, then a message. How far up you can go depends on how well you know them."],
                 ["Status", "Where they've got to, from not contacted through to converted."],
                 ["Dates", "When you first made contact, when you last did, and when to chase."],
               ].map(([term, def]) => (
@@ -583,6 +583,13 @@ function OneContactPanel({
                 </option>
               ))}
             </select>
+            {/* The field was unexplained, and the list is in deliberate order — a
+                client had no way to know that choosing the top option is the point. */}
+            <p className="mt-1.5 text-[11.5px] leading-relaxed text-mut">
+              The best way to reach <em>this</em> person, not the easiest. The list runs
+              best to least: face-to-face, then video, then voice, then a message. How
+              far up you can go depends on how well you know them.
+            </p>
           </div>
           <div>
             <label className="psy-label">Status</label>
