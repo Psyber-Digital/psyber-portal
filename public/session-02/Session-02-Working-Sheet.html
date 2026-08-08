@@ -27,6 +27,13 @@ label{display:block;font-size:13.5px;color:#B9C7DA;margin:14px 0 6px}
 input[type=text],textarea{width:100%;background:#08111f;color:var(--off);
  border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
 textarea{min-height:88px;resize:vertical}
+/* Print mirror — never visible on screen. An <input> is a single line and cannot
+   wrap, so on paper anything longer than the box is silently cut off mid-word.
+   A client filled this sheet in properly, printed it, sent it, and roughly a
+   third of what she had written was missing from the PDF with nothing to show
+   it had ever been there. The value is copied into this block element just
+   before printing and the field itself is hidden. */
+.pv{display:none}
 input:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
 table{width:100%;border-collapse:collapse;margin:8px 0 16px}
 th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);
@@ -39,10 +46,19 @@ td.fixed{color:#B9C7DA;font-size:14px;padding:10px 8px}
  justify-content:center;backdrop-filter:blur(8px)}
 button{font:inherit;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid var(--line);
  background:#12203a;color:var(--off);cursor:pointer}
+/* Reads as one of the buttons, but it is a real link — it navigates to the
+   portal's Shared Files tab, and middle-click and copy-link behave properly. */
+.barlink{font:inherit;font-size:14px;padding:9px 16px;border-radius:8px;
+ border:1px solid var(--line);background:#12203a;color:var(--off);
+ text-decoration:none;line-height:normal;display:inline-block}
+.barlink:hover{filter:brightness(1.18)}
 button.primary{background:var(--orange);border-color:var(--orange);color:#160a02;font-weight:600}
 button:hover{filter:brightness(1.12)}
 .saved{color:var(--ok);font-size:13px;min-width:150px}
 .note{color:var(--slate);font-size:13px;text-align:center;margin-top:26px}
+/* Left to the browser default this renders as bright #0000EE on the dark panel. */
+.note a{color:var(--blue);text-decoration-color:rgba(93,171,229,.5);text-underline-offset:3px}
+.note a:hover{color:var(--orange);text-decoration-color:rgba(240,131,40,.6)}
 /* The block we complete together on the call. Everything else on the sheet is
    solo work, so this one carries the accent rather than blending into the run. */
 section.live{border-color:rgba(240,131,40,.55);
@@ -67,6 +83,10 @@ section.live h2 span{color:var(--orange)}
  width:5px;height:10px;border:solid #160a02;border-width:0 2.2px 2.2px 0;transform:rotate(42deg)}
 .shift input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .shift .nm{font-weight:600;font-size:15.5px}
+/* display:block, or the whole rule does nothing. .why is a <span>, and margin-top
+   and max-width are both ignored on an inline box — so every shift read
+   "Fixed → growthYou have no coaching experience…" with no space, on the live
+   portal, in block one of session one. */
 .shift .why{display:block;color:var(--slate);font-size:14px;margin-top:3px;max-width:72ch}
 .shift .moment{display:none;margin-top:10px}
 .shift.on .moment{display:block}
@@ -131,7 +151,22 @@ td.xlast{position:relative;padding-right:32px}
  section{background:#fff;border:1px solid #ccc;break-inside:avoid}
  .intro{background:#f6f6f6;color:#222} h1 em{color:#9A4516} .principle{color:#444}
  input,textarea{background:#fff;color:#111;border:1px solid #bbb}
+ /* Show the mirror, hide the field it came from. Checkboxes are untouched —
+    they print as themselves. */
+ input[type=text],textarea{display:none}
+ .pv{display:block;white-space:pre-wrap;overflow-wrap:anywhere;
+  background:#fff;color:#111;border:1px solid #bbb;border-radius:8px;
+  padding:10px 12px;font:inherit;font-size:15px;min-height:42px}
+ /* box-sizing is border-box, so min-height is the whole box. 42px is what an
+    empty text input measures, checked against the printed page rather than
+    calculated — leave it lower and every empty field prints shorter than it
+    used to, which quietly costs a blank sheet two pages of writing room.
+    .ta matches the textarea. */
+ .pv.ta{min-height:88px}
  .eyebrow,.help,th{color:#555}
+ /* "Click here" means nothing on paper, so print names the destination instead. */
+ .note a{color:#111;text-decoration:none}
+ .note a::after{content:" — the Shared Files tab in your portal"}
  .shift{background:#fff;border:1px solid #ccc;break-inside:avoid}
  .shift.on{background:#faf3ec;border-color:#9A4516}
  .shift .why{color:#555} .shift .moment{display:block}
@@ -341,7 +376,7 @@ td.xlast{position:relative;padding-right:32px}
 <td><input type='text' id='f71'></td>
 </tr>
 <tr>
-<td class='fixed'>4 · Coaches, courses and books — people already paying to solve this</td>
+<td class='fixed'>4 · Coaches, courses and books — one coach, one course, one book aimed at these people. Proof somebody is already paying to solve this</td>
 <td><input type='text' id='f72'></td>
 <td><input type='text' id='f73'></td>
 </tr>
@@ -375,7 +410,7 @@ td.xlast{position:relative;padding-right:32px}
 <td><input type='text' id='f81'></td>
 </tr>
 <tr>
-<td class='fixed'>4 · Coaches, courses and books — people already paying to solve this</td>
+<td class='fixed'>4 · Coaches, courses and books — one coach, one course, one book aimed at these people. Proof somebody is already paying to solve this</td>
 <td><input type='text' id='f82'></td>
 <td><input type='text' id='f83'></td>
 </tr>
@@ -409,7 +444,7 @@ td.xlast{position:relative;padding-right:32px}
 <td><input type='text' id='f91'></td>
 </tr>
 <tr>
-<td class='fixed'>4 · Coaches, courses and books — people already paying to solve this</td>
+<td class='fixed'>4 · Coaches, courses and books — one coach, one course, one book aimed at these people. Proof somebody is already paying to solve this</td>
 <td><input type='text' id='f92'></td>
 <td><input type='text' id='f93'></td>
 </tr>
@@ -434,7 +469,7 @@ td.xlast{position:relative;padding-right:32px}
 <label for='f98'>Runner-up, parked</label>
 <input type='text' id='f98'>
 </section>
-<div class='note'>Your answers save automatically in this browser. They are not sent anywhere. Use Download / print to keep a copy, and share the PDF with your coach 24 hours before the session.</div>
+<div class='note'><b>To share your workbook with your coach:</b> download it, then either email it or <a href='/portal/shared'>click here to share it on the portal</a>. Your answers save automatically in this browser — they are not sent anywhere until you send them.</div>
 </div>
 <div class='modal' id='menu-transformations' role='dialog' aria-modal='true' aria-label='Transformations menu'><div class='box'>
 <div class='mhead'><h3>Transformations</h3><button type='button' class='close'>Close</button></div>
@@ -537,7 +572,7 @@ td.xlast{position:relative;padding-right:32px}
 <div class='row'><b>For Couples Facing Retirement</b><span>“I help couples plan retirement together and rediscover shared purpose.”</span></div>
 <div class='row'><b>For Military Couples</b><span>“I help military couples navigate deployment and reunion with trust and resilience.”</span></div>
 </div></div></div>
-<div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
+<div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><a class='barlink' href='/portal/shared'>Share on the portal</a><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
 <script>
 (function(){
  var KEY='psyberB-wk2';
@@ -622,7 +657,32 @@ td.xlast{position:relative;padding-right:32px}
  document.addEventListener('change',function(ev){
    if(ev.target&&box(ev.target)){paint();save();}});
  document.getElementById('save').addEventListener('click',save);
- document.getElementById('print').addEventListener('click',function(){save();window.print();});
+
+ // ── print mirror ───────────────────────────────────────────────────────────
+ // A text input cannot wrap, so on paper it prints one line and drops the rest
+ // with no ellipsis and no warning. Copy every value into a real block element
+ // and let that print instead. Rebuilt on every print rather than kept in sync,
+ // so rows added after load are covered without a listener.
+ function mirror(){
+   [].slice.call(document.querySelectorAll('input[type=text],textarea'))
+     .forEach(function(e){
+       var p=e.nextElementSibling;
+       if(!p||p.className.indexOf('pv')!==0){
+         p=document.createElement('div');
+         p.className='pv'+(e.tagName==='TEXTAREA'?' ta':'');
+         e.parentNode.insertBefore(p,e.nextSibling);}
+       p.textContent=e.value;});}
+ document.getElementById('print').addEventListener('click',function(){
+   save();mirror();window.print();});
+ // Cmd-P and the browser's own print menu never touch that button. onbeforeprint
+ // covers Chrome and Firefox; Safari does not fire it, but does fire a change on
+ // the print media query, so both are wired.
+ window.addEventListener('beforeprint',mirror);
+ if(window.matchMedia){
+   var pmq=window.matchMedia('print');
+   var onp=function(m){if(m.matches)mirror();};
+   if(pmq.addEventListener)pmq.addEventListener('change',onp);
+   else if(pmq.addListener)pmq.addListener(onp);}
  document.getElementById('clear').addEventListener('click',function(){
    if(confirm('Clear every answer on this sheet? This cannot be undone.')){
      localStorage.removeItem(KEY);
