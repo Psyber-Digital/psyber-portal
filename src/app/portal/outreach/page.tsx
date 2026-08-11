@@ -42,7 +42,10 @@ export default async function OutreachPage() {
       <Header name={profile?.full_name || "Client"} role="client" />
       <PortalNav badge={uncollected ?? 0} />
 
-      <SectionHead>Outreach · Your contact database</SectionHead>
+      {/* One name for one thing. The nav tab was renamed to "The List" (df6ac53) but
+          this heading and the guide dialog still said "your contact database", so a
+          client met three names for the same page. Don, 11 Aug 2026. */}
+      <SectionHead>The List</SectionHead>
       {/* The rule sits BEFORE the sweep instruction, deliberately: the filter has
           to be in place before "put them all down first" is ever read.
           Don, 8 Aug 2026 — the rule is about who you COACH, not who you talk to.
@@ -57,30 +60,41 @@ export default async function OutreachPage() {
         you are unsure about someone, bring them to a session rather than deciding
         it alone.
       </p>
-      <p className="mx-0.5 mb-4 max-w-[74ch] text-[13.5px] leading-relaxed text-mut">
-        This is the single most consequential input to landing your first client,
-        and it runs alongside everything else. Start it now and keep adding right
-        through the program, every time someone new comes to mind — so that by the
-        time you reach the outreach sessions there is a real list to work, not a
-        blank page. Everyone else on it is either a possible client or a possible
-        connector, so put them all down first and categorise afterwards.
-      </p>
-      <p className="mx-0.5 mb-5 max-w-[74ch] rounded-[10px] border border-blue/30 bg-blue/[0.07] px-4 py-3 text-[12.5px] leading-relaxed text-sec">
-        <b className="text-off">You’re not contacting anyone yet.</b> Reaching out
-        comes later in the program, and we’ll cover exactly how. For now this is
-        only about getting names down.
+      {/* Two paragraphs merged into one, 11 Aug 2026. They said the same thing from
+          two angles — 105 words to establish "start now, everyone counts, don't send
+          anything yet". The dropped clause ("runs alongside everything else... by the
+          time you reach the outreach sessions") is not lost: it is stated in full in
+          the ? guide below, step 1. */}
+      <p className="mx-0.5 mb-5 max-w-[74ch] text-[13.5px] leading-relaxed text-mut">
+        <b className="text-off">Start it now and keep adding.</b> This is the
+        single most consequential input to landing your first client. Every name
+        is either a possible client or a possible connector, so put them all down
+        first and categorise later.{" "}
+        <b className="text-off">You are not contacting anyone yet</b> — that comes
+        later in the program.
       </p>
       {/* Stated to match `Compliance/DPA-portal-clients.md` §5 exactly. The old
           line — "we can't see it from our side of the portal" — is the claim the
           DPA deliberately refuses: it is a commitment plus an architectural
-          control, not technical incapability. Changed 8 Aug 2026 on Don's word. */}
-      <p className="mx-0.5 mb-6 max-w-[74ch] text-[12.5px] leading-relaxed text-mut">
-        No part of the portal gives us a route to this list — the contacts table
-        has no administrator policy and no screen that reads it. Like any hosted
-        system we hold a database key that could bypass that, and we have
-        committed not to use it. Bring the list to a session if you want a second
-        pair of eyes on it.
-      </p>
+          control, not technical incapability. Changed 8 Aug 2026 on Don's word.
+
+          Folded behind a disclosure 11 Aug 2026 — the WORDING IS UNCHANGED and must
+          stay that way. It is a reassurance, wanted the moment a client wonders who
+          can see her contacts and not before, so it no longer sits between her and
+          the list. */}
+      <details className="mx-0.5 mb-6 max-w-[74ch] group">
+        <summary className="inline-flex cursor-pointer list-none items-center gap-2 text-[12.5px] text-mut marker:hidden hover:text-sec">
+          Who can see this list
+          <span className="text-[10px] transition group-open:rotate-90">›</span>
+        </summary>
+        <p className="mt-2 text-[12.5px] leading-relaxed text-mut">
+          No part of the portal gives us a route to this list — the contacts table
+          has no administrator policy and no screen that reads it. Like any hosted
+          system we hold a database key that could bypass that, and we have
+          committed not to use it. Bring the list to a session if you want a second
+          pair of eyes on it.
+        </p>
+      </details>
 
       <OutreachView
         contacts={(data ?? []) as Contact[]}

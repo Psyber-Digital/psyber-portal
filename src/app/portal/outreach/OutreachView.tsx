@@ -131,17 +131,18 @@ export function OutreachView({
               <button
                 onClick={() => setGuideOpen(true)}
                 className="inline-flex h-[19px] w-[19px] items-center justify-center rounded-full border border-orange/50 bg-orange/[0.12] font-disp text-[11px] font-bold text-orange transition hover:bg-orange/[0.22]"
-                aria-label="How the contact database works"
+                aria-label="How The List works"
                 title="How this works"
               >
                 ?
               </button>
             </div>
+            {/* The sweep instruction was on this page four times over — here, in the
+                page prose above, in the empty state below, and again in the ? guide.
+                It survives once, here, next to the number it feeds. 11 Aug 2026. */}
             <p className="mx-auto mt-2 max-w-[62ch] text-[12.5px] leading-relaxed text-mut sm:mx-0">
-              Compile contacts from email, social media and mobile — everyone you
-              can think of. More contacts is better than fewer, and the list keeps
-              growing right through the program. Everyone on it is either a lead or
-              access to another network.
+              Sweep your email, your phone and your social accounts. Everyone is
+              either a lead or a way into another network.
             </p>
             <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
               <Stat label="Relevant" value={stats.relevant} />
@@ -273,11 +274,11 @@ export function OutreachView({
 
       {!contacts.length ? (
         <div className="rounded-[12px] border border-dashed border-line px-5 py-12 text-center">
+          {/* Sat directly under the ring blurb repeating it almost word for word.
+              The buttons it is pointing at are two inches above. 11 Aug 2026. */}
           <p className="mx-auto max-w-[52ch] text-[13.5px] leading-relaxed text-mut">
-            Your contact database is empty. Start it the easy way: open your email,
-            your phone and your social accounts, and paste in everyone you can
-            think of. Names first, categorise later — and keep coming back as more
-            people occur to you.
+            Nothing here yet. Paste in the names you can think of — details and
+            categories can come later.
           </p>
         </div>
       ) : (
@@ -411,7 +412,7 @@ function GuideDialog({ onClose }: { onClose: () => void }) {
           <div>
             <div className="psy-eyebrow text-orange">From the session</div>
             <h2 id="guide-title" className="mt-1.5 font-disp text-[19px] font-semibold text-off">
-              Your contact database
+              The List
             </h2>
           </div>
           <button
@@ -424,9 +425,11 @@ function GuideDialog({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="mt-5 space-y-4 text-[13.5px] leading-relaxed text-sec">
+          {/* The "compile from email, social and mobile" sentence lives on the ring
+              above; repeating it as the first thing inside the guide made the guide
+              read as a restatement rather than the depth behind it. 11 Aug 2026. */}
           <p>
-            Compile contacts from email, social media and mobile. Be as thorough
-            and extensive as possible — more contacts is better than fewer.
+            Be thorough — more contacts is better than fewer.
             <b className="text-off">
               {" "}
               Everyone is either a lead or access to another network.
@@ -510,9 +513,7 @@ function PastePanel({
     <Panel>
       <h4 className="font-disp text-sm font-semibold text-off">Paste a list of names</h4>
       <p className="mb-1 mt-1.5 text-[12.5px] leading-relaxed text-mut">
-        One name per line. The fastest way to add people in batches — get the names
-        down, fill in details and categories afterwards. Use it again any time a
-        new set of names comes to mind.
+        One name per line. Get the names down; details and categories come later.
       </p>
       <form action={onSubmit}>
         <label className="psy-label">Names</label>
@@ -628,11 +629,11 @@ function ImportPanel({
     <Panel>
       <h4 className="font-disp text-sm font-semibold text-off">Import a CSV</h4>
       <p className="mb-1 mt-1.5 max-w-[70ch] text-[12.5px] leading-relaxed text-mut">
-        Already have the Contact Database spreadsheet? Export it as CSV and drop it
-        in — the columns match. It needs a header row with at least{" "}
+        Export the Contact Database spreadsheet as CSV and drop it in — the
+        columns match. It needs a header row with at least{" "}
         <b className="text-sec">Name</b>; Email Address, Phone Number,
         Correspondence, Medium, Status, Notes and the date columns are picked up
-        if they're there. Dates are read day-first (26/07/2026).
+        if present. Dates are read day-first (26/07/2026).
       </p>
       <form action={onSubmit}>
         <div className="mt-3 flex flex-wrap items-center gap-3">
