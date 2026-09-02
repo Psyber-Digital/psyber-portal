@@ -16,6 +16,10 @@ export const WEEK_VIDEOS: Record<number, WeekVideo> = {
   1: { id: "1211864055", hash: "19c07e739e", title: "Session 1 · Pre-Work" },
   // Session 2 pre-work (Niche — Ideas). Private + embed-whitelisted to the portal domain.
   2: { id: "1212379930", hash: "c79b8e732c", title: "Session 2 · Pre-Work" },
+  // Session 3 pre-work (Message). First publish 2 Sep 2026 — Adam on eleven_v3,
+  // 7:17. Private + embed-whitelisted to both portal domains. No hash: the video
+  // was created with view=disable from the outset, so Vimeo issued none.
+  3: { id: "1223352297", title: "Session 3 · Pre-Work" },
 };
 
 // The onboarding video, shown at the top of the portal home rather than as a week.

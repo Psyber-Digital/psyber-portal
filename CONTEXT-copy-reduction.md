@@ -154,6 +154,13 @@ so no week row changed.
 | `ClientPortal/src/app/portal/outreach/` | The List (live) |
 | `Compliance/DPA-portal-clients.md` §5 | The privacy wording that must not change |
 
+## Handoff
+
+A full cold-start handoff for a fresh session is at
+`.workspace/handoffs/handoff-2026-08-12-1115.md` — objective, the three codebase
+traps, every file changed, what was verified, the errors made, and the two open
+items. Read it before this file.
+
 ## Next steps
 Requirement 3: the per-week copy. `bannerIntro` restates the first line of the
 coach's note on several weeks, and two standing paragraphs are repeated

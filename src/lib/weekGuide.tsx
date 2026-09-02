@@ -61,18 +61,18 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     note: {
       fromLabel: "A Note From Your Coach",
       initial: "D",
-      body: (<><span className="block">{"The most valuable material here is their language, not yours — the exact phrases you have heard from the people you are serving."}</span><span className="block mt-3">{"By the end of our session your announcement goes out. Written together, sent the same day."}</span></>),
+      body: (<><span className="block">{"Read before you write. The people you want to serve talk about their own lives in forums, comment threads and reviews — go and read a few, then put what you found into section two in your own words. Your therapy clients are not a source; that lane stays separate."}</span><span className="block mt-3">{"Quantity first, editing second. Aim for ten lines under each heading — every table takes as many rows as you need."}</span><span className="block mt-3">{"By the end of our next session your announcement goes out. Written together, sent the same day."}</span></>),
     },
-    budget: { total: "35 minutes, plus your list", parts: [{ value: "7 min", label: "to watch" }, { value: "30 min", label: "for the sheet" }, { value: "ongoing", label: "your list" }] },
+    budget: { total: "65 minutes, plus your list", parts: [{ value: "7 min", label: "to watch" }, { value: "60 min", label: "for the sheet" }, { value: "ongoing", label: "your list" }] },
     videoStep: {
       mins: "approx 7 min",
       title: "Pre-work video — message",
-      blurb: (<>{"Why your client is the hero and you are the guide, and the five things every message needs."}</>),
+      blurb: (<>{"Why your client is the hero and you are the guide, what a guide needs besides empathy, and the five things every message is built from."}</>),
     },
     workbookStep: {
-      mins: "30 min",
+      mins: "60 min",
       title: "Your Working Sheet",
-      blurb: (<>{"Work backwards from what actually gets sent. We fill only what feeds your announcement and the three answers — the rest waits until you have a real client."}</>),
+      blurb: (<>{"Four sections. Everything you write later — your website copy, your emails, your outreach, the words inside your own program — starts here, so keep this page and keep adding to it. In section two, aim for ten lines under each heading and add rows until you run out. Do not edit while you write."}</>),
       caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
     },
   },

@@ -9,7 +9,7 @@ Verify, wire up, test, and deploy the pre-built Psyber client portal (Next.js + 
 - [x] §3 Accounts & config — Supabase project `awovtppvjifjhabuzoyg`, region London eu-west-2. `.env.local` filled (3 Supabase values + site URL).
 - [x] §4 Database — linked + `db push` applied 0001/0002/0003; seed loaded (weeks 1–2 published, 3 draft); private `worksheets` bucket live.
 - [x] §5 Testing — ALL 9 acceptance tests passed (headless harness + curl). Results recorded in TESTING.md. Test artifacts cleaned; DB back to clean seed.
-- [x] §6 Deploy — DONE. Private repo github.com/Psyber-Digital/psyber-portal → Vercel Pro at https://psyber-portal.vercel.app (Node 22) → deployed URL in Supabase redirect URLs → acceptance tests re-run against prod (all pass) → Asher promoted to admin.
+- [x] §6 Deploy — DONE. Private repo github.com/Psyber-Digital/psyber-portal → Vercel Pro at https://psyber-portal.vercel.app (Node 22), since fronted by the custom domain **https://portal.psyberdigital.com** — that is the address clients are given → deployed URL in Supabase redirect URLs → acceptance tests re-run against prod (all pass) → Asher promoted to admin.
 - [x] §8 ADRs (0012–0016) + ROADMAP.md + TODO.md written. Client-upload-next recorded as ADR-0016.
 
 ## Email / SMTP (added post-brief — was a real go-live blocker)

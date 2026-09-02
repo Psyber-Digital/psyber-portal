@@ -14,10 +14,18 @@ link and embeddable on any site — because privacy was set by hand, per video, 
 one was missed. Two commands now do it, and both must be run on every upload:
 
 ```
+python3 vimeo_replace.py --new <file.mp4> "Title"   first publish (locks automatically)
 python3 vimeo_replace.py <id> --lock      hidden + locked to the portal domains
 python3 vimeo_replace.py <id> --player    like/share/watch-later/embed + logo off
 ```
-(both live in `Programme/Flagship/build/vimeo_replace.py`)
+(all live in `Programme/Flagship/build/vimeo_replace.py`)
+
+**`--lock` sets five fields, not two.** `view`, `embed`, `download`, `add` and
+`comments`. Session 03's first upload came out with `download=True`, `add=True` and
+`comments=anybody` because `--lock` only ever set the first two and the rest had been
+applied by hand on the earlier videos. A client could have downloaded the paid
+pre-work. They are one constant now, and `--lock` fails loudly if any field does not
+take. Corrected 2 Sep 2026.
 
 Player chrome (29 Jul 2026): the like, share, watch-later and embed-code buttons
 and the Vimeo logo are off on all three videos. Those are account-side per-video
@@ -28,6 +36,7 @@ settings — the `title=0` style parameters in `VimeoEmbed.tsx` cannot reach the
 | Welcome — onboarding (not a session) | `1214030618` | — | `https://player.vimeo.com/video/1214030618` | **Final render** (Adam — Conversational on `eleven_v3`, on-cue animation, 4:49). Shown above the weeks on the portal home, not as a week. Source replaced 4 Aug 2026 for the voice change; before that, 29 Jul for the "Welcome to Psyber Digital" opening and the "live" pronunciation fix. |
 | Session 01 — Foundations (pre-work) | `1211864055` | `19c07e739e` | `https://player.vimeo.com/video/1211864055?h=19c07e739e` | Wired into portal (week 1). **Replace source with FINAL render**, then deploy. Privacy corrected 29 Jul 2026 — was `view=unlisted` + `embed=public`. |
 | Session 02 — Niche Ideas (pre-work) | `1212379930` | `c79b8e732c` | `https://player.vimeo.com/video/1212379930?h=c79b8e732c` | **Final render** (Adam — Conversational on `eleven_v3`, on-cue animation, 7:17). Source replaced 4 Aug 2026 for the voice change; originally uploaded 23 Jul 2026; privacy `view=disable` + `embed=whitelist` (psyber-portal.vercel.app + portal.psyberdigital.com). Wired into portal (week 2). |
+| Session 03 — Message (pre-work) | `1223352297` | — | `https://player.vimeo.com/video/1223352297` | **Final render** (Adam — Conversational on `eleven_v3`, 7:18). First publish 2 Sep 2026 via `vimeo_replace.py --new`. No private hash — created with `view=disable` from the outset, so Vimeo issued none. Privacy `view=disable` + `embed=whitelist` (both portal domains); download, add and comments off. Wired into portal (week 3). **Note:** the create+tus flow left the upload unfinalised for 5.5 hours; a second push through `/videos/{id}/versions` completed it. `--new` now detects and repairs that itself. |
 
 **Final render to upload (replace source, keep this ID):** `Projects/1-PsyberDigital/Programme/Session-1-Plan-and-Model-Shift/assets/video/Session-1-Prework-Video.mp4` (4:35, Brian voiceover + on-cue animation). Currently the Vimeo source is an earlier draft.
 

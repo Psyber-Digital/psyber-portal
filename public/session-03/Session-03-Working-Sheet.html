@@ -23,6 +23,15 @@ section{margin:0 0 34px;background:var(--panel);border:1px solid var(--line);bor
 h2{font-size:19px;margin-bottom:6px;font-weight:650}
 h2 span{color:var(--slate);font-weight:500;margin-right:10px}
 .help{color:var(--slate);font-size:14.5px;margin-bottom:16px;max-width:76ch}
+/* A worked example. COPY-STANDARD 16: when an instruction is abstract the fix
+   is one concrete instance, not more description — and it is the one place copy
+   is allowed to get longer. Set apart so it can be skipped by anybody who does
+   not need it. */
+.rowcount{font-size:12.5px;color:var(--slate);margin-left:10px;font-variant-numeric:tabular-nums}
+.rowcount.done{color:var(--ok)}
+.req{font-size:14px;color:var(--off);margin:2px 0 6px;font-weight:500;max-width:76ch}
+.eg{background:rgba(240,131,40,.06);border-left:2px solid var(--orange);border-radius:0 8px 8px 0;padding:11px 14px;margin:-4px 0 16px;color:var(--slate);font-size:13.5px;line-height:1.65;max-width:76ch}
+.eg b{color:var(--off);font-weight:600}
 label{display:block;font-size:13.5px;color:#B9C7DA;margin:14px 0 6px}
 input[type=text],textarea{width:100%;background:#08111f;color:var(--off);
  border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
@@ -115,8 +124,16 @@ section.live h2 span{color:var(--orange)}
 .modal .mnote{color:var(--slate);font-size:14.5px;margin-bottom:18px;max-width:74ch}
 .modal .row{display:grid;grid-template-columns:230px 1fr;gap:10px 18px;
  padding:8px 0;border-bottom:1px solid rgba(30,43,69,.7);font-size:14.5px}
+.modal .row.three{grid-template-columns:200px 1fr 1fr}
 .modal .row b{font-weight:600}
 .modal .row span{color:var(--slate)}
+/* The reframe reads as the destination, not as more of the same complaint. */
+.modal .row span.pos{color:var(--blue)}
+/* Emitted inside .mbody, not .mhead — scoping it to the header meant the grid never
+   applied and the two labels rendered as "Sounds likeOnce it has shifted". */
+.modal .cols{display:grid;grid-template-columns:200px 1fr 1fr;gap:10px 18px;
+ font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);
+ padding:6px 0 4px;border-bottom:1px solid rgba(30,43,69,.7)}
 .modal .chips{display:flex;flex-wrap:wrap;gap:8px}
 .modal .chips span{background:#08111f;border:1px solid var(--line);border-radius:999px;
  padding:6px 12px;font-size:14px;color:#D6E0EE}
@@ -127,7 +144,8 @@ section.live h2 span{color:var(--orange)}
  .modal .mhead{padding:16px 16px 12px;gap:10px}
  .modal .mhead h3{font-size:19px}
  .modal .mbody{padding:14px 16px 20px}
- .modal .row{grid-template-columns:1fr;gap:2px;padding:10px 0}
+ .modal .row,.modal .row.three{grid-template-columns:1fr;gap:2px;padding:10px 0}
+ .modal .cols{display:none}
  .modal .close{padding:8px 13px;font-size:13.5px}
 }
 /* Stop the sheet behind scrolling while a menu is open, on iOS especially. */
@@ -150,6 +168,10 @@ td.xlast{position:relative;padding-right:32px}
  td.xlast{padding-right:4px}
  section{background:#fff;border:1px solid #ccc;break-inside:avoid}
  .intro{background:#f6f6f6;color:#222} h1 em{color:#9A4516} .principle{color:#444}
+ /* Examples are ours, not hers. She downloads this and sends it back, so they
+    would be pages of our own guidance returned to us. Screen only. */
+ .eg{display:none !important}
+ .rowcount{display:none !important}
  input,textarea{background:#fff;color:#111;border:1px solid #bbb}
  /* Show the mirror, hide the field it came from. Checkboxes are untouched —
     they print as themselves. */
@@ -181,102 +203,242 @@ td.xlast{position:relative;padding-right:32px}
 <h1>Message</h1>
 <div class='principle'>Confused people do not buy. Resonance over persuasion.</div>
 </header>
-<div class='intro'>Work backwards from what actually gets sent. We fill only what feeds your announcement and the three answers — the rest waits until you have a real client.</div>
+<div class='intro'>Four sections. Everything you write later — your website copy, your emails, your outreach, the words inside your own program — starts here, so keep this page and keep adding to it. In section two, aim for ten lines under each heading and add rows until you run out. Do not edit while you write.</div>
 <section>
-<h2><span>01</span>Your hero</h2>
-<div class='help'>One person, specifically enough that you could picture them. Not a category.</div>
+<h2><span>01</span>High level, and your coaching statement</h2>
+<div class='help'>Start wide, then narrow to one line. Who do you want to help, what is their problem, and what changes for them? Then what they need to feel before they would act. Then say all of it in one sentence — the one you use when somebody asks what you do. One sentence, not three.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-story-terms'>Story terms menu</button>
+</div>
+<label for='f1'>A · State the Hero (who you want to help), Problem (what you want to help them with) &amp; Result (what changes for them), keep it concise and high level</label>
+<div class='eg'><b>Example.</b> Hero: a high-performing executive whose perfectionism keeps her permanently burnt out. Problem: nothing is ever good enough to let go of, so she works late, sleeps badly and is on edge with everybody. Result: she performs at the same level without the exhaustion. Before she acts she needs to feel that easing off is not the same as slipping.</div>
 <textarea id='f1'></textarea>
+<label for='f2'>B · What they need to feel, and believe, before they take action and work with a coach</label>
+<textarea id='f2'></textarea>
+<label for='f3'>C · I work with ___ who ___ so that they can ___ without ___</label>
+<div class='eg'><b>Example.</b> I work with senior executives whose perfectionism is burning them out, so that they can perform at the level they expect of themselves without living on the edge of exhaustion — and without lowering the standard they are known for.</div>
+<input type='text' id='f3'>
+<label for='ans-what'>D · What do you do?</label>
+<div class='eg'><b>Example.</b> What do you do? I help senior executives ship work at a pace they can sustain, without dropping the standard they are known for. Who is it for? Leaders three to five years into a bigger job than the one they were hired for. How is this different from therapy? Therapy works on what is in the way. Coaching works on where you are going — structured, goal-led work with an end point. If something clinical needs attention I will say so and help you find the right person.</div>
+<input type='text' id='ans-what'>
+<label for='ans-who'>E · Who is it for?</label>
+<input type='text' id='ans-who'>
+<label for='ans-therapy'>F · How is this different from therapy?</label>
+<input type='text' id='ans-therapy'>
 </section>
 <section>
-<h2><span>02</span>Their pain points</h2>
-<div class='help'>More than one — people have a cluster, not a single problem. Their words, not clinical language.</div>
-<table data-x='1' data-cols='2'><thead><tr>
-<th>The pain, as they would say it</th>
-<th>Practical, emotional, or “it shouldn’t be this way”</th>
+<h2><span>02</span>What is true for them</h2>
+<div class='help'>You are not writing copy yet — you are working out what is going on. Name it under each heading, in plain terms; the wording comes later, out of these. Five things, and the first of them has three levels. Aim for ten under each. Put everything down before you judge any of it.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-story-terms'>Story terms menu</button>
+</div>
+<div class='req'>A · External problems — what tangible problems or challenges is the hero facing?</div>
+<div class='eg'><b>Example.</b> Missing deadlines because nothing is ever signed off. Re-doing work three or four times. Fourteen-hour days. Cancelling things she had looked forward to. Not sleeping the night before anything is due.</div>
+<table data-x='1' data-cols='1'>
+<thead style='display:none'><tr>
+<th>External problems — what tangible problems or challenges is the hero facing?</th>
 </tr></thead><tbody>
 <tr>
-<td><input type='text' id='f2'></td>
-<td><input type='text' id='f3'></td>
-</tr>
-<tr>
-<td><input type='text' id='f4'></td>
-<td><input type='text' id='f5'></td>
-</tr>
-<tr>
-<td><input type='text' id='f6'></td>
 <td><input type='text' id='f7'></td>
 </tr>
 <tr>
 <td><input type='text' id='f8'></td>
+</tr>
+<tr>
 <td><input type='text' id='f9'></td>
 </tr>
 <tr>
 <td><input type='text' id='f10'></td>
+</tr>
+<tr>
 <td><input type='text' id='f11'></td>
 </tr>
 </tbody></table>
-<div class='addwrap'><button type='button' class='addrow' data-addrow='1'>+ Add row</button></div>
-</section>
-<section>
-<h2><span>03</span>What they want instead</h2>
-<div class='help'>Specific enough that they could picture an ordinary Tuesday inside it.</div>
-<textarea id='f12'></textarea>
-</section>
-<section>
-<h2><span>04</span>What has stopped them</h2>
-<div class='help'>Including what they have already tried, and why it did not hold.</div>
-<textarea id='f13'></textarea>
-</section>
-<section>
-<h2><span>05</span>The cost of staying where they are</h2>
-<div class='help'>Honest, not dramatic.</div>
-<label for='f14'>In six months</label>
-<input type='text' id='f14'>
-<label for='f15'>In two years</label>
-<input type='text' id='f15'>
-</section>
-<section>
-<h2><span>06</span>Your one-liner</h2>
-<div class='help'>Three drafts. Circle the one you would say to a stranger without adding anything.</div>
-<table data-x='2' data-cols='1'><thead><tr>
-<th>I work with ___ who ___ so that they can ___</th>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='1'>+ Add row</button><span class='rowcount' data-count='1' data-target='10'></span></div>
+<div class='req'>B · Internal problems — how does the external problem make the hero feel on a personal level?</div>
+<div class='eg'><b>Example.</b> Feels like a fraud despite the title. Believes she is only as good as her last piece of work. Ashamed of how much it takes out of her. Constantly on edge, and short with people she cares about.</div>
+<table data-x='2' data-cols='1'>
+<thead style='display:none'><tr>
+<th>Internal problems — how does the external problem make the hero feel on a personal level?</th>
 </tr></thead><tbody>
+<tr>
+<td><input type='text' id='f12'></td>
+</tr>
+<tr>
+<td><input type='text' id='f13'></td>
+</tr>
+<tr>
+<td><input type='text' id='f14'></td>
+</tr>
+<tr>
+<td><input type='text' id='f15'></td>
+</tr>
 <tr>
 <td><input type='text' id='f16'></td>
 </tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add row</button><span class='rowcount' data-count='2' data-target='10'></span></div>
+<div class='req'>C · Philosophical problems — what bigger picture or ethical issues are tied to the hero’s problem?</div>
+<div class='eg'><b>Example.</b> It should not cost your health to do a job well. Nobody should have to choose between doing good work and having a life. Exhaustion has been dressed up as commitment for a generation.</div>
+<table data-x='3' data-cols='1'>
+<thead style='display:none'><tr>
+<th>Philosophical problems — what bigger picture or ethical issues are tied to the hero’s problem?</th>
+</tr></thead><tbody>
 <tr>
 <td><input type='text' id='f17'></td>
 </tr>
 <tr>
 <td><input type='text' id='f18'></td>
 </tr>
+<tr>
+<td><input type='text' id='f19'></td>
+</tr>
+<tr>
+<td><input type='text' id='f20'></td>
+</tr>
+<tr>
+<td><input type='text' id='f21'></td>
+</tr>
 </tbody></table>
-<div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add row</button></div>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='3'>+ Add row</button><span class='rowcount' data-count='3' data-target='10'></span></div>
+<div class='req'>D · Desired outcomes — specific enough to picture an ordinary Tuesday inside it</div>
+<div class='eg'><b>Example.</b> Finishing at a reasonable hour without guilt. Signing work off first time. Sleeping through the night before a deadline. Being someone her team finds calm to be around.</div>
+<table data-x='4' data-cols='1'>
+<thead style='display:none'><tr>
+<th>Desired outcomes — specific enough to picture an ordinary Tuesday inside it</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f22'></td>
+</tr>
+<tr>
+<td><input type='text' id='f23'></td>
+</tr>
+<tr>
+<td><input type='text' id='f24'></td>
+</tr>
+<tr>
+<td><input type='text' id='f25'></td>
+</tr>
+<tr>
+<td><input type='text' id='f26'></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='4'>+ Add row</button><span class='rowcount' data-count='4' data-target='10'></span></div>
+<div class='req'>E · Obstacles — what’s stopping them from improving their own life?</div>
+<div class='eg'><b>Example.</b> Has delegated and taken it back twice. Believes the standard IS her, so easing off feels like becoming someone worse. No idea what good enough looks like. No time to work it out.</div>
+<table data-x='5' data-cols='1'>
+<thead style='display:none'><tr>
+<th>Obstacles — what’s stopping them from improving their own life?</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f27'></td>
+</tr>
+<tr>
+<td><input type='text' id='f28'></td>
+</tr>
+<tr>
+<td><input type='text' id='f29'></td>
+</tr>
+<tr>
+<td><input type='text' id='f30'></td>
+</tr>
+<tr>
+<td><input type='text' id='f31'></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='5'>+ Add row</button><span class='rowcount' data-count='5' data-target='10'></span></div>
+<div class='req'>F · Cost of inaction — what does it cost them three months, six months, a year, five years?</div>
+<div class='eg'><b>Example.</b> Three months: another quarter as the bottleneck. Six months: the team routes around her. A year: burnout leave, or a resignation she did not plan. Five years: the health thing she keeps postponing.</div>
+<table data-x='6' data-cols='1'>
+<thead style='display:none'><tr>
+<th>Cost of inaction — what does it cost them three months, six months, a year, five years?</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f32'></td>
+</tr>
+<tr>
+<td><input type='text' id='f33'></td>
+</tr>
+<tr>
+<td><input type='text' id='f34'></td>
+</tr>
+<tr>
+<td><input type='text' id='f35'></td>
+</tr>
+<tr>
+<td><input type='text' id='f36'></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='6'>+ Add row</button><span class='rowcount' data-count='6' data-target='10'></span></div>
+<div class='req'>G · Authority and trust — your training, your years, your results, and what others say about you</div>
+<div class='eg'><b>Example.</b> Fifteen years as a licensed therapist. Several hundred hours with high performers in exactly this position. Work that used to sit for weeks goes out on time, without the standard slipping.</div>
+<table data-x='7' data-cols='1'>
+<thead style='display:none'><tr>
+<th>Authority and trust — your training, your years, your results, and what others say about you</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f37'></td>
+</tr>
+<tr>
+<td><input type='text' id='f38'></td>
+</tr>
+<tr>
+<td><input type='text' id='f39'></td>
+</tr>
+<tr>
+<td><input type='text' id='f40'></td>
+</tr>
+<tr>
+<td><input type='text' id='f41'></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='7'>+ Add row</button><span class='rowcount' data-count='7' data-target='10'></span></div>
+</section>
+<section class='live'>
+<div class='livetag'>Ten minutes · the one that tests the rest</div>
+<h2><span>03</span>The story</h2>
+<div class='help'>Write it as a short story about a hypothetical client you'd work with — one you have invented, not one you have met. Where they are now, what they badly want, what is in the way, the moment they meet a guide — that is you — who offers a way through, and where they end up. It is the fastest way to hear whether the two sections above actually hang together. If the story limps, something further up is still vague.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-story-terms'>Story terms menu</button>
+</div>
+<div class='eg'><b>Example.</b> Maya runs a division of four hundred people and she is genuinely excellent at it — which is what makes this hard to see, and harder to say out loud. She is also awake at five re-reading work she has already re-read, short with her team by four, and home too late to hear about anybody’s day. She has canceled the same weekend away twice. Somewhere in the last two years she started measuring herself only by the last thing she shipped, and the sense of running out of time never quite lifts. She wants to be this good without it costing her everything. She has delegated and clawed it back, read two books on it, and quietly decided the standard is just who she is. Then she starts working with a coach who has sat with high performers for years, who gives her a way to tell finished from perfect and a rule for when to send. It is uncomfortable for a couple of weeks. By the fall the work is no worse, she is sleeping, and she was at the table for her daughter’s birthday.</div>
+<textarea id='f42'></textarea>
 </section>
 <section>
-<h2><span>07</span>The three answers</h2>
-<div class='help'>Write them as you would say them, then say each out loud twice.</div>
-<label for='f19'>What do you do?</label>
-<textarea id='f19'></textarea>
-<label for='f20'>Who is it for?</label>
-<textarea id='f20'></textarea>
-<label for='f21'>How is this different from therapy?</label>
-<textarea id='f21'></textarea>
-</section>
-<section>
-<h2><span>08</span>Your announcement</h2>
-<div class='help'>One message, to everyone on your list. Told as news, ending with the question. Drafted here, finished together, sent on the call.</div>
-<label for='f22'>As you know, I have been a therapist for… and I love what I do. Alongside that, I am excited to tell you…</label>
-<textarea id='f22'></textarea>
-<label for='f23'>…who want to achieve</label>
-<input type='text' id='f23'>
-<label for='f24'>Closing question — do you know anyone who might be interested in this?</label>
-<input type='text' id='f24'>
-<label for='f25'>How many will go out on the day of our session</label>
-<input type='text' id='f25'>
+<h2><span>04</span>Your outreach</h2>
+<div class='help'>One announcement, then two follow-ups. Start them here — you finish them on The List tab, which is where they live and where you update them as you learn what gets answered. Write all three while the words are fresh, so sending them later takes no decision. Use your own energy, style and voice. It has to sound like you.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-story-terms'>Story terms menu</button>
+</div>
+<label for='out-announcement'>A · The announcement — told as news, ending with the question. Finished together on the call</label>
+<div class='eg'><b>Example.</b> Some news. I have been a therapist for fifteen years and I love what I do. Alongside that, I have just launched something new — a coaching program for senior leaders whose perfectionism is quietly costing them their evenings, their sleep and their patience. They are excellent at the job; that is rather the problem. Do you know anyone who might be interested in this?</div>
+<textarea id='out-announcement'></textarea>
+<label for='out-followup-1'>B · Follow-up 1 — three days later. Short. Ask again whether anybody came to mind. The easiest one to skip, and the one worth sending</label>
+<div class='eg'><b>Example.</b> “Hi Sarah — just following up on my note last week. Did anyone come to mind?”</div>
+<textarea id='out-followup-1'></textarea>
+<label for='out-followup-2'>C · Follow-up 2 — ten days after the announcement, and the last one. Take the pressure off, hand it back, leave the door open.</label>
+<div class='eg'><b>Example.</b> “Hi Sarah — I know how busy you are, so I’ll leave this one with you. If somebody springs to mind down the line, reach out any time.”</div>
+<textarea id='out-followup-2'></textarea>
 </section>
 <div class='note'><b>To share your workbook with your coach:</b> download it, then either email it or <a href='/portal/shared'>click here to share it on the portal</a>. Your answers save automatically in this browser — they are not sent anywhere until you send them.</div>
 </div>
+<div class='modal' id='menu-story-terms' role='dialog' aria-modal='true' aria-label='Story terms menu'><div class='box'>
+<div class='mhead'><h3>Story terms</h3><button type='button' class='close'>Close</button></div>
+<div class='mbody'>
+<div class='mnote'>The shape of this session comes from Donald Miller's Building a StoryBrand. You never have to use the words — but knowing which piece you are writing is what stops one message trying to do two jobs badly.</div>
+<div class='row'><b>The hero</b><span>The one person you are writing to — your client, never your business. They do the walking; everything is written to them</span></div>
+<div class='row'><b>The guide</b><span>You. Somebody who has been down this road before, who hands them a plan and a reason to believe it is possible, then steps back</span></div>
+<div class='row'><b>The villain</b><span>The thing standing in their way. Make it one thing, make it real, and remember it works on three levels rather than one</span></div>
+<div class='row'><b>External problem</b><span>What is factually going wrong — the nuts and bolts of it. Most writing never gets past this level</span></div>
+<div class='row'><b>Internal problem</b><span>How that problem makes them feel about themselves. Usually some version of “do I even have what it takes?” — and this is the level that makes somebody feel understood</span></div>
+<div class='row'><b>Philosophical problem</b><span>Why it is simply not right that anybody should have to put up with this. The level that makes it matter rather than just annoy</span></div>
+<div class='row'><b>The promised land</b><span>Their desired outcome — the new normal once they have what they want. Not the absence of the problem, but the ordinary day they get to live instead</span></div>
+<div class='row'><b>The plan</b><span>The vehicle that carries them from where they are now to the promised land. That is your coaching program. You build it in Session 04; here you only need to know it sits between the two</span></div>
+<div class='row'><b>Stakes</b><span>What it costs them if nothing changes. Too little and the message is bland, too much and you have lost them — the setting is honest, not frightening</span></div>
+<div class='row'><b>Authority</b><span>Why you are credible on exactly this. Your training, your years, and the results you have already achieved for people</span></div>
+<div class='row'><b>Social proof</b><span>What other people have said about you. You will have little of this at first, and that is normal</span></div>
+<div class='row'><b>Call to action</b><span>What you ask them to do next. Your announcement is the gentle kind: news, ending in a question anybody can answer</span></div>
+</div></div></div>
 <div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><a class='barlink' href='/portal/shared'>Share on the portal</a><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
 <script>
 (function(){
@@ -352,13 +514,28 @@ td.xlast{position:relative;padding-right:32px}
      var tr=addRow(tb,nextRow(tb));
      if(tr){var f=tr.querySelector('input');if(f)f.focus();}});});
 
+ // How many lines are actually written, against the target the session asks for.
+ // "Aim for ten" is not an instruction anybody can follow without being able to see
+ // where they are.
+ function counts(){
+   [].slice.call(document.querySelectorAll('.rowcount')).forEach(function(sp){
+     var tb=document.querySelector("table[data-x='"+sp.getAttribute('data-count')+"']");
+     if(!tb)return;
+     var n=0;
+     [].slice.call(tb.querySelectorAll('input')).forEach(function(i){
+       if(i.value&&i.value.trim())n++;});
+     var t=sp.getAttribute('data-target');
+     sp.textContent = t ? (n+' of '+t) : (n?n+' written':'');
+     sp.className = 'rowcount'+(t&&n>=+t?' done':'');
+   });
+ }
  function load(){var d={};try{d=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
    restoreRows(d);
    all().forEach(function(e){if(d[e.id]!==undefined)set(e,d[e.id]);});
-   paint();}
+   paint();counts();}
 
  // Delegated, so rows added after load save exactly like the printed ones.
- document.addEventListener('input',function(){clearTimeout(t);t=setTimeout(save,400);});
+ document.addEventListener('input',function(){counts();clearTimeout(t);t=setTimeout(save,400);});
  document.addEventListener('change',function(ev){
    if(ev.target&&box(ev.target)){paint();save();}});
  document.getElementById('save').addEventListener('click',save);
@@ -416,4 +593,5 @@ td.xlast{position:relative;padding-right:32px}
  load();
  window.addEventListener('beforeunload',save);
 })();
-</script></body></html>
+</script>
+</body></html>
