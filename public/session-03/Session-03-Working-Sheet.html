@@ -36,6 +36,11 @@ label{display:block;font-size:13.5px;color:#B9C7DA;margin:14px 0 6px}
 input[type=text],textarea{width:100%;background:#08111f;color:var(--off);
  border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
 textarea{min-height:88px;resize:vertical}
+/* WORKSHEET-STANDARD rule 2: the box must fit the answer. 88px is right for a
+   few lines and wrong for a story — section 3 asks for ten minutes of writing
+   into a box three lines deep, which reads as 'keep it short' when the whole
+   point is the opposite. */
+textarea.tall{min-height:360px}
 /* Print mirror — never visible on screen. An <input> is a single line and cannot
    wrap, so on paper anything longer than the box is silently cut off mid-word.
    A client filled this sheet in properly, printed it, sent it, and roughly a
@@ -218,12 +223,8 @@ td.xlast{position:relative;padding-right:32px}
 <label for='f3'>C · I work with ___ who ___ so that they can ___ without ___</label>
 <div class='eg'><b>Example.</b> I work with senior executives whose perfectionism is burning them out, so that they can perform at the level they expect of themselves without living on the edge of exhaustion — and without lowering the standard they are known for.</div>
 <input type='text' id='f3'>
-<label for='ans-what'>D · What do you do?</label>
-<div class='eg'><b>Example.</b> What do you do? I help senior executives ship work at a pace they can sustain, without dropping the standard they are known for. Who is it for? Leaders three to five years into a bigger job than the one they were hired for. How is this different from therapy? Therapy works on what is in the way. Coaching works on where you are going — structured, goal-led work with an end point. If something clinical needs attention I will say so and help you find the right person.</div>
-<input type='text' id='ans-what'>
-<label for='ans-who'>E · Who is it for?</label>
-<input type='text' id='ans-who'>
-<label for='ans-therapy'>F · How is this different from therapy?</label>
+<label for='ans-therapy'>D · How is this different from therapy?</label>
+<div class='eg'><b>Example.</b> Therapy works on what is in the way. Coaching works on where you are going — structured, goal-led work with an end point. If something clinical needs attention I will say so and help you find the right person.</div>
 <input type='text' id='ans-therapy'>
 </section>
 <section>
@@ -239,6 +240,12 @@ td.xlast{position:relative;padding-right:32px}
 <th>External problems — what tangible problems or challenges is the hero facing?</th>
 </tr></thead><tbody>
 <tr>
+<td><input type='text' id='f5'></td>
+</tr>
+<tr>
+<td><input type='text' id='f6'></td>
+</tr>
+<tr>
 <td><input type='text' id='f7'></td>
 </tr>
 <tr>
@@ -246,12 +253,6 @@ td.xlast{position:relative;padding-right:32px}
 </tr>
 <tr>
 <td><input type='text' id='f9'></td>
-</tr>
-<tr>
-<td><input type='text' id='f10'></td>
-</tr>
-<tr>
-<td><input type='text' id='f11'></td>
 </tr>
 </tbody></table>
 <div class='addwrap'><button type='button' class='addrow' data-addrow='1'>+ Add row</button><span class='rowcount' data-count='1' data-target='10'></span></div>
@@ -262,6 +263,12 @@ td.xlast{position:relative;padding-right:32px}
 <th>Internal problems — how does the external problem make the hero feel on a personal level?</th>
 </tr></thead><tbody>
 <tr>
+<td><input type='text' id='f10'></td>
+</tr>
+<tr>
+<td><input type='text' id='f11'></td>
+</tr>
+<tr>
 <td><input type='text' id='f12'></td>
 </tr>
 <tr>
@@ -269,12 +276,6 @@ td.xlast{position:relative;padding-right:32px}
 </tr>
 <tr>
 <td><input type='text' id='f14'></td>
-</tr>
-<tr>
-<td><input type='text' id='f15'></td>
-</tr>
-<tr>
-<td><input type='text' id='f16'></td>
 </tr>
 </tbody></table>
 <div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add row</button><span class='rowcount' data-count='2' data-target='10'></span></div>
@@ -285,6 +286,12 @@ td.xlast{position:relative;padding-right:32px}
 <th>Philosophical problems — what bigger picture or ethical issues are tied to the hero’s problem?</th>
 </tr></thead><tbody>
 <tr>
+<td><input type='text' id='f15'></td>
+</tr>
+<tr>
+<td><input type='text' id='f16'></td>
+</tr>
+<tr>
 <td><input type='text' id='f17'></td>
 </tr>
 <tr>
@@ -292,12 +299,6 @@ td.xlast{position:relative;padding-right:32px}
 </tr>
 <tr>
 <td><input type='text' id='f19'></td>
-</tr>
-<tr>
-<td><input type='text' id='f20'></td>
-</tr>
-<tr>
-<td><input type='text' id='f21'></td>
 </tr>
 </tbody></table>
 <div class='addwrap'><button type='button' class='addrow' data-addrow='3'>+ Add row</button><span class='rowcount' data-count='3' data-target='10'></span></div>
@@ -308,6 +309,12 @@ td.xlast{position:relative;padding-right:32px}
 <th>Desired outcomes — specific enough to picture an ordinary Tuesday inside it</th>
 </tr></thead><tbody>
 <tr>
+<td><input type='text' id='f20'></td>
+</tr>
+<tr>
+<td><input type='text' id='f21'></td>
+</tr>
+<tr>
 <td><input type='text' id='f22'></td>
 </tr>
 <tr>
@@ -315,12 +322,6 @@ td.xlast{position:relative;padding-right:32px}
 </tr>
 <tr>
 <td><input type='text' id='f24'></td>
-</tr>
-<tr>
-<td><input type='text' id='f25'></td>
-</tr>
-<tr>
-<td><input type='text' id='f26'></td>
 </tr>
 </tbody></table>
 <div class='addwrap'><button type='button' class='addrow' data-addrow='4'>+ Add row</button><span class='rowcount' data-count='4' data-target='10'></span></div>
@@ -331,6 +332,12 @@ td.xlast{position:relative;padding-right:32px}
 <th>Obstacles — what’s stopping them from improving their own life?</th>
 </tr></thead><tbody>
 <tr>
+<td><input type='text' id='f25'></td>
+</tr>
+<tr>
+<td><input type='text' id='f26'></td>
+</tr>
+<tr>
 <td><input type='text' id='f27'></td>
 </tr>
 <tr>
@@ -338,12 +345,6 @@ td.xlast{position:relative;padding-right:32px}
 </tr>
 <tr>
 <td><input type='text' id='f29'></td>
-</tr>
-<tr>
-<td><input type='text' id='f30'></td>
-</tr>
-<tr>
-<td><input type='text' id='f31'></td>
 </tr>
 </tbody></table>
 <div class='addwrap'><button type='button' class='addrow' data-addrow='5'>+ Add row</button><span class='rowcount' data-count='5' data-target='10'></span></div>
@@ -354,6 +355,12 @@ td.xlast{position:relative;padding-right:32px}
 <th>Cost of inaction — what does it cost them three months, six months, a year, five years?</th>
 </tr></thead><tbody>
 <tr>
+<td><input type='text' id='f30'></td>
+</tr>
+<tr>
+<td><input type='text' id='f31'></td>
+</tr>
+<tr>
 <td><input type='text' id='f32'></td>
 </tr>
 <tr>
@@ -361,12 +368,6 @@ td.xlast{position:relative;padding-right:32px}
 </tr>
 <tr>
 <td><input type='text' id='f34'></td>
-</tr>
-<tr>
-<td><input type='text' id='f35'></td>
-</tr>
-<tr>
-<td><input type='text' id='f36'></td>
 </tr>
 </tbody></table>
 <div class='addwrap'><button type='button' class='addrow' data-addrow='6'>+ Add row</button><span class='rowcount' data-count='6' data-target='10'></span></div>
@@ -377,6 +378,12 @@ td.xlast{position:relative;padding-right:32px}
 <th>Authority and trust — your training, your years, your results, and what others say about you</th>
 </tr></thead><tbody>
 <tr>
+<td><input type='text' id='f35'></td>
+</tr>
+<tr>
+<td><input type='text' id='f36'></td>
+</tr>
+<tr>
 <td><input type='text' id='f37'></td>
 </tr>
 <tr>
@@ -384,12 +391,6 @@ td.xlast{position:relative;padding-right:32px}
 </tr>
 <tr>
 <td><input type='text' id='f39'></td>
-</tr>
-<tr>
-<td><input type='text' id='f40'></td>
-</tr>
-<tr>
-<td><input type='text' id='f41'></td>
 </tr>
 </tbody></table>
 <div class='addwrap'><button type='button' class='addrow' data-addrow='7'>+ Add row</button><span class='rowcount' data-count='7' data-target='10'></span></div>
@@ -402,7 +403,7 @@ td.xlast{position:relative;padding-right:32px}
 <button type='button' class='menubtn' data-menu='menu-story-terms'>Story terms menu</button>
 </div>
 <div class='eg'><b>Example.</b> Maya runs a division of four hundred people and she is genuinely excellent at it — which is what makes this hard to see, and harder to say out loud. She is also awake at five re-reading work she has already re-read, short with her team by four, and home too late to hear about anybody’s day. She has canceled the same weekend away twice. Somewhere in the last two years she started measuring herself only by the last thing she shipped, and the sense of running out of time never quite lifts. She wants to be this good without it costing her everything. She has delegated and clawed it back, read two books on it, and quietly decided the standard is just who she is. Then she starts working with a coach who has sat with high performers for years, who gives her a way to tell finished from perfect and a rule for when to send. It is uncomfortable for a couple of weeks. By the fall the work is no worse, she is sleeping, and she was at the table for her daughter’s birthday.</div>
-<textarea id='f42'></textarea>
+<textarea id='f40' class='tall'></textarea>
 </section>
 <section>
 <h2><span>04</span>Your outreach</h2>
