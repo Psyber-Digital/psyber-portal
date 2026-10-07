@@ -81,18 +81,18 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     note: {
       fromLabel: "A Note From Your Coach",
       initial: "D",
-      body: (<><span className="block">{"Phase one gave you who you serve, the change you help them make, and the words for it. Phase two builds the program that gets them there. This session builds its skeleton."}</span><span className="block mt-3">{"Thirteen steps, from wide to narrow, in three sittings. Two of the steps are for letting ideas flow. The rest are for cutting."}</span><span className="block mt-3">{"Start from your own knowledge and experience. Research fills the gaps afterwards."}</span><span className="block mt-3">{"There is a worked example above every box, and it is the same client all the way down, so you can watch one program take shape."}</span></>),
+      body: (<><span className="block">{"Start from your own knowledge and experience. Research fills the gaps afterwards."}</span></>),
     },
-    budget: { total: "115 minutes, plus your list", parts: [{ value: "5 min", label: "to watch" }, { value: "110 min", label: "for the sheet, in three sittings" }, { value: "ongoing", label: "your list" }] },
+    budget: { total: "135 minutes", parts: [{ value: "5 min", label: "to watch" }, { value: "130 min", label: "for the sheet, in three sittings of about 45 minutes" }] },
     videoStep: {
       mins: "approx 5 min",
       title: "Pre-work video — structure",
-      blurb: (<>{"Phase two begins. The thirteen steps that turn your transformation into the skeleton of a coaching program, from the big questions down to units, resources and weeks."}</>),
+      blurb: (<>{"The thirteen steps, from the big questions down to units, resources and weeks, with each stage on one slide."}</>),
     },
     workbookStep: {
-      mins: "110 min",
+      mins: "130 min",
       title: "Your Working Sheet",
-      blurb: (<>{"Thirteen steps, numbered the same as the video. We start wide and get narrower. Steps two and six are for letting ideas flow, so write everything down and don't edit. Every other step cuts. Bring all thirteen to our next call, done in three sittings with a night between each: steps one to five, six to nine, then ten to thirteen. Start at least three days before the call. There is a worked example above every box, and it is the same client all the way down."}</>),
+      blurb: (<>{"Thirteen steps, with a night between each sitting. The sheet walks you through every step, with a worked example above each box. Send it in at least 24 hours before our next call, and bring your announcement draft from the Message sheet."}</>),
       caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
     },
   },

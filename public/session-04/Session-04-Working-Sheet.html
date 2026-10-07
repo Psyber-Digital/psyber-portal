@@ -203,15 +203,45 @@ td.xlast{position:relative;padding-right:32px}
  section.live h2 span{color:#9A4516}
  .livetag{color:#9A4516;background:#fff;border-color:#9A4516}
 }
+
+/* Shared from Session 04's design pass, applied to every sheet on Don's say-so, 7 Oct 2026.
+   Worked examples a touch larger and lighter; module-label columns narrow and fixed so
+   the writing boxes line up; cells top-aligned. Module tables only (table[data-grow]):
+   Session 02's research checks keep long labels in that column. */
+@media screen{
+ td{vertical-align:top}
+ table[data-grow] td.fixed{width:104px;white-space:nowrap;padding-top:15px}
+ .eg{font-size:14px;color:#A9B8CC}
+}
+@media screen and (max-width:640px){
+ table[data-grow] td.fixed{width:74px;padding-left:2px;padding-right:6px;font-size:13px}
+}
+
+@media screen{
+ /* The module label is a short tag, not a column of writing. Narrow and fixed, so
+    the boxes beside it get the width. Top-aligned, so a one-line name box and a
+    tall outcome box start on the same line as the label. */
+ td{vertical-align:top}
+ td.fixed{width:104px;white-space:nowrap;padding-top:15px}
+ /* Three sittings, three visible breaks. Sittings 2 and 3 open with clear space. */
+ section.live ~ section.live{margin-top:76px}
+ /* The worked examples carry this sheet. A touch larger and lighter to read. */
+ .eg{font-size:14px;color:#A9B8CC}
+ /* Step 13 asks for a number of weeks. Depends on step 13 being the last block. */
+ section:last-of-type td input{max-width:180px}
+}
+@media screen and (max-width:640px){
+ td.fixed{width:74px;padding-left:2px;padding-right:6px;font-size:13px}
+}
 </style></head><body><div class='wrap'>
 <header>
 <div class='eyebrow'>Therapy<b>+</b> · Working Sheet · Session 04</div>
 <h1>Structure</h1>
 <div class='principle'>Think in journeys, not sessions.</div>
 </header>
-<div class='intro'>Thirteen steps, numbered the same as the video. We start wide and get narrower. Steps two and six are for letting ideas flow, so write everything down and don't edit. Every other step cuts. Bring all thirteen to our next call, done in three sittings with a night between each: steps one to five, six to nine, then ten to thirteen. Start at least three days before the call. There is a worked example above every box, and it is the same client all the way down.</div>
+<div class='intro'>Thirteen steps, numbered the same as the video. We start wide and get narrower. Steps two, six and eleven are for letting ideas flow, so write everything down and don't edit. In every other step, you choose what stays. Bring all thirteen to our next call, done in three sittings with a night between each: steps one to five, six to nine, then ten to thirteen. Start at least three days before the call. There is a worked example above every box, and it is the same client all the way down. Send the sheet in at least 24 hours before our next call, and bring your announcement draft from the Message sheet.</div>
 <section class='live'>
-<div class='livetag'>Sitting 1 of 3 · steps 1 to 5 · the shape</div>
+<div class='livetag'>Sitting 1 of 3 · steps 1 to 5 · the shape · about 45 minutes</div>
 <h2><span>01</span>The transformation, as a question</h2>
 <div class='help'>Take your coaching statement from Session 03, the “I work with ___ who ___ so that they can ___” line. Turn it into a question: “If I was [your niche], how would I [your transformation]?” It puts you inside your client's situation and keeps you on the main thing.</div>
 <div class='menus'>
@@ -223,7 +253,7 @@ td.xlast{position:relative;padding-right:32px}
 </section>
 <section>
 <h2><span>02</span>The big questions</h2>
-<div class='help'>What does someone have to work out to reach that transformation? Start with your own knowledge and experience, then research. Write down anything that comes to mind and don't edit. Give it about ten minutes.</div>
+<div class='help'>What does someone have to work out to reach that transformation? Write from your own knowledge and experience for about ten minutes, as your client would ask the questions, in everyday words. Put down anything that comes to mind and don't edit. If a gap shows up, look it up after this sitting.</div>
 <div class='req'>The question</div>
 <div class='eg'><b>Example.</b> How can work and personal life be effectively balanced? · What time management techniques maximize productivity? · Which well-being practices are most effective? · How can technology aid in work-life integration? · What role do personal relationships play in a founder's well-being? · How can health and fitness be maintained amid a busy schedule? · What stress management techniques are effective in high-pressure environments? · How do I cultivate a supportive personal network? · What tools help with prioritizing and managing tasks? · How can a routine support both personal and professional growth?</div>
 <table data-x='1' data-cols='1'>
@@ -259,7 +289,7 @@ td.xlast{position:relative;padding-right:32px}
 </section>
 <section>
 <h2><span>03</span>Keep only the essentials</h2>
-<div class='help'>Apply SLIP. Keep the questions your client can't reach the transformation without. If it isn't necessary, remove it. Three to five usually survive, and each one you keep becomes a module.</div>
+<div class='help'>Apply SLIP. Keep the questions your client can't reach the transformation without. If it isn't necessary, remove it. Three to five usually survive.</div>
 <div class='menus'>
 <button type='button' class='menubtn' data-menu='menu-build-terms'>Build terms menu</button>
 </div>
@@ -293,7 +323,7 @@ td.xlast{position:relative;padding-right:32px}
 </section>
 <section>
 <h2><span>04</span>Put them in order</h2>
-<div class='help'>No need to rewrite them. Put the numbers from step 3 in the order change actually happens. What has to come first? What unlocks the next step? What builds momentum?</div>
+<div class='help'>No need to rewrite them. Put the numbers from step 3 in the order your client's change actually happens. What has to come first? What unlocks the next step? What builds momentum? If two answer the same need, put them together. They become one module.</div>
 <label for='f15'>A · Your order, as numbers from step 3, first to last</label>
 <div class='eg'><b>Example.</b> 2, 4, 1, then 3 and 5 together. Time comes first, because nothing else changes until the week is under control. Technology next, because the right tools make the balance possible. Then balance itself. Well-being and stress management merge into one module, because they answer the same need.</div>
 <input type='text' id='f15'>
@@ -302,7 +332,7 @@ td.xlast{position:relative;padding-right:32px}
 </section>
 <section>
 <h2><span>05</span>Turn them into modules</h2>
-<div class='help'>Each question becomes a module: one stage of the journey, usually one to three weeks. Module 1 is always Plan, Mindset &amp; Success Factors, so the question you put first in step 4 becomes Module 2. Give each module a short name, not the whole question. Then give every module its outcome in one sentence. By the end of it, what can your client do? Four to six modules. Use + Add module if you need a sixth.</div>
+<div class='help'>Each number in your step 4 order becomes a module, and a merged pair is one module. A module is one stage of the journey, usually one to three weeks. Module 1 is always Plan, Mindset &amp; Success Factors, so type that name in its row. The question you put first in step 4 becomes Module 2. Give each module a short name, not the whole question. Then give every module its outcome in one sentence. By the end of it, what can your client do? Four to six modules. Use + Add module if you need a sixth.</div>
 <div class='menus'>
 <button type='button' class='menubtn' data-menu='menu-build-terms'>Build terms menu</button>
 </div>
@@ -342,7 +372,7 @@ td.xlast{position:relative;padding-right:32px}
 <div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add module</button><span class='rowcount' data-count='2'></span></div>
 </section>
 <section class='live'>
-<div class='livetag'>Sitting 2 of 3 · steps 6 to 9 · inside each module</div>
+<div class='livetag'>Sitting 2 of 3 · steps 6 to 9 · inside each module · about 45 minutes</div>
 <h2><span>06</span>The detailed questions in each module</h2>
 <div class='help'>Now go a level down. For every module except Module 1, list the detailed questions inside it. Idea generation again, so everything down and no editing. A few minutes per module is enough.</div>
 <div class='eg'><b>Example.</b> Module 2 · Optimizing Time for Peak Productivity: What are the best time management techniques? · How do I set productivity goals? · How do I avoid time-wasting traps? · How can daily scheduling improve productivity? · What tools help with time tracking and management?</div>
@@ -373,7 +403,7 @@ td.xlast{position:relative;padding-right:32px}
 <section>
 <h2><span>07</span>Keep what matters</h2>
 <div class='help'>SLIP again. For each module, keep the questions it can't do without. Three at most. Three is plenty.</div>
-<div class='eg'><b>Example.</b> Module 2: What are effective time management techniques? · How do I set and achieve productivity goals? · What are the best tools for time tracking and management?</div>
+<div class='eg'><b>Example.</b> Module 2: What are the best time management techniques? · How do I set productivity goals? · What tools help with time tracking and management?</div>
 <table data-x='4' data-cols='2' data-tall='1' data-grow='Module' data-growbase='5'>
 <thead><tr>
 <th>Module</th>
@@ -449,14 +479,14 @@ td.xlast{position:relative;padding-right:32px}
 <h2><span>09</span>Read it through and simplify</h2>
 <div class='help'>Read every module and unit title from top to bottom. Simplify anything a client wouldn't understand the first time, and cut anything that repeats. Make the changes in steps 5 and 8. Use the box to note what you changed.</div>
 <label for='f50'>What did you simplify or cut?</label>
-<div class='eg'><b>Example.</b> “Time Management Mastery” became “Mastering Time”. “Productivity Goal Setting” became “Goal-Oriented Productivity”. “Effective Time Tracking” became “Time Tracking Tools”. Shorter, and a founder understands each one the first time.</div>
+<div class='eg'><b>Example.</b> “Productivity Goal Setting” became “Setting Your Weekly Goals”. “Effective Time Tracking” became “Tracking Your Time”. Plainer words, and a founder understands each one the first time.</div>
 <textarea id='f50'></textarea>
 </section>
 <section class='live'>
-<div class='livetag'>Sitting 3 of 3 · steps 10 to 13 · key ideas, resources and weeks</div>
+<div class='livetag'>Sitting 3 of 3 · steps 10 to 13 · key ideas, resources and weeks · about 40 minutes</div>
 <h2><span>10</span>One key idea per unit</h2>
-<div class='help'>For each unit, the one idea it delivers. One line each. For Module 1, write what your client needs to know about the journey, the mindset it takes, and what makes clients succeed. A module is where bloat creeps in, and this is the cap that stops it.</div>
-<div class='eg'><b>Example.</b> Module 1 · The Blueprint: how the twelve weeks fit together. · The Required Mindset: balance is a skill they can learn, like any other. · Success Factors: what makes founders succeed in this program. Module 2 · Mastering Time: efficient time management methods. · Goal-Oriented Productivity: goal-setting strategies for productivity. · Time Tracking Tools: effective use of time tracking tools.</div>
+<div class='help'>For each unit, the one idea it delivers. One line each. For Module 1, write what your client needs to know about the journey, the mindset it takes, and what makes clients succeed. One idea per unit keeps each module from growing too big.</div>
+<div class='eg'><b>Example.</b> Module 1 · The Blueprint: how the twelve weeks fit together. · The Required Mindset: balance is a skill they can learn, like any other. · Success Factors: one small action between sessions, every week, even a busy one. Module 2 · Time Management Mastery: the first two hours of the day go to the most important work. · Setting Your Weekly Goals: three outcomes a week, set every Monday morning. · Tracking Your Time: one honest week of tracking shows where the hours really go.</div>
 <table data-x='6' data-cols='4' data-tall='1,2,3' data-grow='Module' data-growbase='5'>
 <thead><tr>
 <th>Module</th>
@@ -500,7 +530,7 @@ td.xlast{position:relative;padding-right:32px}
 <section>
 <h2><span>11</span>Possible worksheets and resources</h2>
 <div class='help'>List what each module could use: a worksheet, a guide, a checklist, a tool. Write down anything that comes to mind. You are not building any of them yet.</div>
-<div class='eg'><b>Example.</b> Module 2: a Time Management Planner, for planning and goal achievement. Module 3: a Digital Balance Guide, with tools and best practices. Module 4: a Work-Life Balance Checklist, to assess and improve balance. Module 5: a Resilience Workbook, with practical exercises.</div>
+<div class='eg'><b>Example.</b> Module 1: none needed. Module 2: a Time Management Planner, for planning and goal achievement. Module 3: a Digital Balance Guide, with tools and best practices. Module 4: a Work-Life Balance Checklist, to assess and improve balance. Module 5: a Resilience Workbook, with practical exercises.</div>
 <table data-x='7' data-cols='2' data-tall='1' data-grow='Module' data-growbase='5'>
 <thead><tr>
 <th>Module</th>
@@ -531,8 +561,8 @@ td.xlast{position:relative;padding-right:32px}
 </section>
 <section>
 <h2><span>12</span>Keep it simple</h2>
-<div class='help'>The standard for every session you run is one simple worksheet and one Principle Card. Anything beyond that has to earn its place, so for most modules the answer here is none. You'll build them later, one or two sessions ahead of your client.</div>
-<div class='eg'><b>Example.</b> Every session: one worksheet and one Principle Card. Module 2: the Time Management Planner as well, because they will use it every day. Modules 3 to 5: none. The worksheet carries it.</div>
+<div class='help'>The standard for each coaching session in your program, usually one a week, is one simple worksheet and one Principle Card. Anything beyond that has to earn its place, so for most modules the answer here is none. You'll build them later, one or two sessions ahead of your client.</div>
+<div class='eg'><b>Example.</b> Every session: one worksheet and one Principle Card. Module 1: none. Module 2: the Time Management Planner as well, because they will use it every day. Modules 3 to 5: none. The worksheet carries it.</div>
 <table data-x='8' data-cols='2' data-tall='1' data-grow='Module' data-growbase='5'>
 <thead><tr>
 <th>Module</th>
@@ -564,7 +594,6 @@ td.xlast{position:relative;padding-right:32px}
 <section>
 <h2><span>13</span>How long each module runs</h2>
 <div class='help'>Weeks for each module, adding up to eight to twelve in total. Choose the shortest length that does the job.</div>
-<div class='req'>A</div>
 <div class='eg'><b>Example.</b> Module 1: 2 weeks · Module 2: 3 weeks · Module 3: 2 weeks · Module 4: 3 weeks · Module 5: 2 weeks. Twelve weeks in total.</div>
 <table data-x='9' data-cols='2' data-grow='Module' data-growbase='5'>
 <thead><tr>
@@ -593,10 +622,8 @@ td.xlast{position:relative;padding-right:32px}
 </tr>
 </tbody></table>
 <div class='addwrap'><button type='button' class='addrow' data-addrow='9'>+ Add module</button><span class='rowcount' data-count='9'></span></div>
-<label for='f81'>B · Total — aim for eight to twelve weeks</label>
-<input type='text' id='f81'>
 </section>
-<div class='note'><b>To share your workbook with your coach:</b> download it, then either email it or <a href='/portal/shared'>click here to share it on the portal</a>. Your answers save automatically in this browser — they are not sent anywhere until you send them.</div>
+<div class='note'><b>Send your workbook to your coach at least 24 hours before your next call:</b> download it, then either email it or <a href='/portal/shared'>click here to share it on the portal</a>. Your answers save automatically in this browser — they are not sent anywhere until you send them.</div>
 </div>
 <div class='modal' id='menu-build-terms' role='dialog' aria-modal='true' aria-label='Build terms menu'><div class='box'>
 <div class='mhead'><h3>Build terms</h3><button type='button' class='close'>Close</button></div>
