@@ -1,6 +1,6 @@
 <!doctype html><html lang='en'><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>Session 04 · Structure &amp; Offer — Working Sheet</title>
+<title>Session 04 · Structure — Working Sheet</title>
 <style>
 :root{--navy:#060f1d;--panel:#0d1729;--line:#1e2b45;--off:#F4F7FB;--slate:#8FA0B8;
  --orange:#F08328;--blue:#5DABE5;--ok:#3FB37F;}
@@ -23,10 +23,25 @@ section{margin:0 0 34px;background:var(--panel);border:1px solid var(--line);bor
 h2{font-size:19px;margin-bottom:6px;font-weight:650}
 h2 span{color:var(--slate);font-weight:500;margin-right:10px}
 .help{color:var(--slate);font-size:14.5px;margin-bottom:16px;max-width:76ch}
+/* A worked example. COPY-STANDARD 16: when an instruction is abstract the fix
+   is one concrete instance, not more description — and it is the one place copy
+   is allowed to get longer. Set apart so it can be skipped by anybody who does
+   not need it. */
+.rowcount{font-size:12.5px;color:var(--slate);margin-left:10px;font-variant-numeric:tabular-nums}
+.rowcount.done{color:var(--ok)}
+.req{font-size:14px;color:var(--off);margin:2px 0 6px;font-weight:500;max-width:76ch}
+.eg{background:rgba(240,131,40,.06);border-left:2px solid var(--orange);border-radius:0 8px 8px 0;padding:11px 14px;margin:-4px 0 16px;color:var(--slate);font-size:13.5px;line-height:1.65;max-width:76ch}
+.eg b{color:var(--off);font-weight:600}
 label{display:block;font-size:13.5px;color:#B9C7DA;margin:14px 0 6px}
 input[type=text],textarea{width:100%;background:#08111f;color:var(--off);
  border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
 textarea{min-height:88px;resize:vertical}
+td textarea{min-height:58px}
+/* WORKSHEET-STANDARD rule 2: the box must fit the answer. 88px is right for a
+   few lines and wrong for a story — section 3 asks for ten minutes of writing
+   into a box three lines deep, which reads as 'keep it short' when the whole
+   point is the opposite. */
+textarea.tall{min-height:360px}
 /* Print mirror — never visible on screen. An <input> is a single line and cannot
    wrap, so on paper anything longer than the box is silently cut off mid-word.
    A client filled this sheet in properly, printed it, sent it, and roughly a
@@ -115,8 +130,16 @@ section.live h2 span{color:var(--orange)}
 .modal .mnote{color:var(--slate);font-size:14.5px;margin-bottom:18px;max-width:74ch}
 .modal .row{display:grid;grid-template-columns:230px 1fr;gap:10px 18px;
  padding:8px 0;border-bottom:1px solid rgba(30,43,69,.7);font-size:14.5px}
+.modal .row.three{grid-template-columns:200px 1fr 1fr}
 .modal .row b{font-weight:600}
 .modal .row span{color:var(--slate)}
+/* The reframe reads as the destination, not as more of the same complaint. */
+.modal .row span.pos{color:var(--blue)}
+/* Emitted inside .mbody, not .mhead — scoping it to the header meant the grid never
+   applied and the two labels rendered as "Sounds likeOnce it has shifted". */
+.modal .cols{display:grid;grid-template-columns:200px 1fr 1fr;gap:10px 18px;
+ font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);
+ padding:6px 0 4px;border-bottom:1px solid rgba(30,43,69,.7)}
 .modal .chips{display:flex;flex-wrap:wrap;gap:8px}
 .modal .chips span{background:#08111f;border:1px solid var(--line);border-radius:999px;
  padding:6px 12px;font-size:14px;color:#D6E0EE}
@@ -127,7 +150,8 @@ section.live h2 span{color:var(--orange)}
  .modal .mhead{padding:16px 16px 12px;gap:10px}
  .modal .mhead h3{font-size:19px}
  .modal .mbody{padding:14px 16px 20px}
- .modal .row{grid-template-columns:1fr;gap:2px;padding:10px 0}
+ .modal .row,.modal .row.three{grid-template-columns:1fr;gap:2px;padding:10px 0}
+ .modal .cols{display:none}
  .modal .close{padding:8px 13px;font-size:13.5px}
 }
 /* Stop the sheet behind scrolling while a menu is open, on iOS especially. */
@@ -150,6 +174,10 @@ td.xlast{position:relative;padding-right:32px}
  td.xlast{padding-right:4px}
  section{background:#fff;border:1px solid #ccc;break-inside:avoid}
  .intro{background:#f6f6f6;color:#222} h1 em{color:#9A4516} .principle{color:#444}
+ /* Examples are ours, not hers. She downloads this and sends it back, so they
+    would be pages of our own guidance returned to us. Screen only. */
+ .eg{display:none !important}
+ .rowcount{display:none !important}
  input,textarea{background:#fff;color:#111;border:1px solid #bbb}
  /* Show the mirror, hide the field it came from. Checkboxes are untouched —
     they print as themselves. */
@@ -178,171 +206,413 @@ td.xlast{position:relative;padding-right:32px}
 </style></head><body><div class='wrap'>
 <header>
 <div class='eyebrow'>Therapy<b>+</b> · Working Sheet · Session 04</div>
-<h1>Structure &amp; Offer</h1>
-<div class='principle'>Until perceived value exceeds price, you should never reveal the price.</div>
+<h1>Structure</h1>
+<div class='principle'>Think in journeys, not sessions.</div>
 </header>
-<div class='intro'>One page for the map, two numbers for the price. If you find yourself designing slides or naming units, that is a level deeper than this session needs — come back.</div>
-<section>
-<h2><span>01</span>The transformation as a question</h2>
-<div class='help'>If I were my client, how would I…</div>
+<div class='intro'>Thirteen steps, numbered the same as the video. We start wide and get narrower. Steps two and six are for letting ideas flow, so write everything down and don't edit. Every other step cuts. Bring all thirteen to our next call, done in three sittings with a night between each: steps one to five, six to nine, then ten to thirteen. Start at least three days before the call. There is a worked example above every box, and it is the same client all the way down.</div>
+<section class='live'>
+<div class='livetag'>Sitting 1 of 3 · steps 1 to 5 · the shape</div>
+<h2><span>01</span>The transformation, as a question</h2>
+<div class='help'>Take your coaching statement from Session 03, the “I work with ___ who ___ so that they can ___” line. Turn it into a question: “If I was [your niche], how would I [your transformation]?” It puts you inside your client's situation and keeps you on the main thing.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-build-terms'>Build terms menu</button>
+</div>
+<label for='f1'>If I was ___, how would I ___?</label>
+<div class='eg'><b>Example.</b> If I was a tech start-up founder, how would I effectively integrate my work and personal life, ensuring sustained productivity and enhanced personal well-being?</div>
 <textarea id='f1'></textarea>
 </section>
 <section>
-<h2><span>02</span>The questions that have to be answered</h2>
-<div class='help'>Empty your head first. Then cross out anything that is not necessary.</div>
-<table data-x='1' data-cols='2'><thead><tr>
+<h2><span>02</span>The big questions</h2>
+<div class='help'>What does someone have to work out to reach that transformation? Start with your own knowledge and experience, then research. Write down anything that comes to mind and don't edit. Give it about ten minutes.</div>
+<div class='req'>The question</div>
+<div class='eg'><b>Example.</b> How can work and personal life be effectively balanced? · What time management techniques maximize productivity? · Which well-being practices are most effective? · How can technology aid in work-life integration? · What role do personal relationships play in a founder's well-being? · How can health and fitness be maintained amid a busy schedule? · What stress management techniques are effective in high-pressure environments? · How do I cultivate a supportive personal network? · What tools help with prioritizing and managing tasks? · How can a routine support both personal and professional growth?</div>
+<table data-x='1' data-cols='1'>
+<thead style='display:none'><tr>
 <th>The question</th>
-<th>Necessary?</th>
 </tr></thead><tbody>
 <tr>
 <td><input type='text' id='f2'></td>
+</tr>
+<tr>
 <td><input type='text' id='f3'></td>
 </tr>
 <tr>
 <td><input type='text' id='f4'></td>
+</tr>
+<tr>
 <td><input type='text' id='f5'></td>
 </tr>
 <tr>
 <td><input type='text' id='f6'></td>
+</tr>
+<tr>
 <td><input type='text' id='f7'></td>
 </tr>
 <tr>
 <td><input type='text' id='f8'></td>
-<td><input type='text' id='f9'></td>
 </tr>
 <tr>
+<td><input type='text' id='f9'></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='1'>+ Add row</button><span class='rowcount' data-count='1' data-target='10'></span></div>
+</section>
+<section>
+<h2><span>03</span>Keep only the essentials</h2>
+<div class='help'>Apply SLIP. Keep the questions your client can't reach the transformation without. If it isn't necessary, remove it. Three to five usually survive, and each one you keep becomes a module.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-build-terms'>Build terms menu</button>
+</div>
+<div class='eg'><b>Example.</b> Kept: 1 · How can work and personal life be effectively balanced? 2 · What time management techniques maximize productivity? 3 · Which well-being practices are most effective? 4 · How can technology aid in work-life integration? 5 · What stress management techniques are effective in high-pressure environments? Cut: relationships, health and fitness, a supportive network, task tools and routines. Each is worth knowing. None is essential to the transformation.</div>
+<table>
+<thead><tr>
+<th>#</th>
+<th>The question</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>1</td>
 <td><input type='text' id='f10'></td>
+</tr>
+<tr>
+<td class='fixed'>2</td>
 <td><input type='text' id='f11'></td>
 </tr>
 <tr>
+<td class='fixed'>3</td>
 <td><input type='text' id='f12'></td>
+</tr>
+<tr>
+<td class='fixed'>4</td>
 <td><input type='text' id='f13'></td>
 </tr>
 <tr>
+<td class='fixed'>5</td>
 <td><input type='text' id='f14'></td>
-<td><input type='text' id='f15'></td>
-</tr>
-<tr>
-<td><input type='text' id='f16'></td>
-<td><input type='text' id='f17'></td>
 </tr>
 </tbody></table>
-<div class='addwrap'><button type='button' class='addrow' data-addrow='1'>+ Add row</button></div>
 </section>
 <section>
-<h2><span>03</span>The map — and the job of each module</h2>
-<div class='help'>Module one is always mindset. Four to six modules, eight to twelve weeks. The third column is the important one: an objective reached, or a fear removed.</div>
-<table data-x='2' data-cols='3'><thead><tr>
+<h2><span>04</span>Put them in order</h2>
+<div class='help'>No need to rewrite them. Put the numbers from step 3 in the order change actually happens. What has to come first? What unlocks the next step? What builds momentum?</div>
+<label for='f15'>A · Your order, as numbers from step 3, first to last</label>
+<div class='eg'><b>Example.</b> 2, 4, 1, then 3 and 5 together. Time comes first, because nothing else changes until the week is under control. Technology next, because the right tools make the balance possible. Then balance itself. Well-being and stress management merge into one module, because they answer the same need.</div>
+<input type='text' id='f15'>
+<label for='f16'>B · Why that order? One or two lines</label>
+<textarea id='f16'></textarea>
+</section>
+<section>
+<h2><span>05</span>Turn them into modules</h2>
+<div class='help'>Each question becomes a module: one stage of the journey, usually one to three weeks. Module 1 is always Plan, Mindset &amp; Success Factors, so the question you put first in step 4 becomes Module 2. Give each module a short name, not the whole question. Then give every module its outcome in one sentence. By the end of it, what can your client do? Four to six modules. Use + Add module if you need a sixth.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-build-terms'>Build terms menu</button>
+</div>
+<div class='eg'><b>Example.</b> Module 1 · Plan, Mindset &amp; Success Factors: they're clear on the journey and committed to it. Module 2 · Optimizing Time for Peak Productivity: they plan each week around their three most important outcomes. Module 3 · Leveraging Technology for Work-Life Integration: their tools protect two focused blocks a day. Module 4 · Balancing Work and Personal Life: they hold one clear boundary between work and home. Module 5 · Cultivating Well-Being and Resilience: they have a daily routine that keeps them steady through a hard week.</div>
+<table data-x='2' data-cols='3' data-tall='2' data-grow='Module' data-growbase='5'>
+<thead><tr>
 <th>Module</th>
-<th>Its job — an objective reached, or a fear removed</th>
-<th>Weeks</th>
+<th>A short name for it</th>
+<th>Its outcome, in one sentence. By the end of it, the client…</th>
 </tr></thead><tbody>
 <tr>
-<td><input type='text' id='f18'></td>
+<td class='fixed'>Module 1</td>
+<td><input type='text' id='f17'></td>
+<td><textarea id='f18'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 2</td>
 <td><input type='text' id='f19'></td>
-<td><input type='text' id='f20'></td>
+<td><textarea id='f20'></textarea></td>
 </tr>
 <tr>
+<td class='fixed'>Module 3</td>
 <td><input type='text' id='f21'></td>
-<td><input type='text' id='f22'></td>
+<td><textarea id='f22'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 4</td>
 <td><input type='text' id='f23'></td>
+<td><textarea id='f24'></textarea></td>
 </tr>
 <tr>
-<td><input type='text' id='f24'></td>
+<td class='fixed'>Module 5</td>
 <td><input type='text' id='f25'></td>
-<td><input type='text' id='f26'></td>
-</tr>
-<tr>
-<td><input type='text' id='f27'></td>
-<td><input type='text' id='f28'></td>
-<td><input type='text' id='f29'></td>
-</tr>
-<tr>
-<td><input type='text' id='f30'></td>
-<td><input type='text' id='f31'></td>
-<td><input type='text' id='f32'></td>
-</tr>
-<tr>
-<td><input type='text' id='f33'></td>
-<td><input type='text' id='f34'></td>
-<td><input type='text' id='f35'></td>
+<td><textarea id='f26'></textarea></td>
 </tr>
 </tbody></table>
-<div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add row</button></div>
-<label for='f36'>Total length</label>
-<input type='text' id='f36'>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add module</button><span class='rowcount' data-count='2'></span></div>
 </section>
-<section>
-<h2><span>04</span>The ninety-second test</h2>
-<div class='help'>Describe the journey out loud as if to a prospect. Time it.</div>
-<label for='f37'>How long did it take?</label>
-<input type='text' id='f37'>
-<label for='f38'>What did I cut?</label>
-<input type='text' id='f38'>
-</section>
-<section>
-<h2><span>05</span>Transformative results</h2>
-<div class='help'>What key outcomes can you highlight to a potential client? What changes for them — not what is included.</div>
-<table data-x='3' data-cols='1'><thead><tr>
-<th>The result they can point at afterwards</th>
+<section class='live'>
+<div class='livetag'>Sitting 2 of 3 · steps 6 to 9 · inside each module</div>
+<h2><span>06</span>The detailed questions in each module</h2>
+<div class='help'>Now go a level down. For every module except Module 1, list the detailed questions inside it. Idea generation again, so everything down and no editing. A few minutes per module is enough.</div>
+<div class='eg'><b>Example.</b> Module 2 · Optimizing Time for Peak Productivity: What are the best time management techniques? · How do I set productivity goals? · How do I avoid time-wasting traps? · How can daily scheduling improve productivity? · What tools help with time tracking and management?</div>
+<table data-x='3' data-cols='2' data-tall='1' data-grow='Module' data-growbase='5'>
+<thead><tr>
+<th>Module</th>
+<th>Every question inside it</th>
 </tr></thead><tbody>
 <tr>
-<td><input type='text' id='f39'></td>
+<td class='fixed'>Module 2</td>
+<td><textarea id='f27'></textarea></td>
 </tr>
 <tr>
+<td class='fixed'>Module 3</td>
+<td><textarea id='f28'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 4</td>
+<td><textarea id='f29'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 5</td>
+<td><textarea id='f30'></textarea></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='3'>+ Add module</button><span class='rowcount' data-count='3'></span></div>
+</section>
+<section>
+<h2><span>07</span>Keep what matters</h2>
+<div class='help'>SLIP again. For each module, keep the questions it can't do without. Three at most. Three is plenty.</div>
+<div class='eg'><b>Example.</b> Module 2: What are effective time management techniques? · How do I set and achieve productivity goals? · What are the best tools for time tracking and management?</div>
+<table data-x='4' data-cols='2' data-tall='1' data-grow='Module' data-growbase='5'>
+<thead><tr>
+<th>Module</th>
+<th>The ones that stay, three at most</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Module 2</td>
+<td><textarea id='f31'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 3</td>
+<td><textarea id='f32'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 4</td>
+<td><textarea id='f33'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 5</td>
+<td><textarea id='f34'></textarea></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='4'>+ Add module</button><span class='rowcount' data-count='4'></span></div>
+</section>
+<section>
+<h2><span>08</span>Turn them into units</h2>
+<div class='help'>Each question you kept becomes a unit, with a short title. Three units per module at most. Past three, a module starts to bloat. Module 1's are always the same: The Blueprint, The Required Mindset, Success Factors. Copy them into its row.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-build-terms'>Build terms menu</button>
+</div>
+<div class='eg'><b>Example.</b> Module 2 · Optimizing Time for Peak Productivity: Time Management Mastery · Productivity Goal Setting · Effective Time Tracking.</div>
+<table data-x='5' data-cols='4' data-grow='Module' data-growbase='5'>
+<thead><tr>
+<th>Module</th>
+<th>Unit 1</th>
+<th>Unit 2</th>
+<th>Unit 3</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Module 1</td>
+<td><input type='text' id='f35'></td>
+<td><input type='text' id='f36'></td>
+<td><input type='text' id='f37'></td>
+</tr>
+<tr>
+<td class='fixed'>Module 2</td>
+<td><input type='text' id='f38'></td>
+<td><input type='text' id='f39'></td>
 <td><input type='text' id='f40'></td>
 </tr>
 <tr>
+<td class='fixed'>Module 3</td>
 <td><input type='text' id='f41'></td>
+<td><input type='text' id='f42'></td>
+<td><input type='text' id='f43'></td>
+</tr>
+<tr>
+<td class='fixed'>Module 4</td>
+<td><input type='text' id='f44'></td>
+<td><input type='text' id='f45'></td>
+<td><input type='text' id='f46'></td>
+</tr>
+<tr>
+<td class='fixed'>Module 5</td>
+<td><input type='text' id='f47'></td>
+<td><input type='text' id='f48'></td>
+<td><input type='text' id='f49'></td>
 </tr>
 </tbody></table>
-<div class='addwrap'><button type='button' class='addrow' data-addrow='3'>+ Add row</button></div>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='5'>+ Add module</button><span class='rowcount' data-count='5'></span></div>
 </section>
 <section>
-<h2><span>06</span>Effort and time saved</h2>
-<div class='help'>How does your program reduce the effort and the time it takes them to get there?</div>
-<label for='f42'>Doing it alone would take them…</label>
-<textarea id='f42'></textarea>
-<label for='f43'>With the program it takes…</label>
-<textarea id='f43'></textarea>
-</section>
-<section>
-<h2><span>07</span>Offer enhancement — pick at least one</h2>
-<div class='help'>Only ones you can stand behind.</div>
-<label for='f44'>Scarcity — a genuine limit you would actually hold</label>
-<textarea id='f44'></textarea>
-<label for='f45'>Urgency — why deciding now is better for them</label>
-<textarea id='f45'></textarea>
-<label for='f46'>High-value bonuses — low effort for you, high value for them</label>
-<textarea id='f46'></textarea>
-<label for='f47'>Risk reversal — your guarantee, in plain words</label>
-<textarea id='f47'></textarea>
-</section>
-<section>
-<h2><span>08</span>The offer</h2>
-<label for='f48'>Offer name — it has to survive being said out loud on a phone call</label>
-<input type='text' id='f48'>
-<label for='f49'>What is included</label>
-<textarea id='f49'></textarea>
-<label for='f50'>What is explicitly not included</label>
+<h2><span>09</span>Read it through and simplify</h2>
+<div class='help'>Read every module and unit title from top to bottom. Simplify anything a client wouldn't understand the first time, and cut anything that repeats. Make the changes in steps 5 and 8. Use the box to note what you changed.</div>
+<label for='f50'>What did you simplify or cut?</label>
+<div class='eg'><b>Example.</b> “Time Management Mastery” became “Mastering Time”. “Productivity Goal Setting” became “Goal-Oriented Productivity”. “Effective Time Tracking” became “Time Tracking Tools”. Shorter, and a founder understands each one the first time.</div>
 <textarea id='f50'></textarea>
-<label for='f51'>Duration</label>
-<input type='text' id='f51'>
+</section>
+<section class='live'>
+<div class='livetag'>Sitting 3 of 3 · steps 10 to 13 · key ideas, resources and weeks</div>
+<h2><span>10</span>One key idea per unit</h2>
+<div class='help'>For each unit, the one idea it delivers. One line each. For Module 1, write what your client needs to know about the journey, the mindset it takes, and what makes clients succeed. A module is where bloat creeps in, and this is the cap that stops it.</div>
+<div class='eg'><b>Example.</b> Module 1 · The Blueprint: how the twelve weeks fit together. · The Required Mindset: balance is a skill they can learn, like any other. · Success Factors: what makes founders succeed in this program. Module 2 · Mastering Time: efficient time management methods. · Goal-Oriented Productivity: goal-setting strategies for productivity. · Time Tracking Tools: effective use of time tracking tools.</div>
+<table data-x='6' data-cols='4' data-tall='1,2,3' data-grow='Module' data-growbase='5'>
+<thead><tr>
+<th>Module</th>
+<th>Unit 1 · its key idea</th>
+<th>Unit 2 · its key idea</th>
+<th>Unit 3 · its key idea</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Module 1</td>
+<td><textarea id='f51'></textarea></td>
+<td><textarea id='f52'></textarea></td>
+<td><textarea id='f53'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 2</td>
+<td><textarea id='f54'></textarea></td>
+<td><textarea id='f55'></textarea></td>
+<td><textarea id='f56'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 3</td>
+<td><textarea id='f57'></textarea></td>
+<td><textarea id='f58'></textarea></td>
+<td><textarea id='f59'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 4</td>
+<td><textarea id='f60'></textarea></td>
+<td><textarea id='f61'></textarea></td>
+<td><textarea id='f62'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 5</td>
+<td><textarea id='f63'></textarea></td>
+<td><textarea id='f64'></textarea></td>
+<td><textarea id='f65'></textarea></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='6'>+ Add module</button><span class='rowcount' data-count='6'></span></div>
 </section>
 <section>
-<h2><span>09</span>Your two numbers</h2>
-<div class='help'>Set the step-up rule now, while you are calm.</div>
-<label for='f52'>Founding price — first three clients, not less than $1,500</label>
-<input type='text' id='f52'>
-<label for='f53'>Price after that — roughly double</label>
-<input type='text' id='f53'>
-<label for='f54'>The step-up rule</label>
-<input type='text' id='f54'>
-<label for='f55'>Set price plus $500, so the action-taking discount is built in</label>
-<input type='text' id='f55'>
+<h2><span>11</span>Possible worksheets and resources</h2>
+<div class='help'>List what each module could use: a worksheet, a guide, a checklist, a tool. Write down anything that comes to mind. You are not building any of them yet.</div>
+<div class='eg'><b>Example.</b> Module 2: a Time Management Planner, for planning and goal achievement. Module 3: a Digital Balance Guide, with tools and best practices. Module 4: a Work-Life Balance Checklist, to assess and improve balance. Module 5: a Resilience Workbook, with practical exercises.</div>
+<table data-x='7' data-cols='2' data-tall='1' data-grow='Module' data-growbase='5'>
+<thead><tr>
+<th>Module</th>
+<th>What it could use</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Module 1</td>
+<td><textarea id='f66'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 2</td>
+<td><textarea id='f67'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 3</td>
+<td><textarea id='f68'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 4</td>
+<td><textarea id='f69'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 5</td>
+<td><textarea id='f70'></textarea></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='7'>+ Add module</button><span class='rowcount' data-count='7'></span></div>
+</section>
+<section>
+<h2><span>12</span>Keep it simple</h2>
+<div class='help'>The standard for every session you run is one simple worksheet and one Principle Card. Anything beyond that has to earn its place, so for most modules the answer here is none. You'll build them later, one or two sessions ahead of your client.</div>
+<div class='eg'><b>Example.</b> Every session: one worksheet and one Principle Card. Module 2: the Time Management Planner as well, because they will use it every day. Modules 3 to 5: none. The worksheet carries it.</div>
+<table data-x='8' data-cols='2' data-tall='1' data-grow='Module' data-growbase='5'>
+<thead><tr>
+<th>Module</th>
+<th>Anything beyond the worksheet and card? Usually none</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Module 1</td>
+<td><textarea id='f71'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 2</td>
+<td><textarea id='f72'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 3</td>
+<td><textarea id='f73'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 4</td>
+<td><textarea id='f74'></textarea></td>
+</tr>
+<tr>
+<td class='fixed'>Module 5</td>
+<td><textarea id='f75'></textarea></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='8'>+ Add module</button><span class='rowcount' data-count='8'></span></div>
+</section>
+<section>
+<h2><span>13</span>How long each module runs</h2>
+<div class='help'>Weeks for each module, adding up to eight to twelve in total. Choose the shortest length that does the job.</div>
+<div class='req'>A</div>
+<div class='eg'><b>Example.</b> Module 1: 2 weeks · Module 2: 3 weeks · Module 3: 2 weeks · Module 4: 3 weeks · Module 5: 2 weeks. Twelve weeks in total.</div>
+<table data-x='9' data-cols='2' data-grow='Module' data-growbase='5'>
+<thead><tr>
+<th>Module</th>
+<th>Weeks</th>
+</tr></thead><tbody>
+<tr>
+<td class='fixed'>Module 1</td>
+<td><input type='text' id='f76'></td>
+</tr>
+<tr>
+<td class='fixed'>Module 2</td>
+<td><input type='text' id='f77'></td>
+</tr>
+<tr>
+<td class='fixed'>Module 3</td>
+<td><input type='text' id='f78'></td>
+</tr>
+<tr>
+<td class='fixed'>Module 4</td>
+<td><input type='text' id='f79'></td>
+</tr>
+<tr>
+<td class='fixed'>Module 5</td>
+<td><input type='text' id='f80'></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='9'>+ Add module</button><span class='rowcount' data-count='9'></span></div>
+<label for='f81'>B · Total — aim for eight to twelve weeks</label>
+<input type='text' id='f81'>
 </section>
 <div class='note'><b>To share your workbook with your coach:</b> download it, then either email it or <a href='/portal/shared'>click here to share it on the portal</a>. Your answers save automatically in this browser — they are not sent anywhere until you send them.</div>
 </div>
+<div class='modal' id='menu-build-terms' role='dialog' aria-modal='true' aria-label='Build terms menu'><div class='box'>
+<div class='mhead'><h3>Build terms</h3><button type='button' class='close'>Close</button></div>
+<div class='mbody'>
+<div class='mnote'>The words this session borrows, in one place. Knowing which level you are working on is what stops the program growing into a syllabus.</div>
+<div class='row'><b>The transformation</b><span>Where your client starts and where they end up. Written as a question, because a question has an answer and a topic does not</span></div>
+<div class='row'><b>A big question</b><span>Something your client has to work out to reach the transformation. Each one you keep becomes a module</span></div>
+<div class='row'><b>A module</b><span>One stage of the journey, usually one to three weeks. Four to six of them, and Module 1 is always Plan, Mindset &amp; Success Factors</span></div>
+<div class='row'><b>Its outcome</b><span>One sentence: by the end of this module, the client can… A module without one does not have a job yet</span></div>
+<div class='row'><b>A detailed question</b><span>A question inside one module. Each one you keep becomes a unit</span></div>
+<div class='row'><b>A unit</b><span>One piece of a module, answering one question. Three per module at most. A unit is a piece of content, and one session can cover one or more of them</span></div>
+<div class='row'><b>A key idea</b><span>The one thing a unit delivers. One per unit</span></div>
+<div class='row'><b>SLIP</b><span>Simple, Lean, Impactful, Practical. Simple or they won’t start it, lean or they won’t finish it, impactful or it’s free online, practical or they drift back. It applies to everything: the program, its structure, every session, every worksheet</span></div>
+<div class='row'><b>A resource</b><span>A worksheet, guide, checklist or tool. The standard is one simple worksheet and one Principle Card per session. Anything more has to earn its place. Built later, one or two sessions ahead of your client</span></div>
+<div class='row'><b>The skeleton</b><span>Everything above, on paper: modules with their outcomes, units, key ideas and weeks. This is what the session produces</span></div>
+</div></div></div>
 <div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><a class='barlink' href='/portal/shared'>Share on the portal</a><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
 <script>
 (function(){
@@ -375,9 +645,20 @@ td.xlast{position:relative;padding-right:32px}
    var tid=tb.getAttribute('data-x');
    var body=tb.querySelector('tbody');if(!body)return null;
    var tr=document.createElement('tr');tr.className='xrow';
+   var tallAttr=tb.getAttribute('data-tall');
+   var tallSet={};if(tallAttr){tallAttr.split(',').forEach(function(x){tallSet[+x]=1;});}
+   var grow=tb.getAttribute('data-grow');
    for(var c=1;c<=cols;c++){
      var td=document.createElement('td');
-     var inp=document.createElement('input');inp.type='text';
+     var inp;
+     if(grow&&c===1){
+       // a growing labelled table: the first cell names the row, like the printed ones
+       td.className='fixed';
+       td.textContent=grow+' '+((parseInt(tb.getAttribute('data-growbase'),10)||0)+r);
+       tr.appendChild(td);continue;
+     }
+     if(tallSet[c-1]){inp=document.createElement('textarea');}
+     else{inp=document.createElement('input');inp.type='text';}
      inp.id='x'+tid+'_'+r+'_'+c;
      td.appendChild(inp);
      if(c===cols){
@@ -398,7 +679,7 @@ td.xlast{position:relative;padding-right:32px}
  function nextRow(tb){
    var top=0;
    rowsIn(tb).forEach(function(tr){
-     var inp=tr.querySelector('input');if(!inp)return;
+     var inp=tr.querySelector('input,textarea');if(!inp)return;
      var m=inp.id.match(/_(\d+)_\d+$/);if(m&&+m[1]>top)top=+m[1];});
    return top+1;
  }
@@ -416,15 +697,35 @@ td.xlast{position:relative;padding-right:32px}
      var tb=document.querySelector("table[data-x='"+b.getAttribute('data-addrow')+"']");
      if(!tb)return;
      var tr=addRow(tb,nextRow(tb));
-     if(tr){var f=tr.querySelector('input');if(f)f.focus();}});});
+     if(tr){var f=tr.querySelector('input,textarea');if(f)f.focus();}});});
 
+ // How many lines are actually written, against the target the session asks for.
+ // "Aim for ten" is not an instruction anybody can follow without being able to see
+ // where they are.
+ function counts(){
+   [].slice.call(document.querySelectorAll('.rowcount')).forEach(function(sp){
+     var tb=document.querySelector("table[data-x='"+sp.getAttribute('data-count')+"']");
+     if(!tb)return;
+     // Count ROWS with anything in them, not cells. A three-column table used to
+     // report 18 for a complete six-row map, directly under "four to six modules".
+     var n=0;
+     [].slice.call(tb.querySelectorAll('tbody tr')).forEach(function(tr){
+       var filled=false;
+       [].slice.call(tr.querySelectorAll('input,textarea')).forEach(function(i){
+         if(i.value&&i.value.trim())filled=true;});
+       if(filled)n++;});
+     var t=sp.getAttribute('data-target');
+     sp.textContent = t ? (n+' of '+t) : (n?n+' written':'');
+     sp.className = 'rowcount'+(t&&n>=+t?' done':'');
+   });
+ }
  function load(){var d={};try{d=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
    restoreRows(d);
    all().forEach(function(e){if(d[e.id]!==undefined)set(e,d[e.id]);});
-   paint();}
+   paint();counts();}
 
  // Delegated, so rows added after load save exactly like the printed ones.
- document.addEventListener('input',function(){clearTimeout(t);t=setTimeout(save,400);});
+ document.addEventListener('input',function(){counts();clearTimeout(t);t=setTimeout(save,400);});
  document.addEventListener('change',function(ev){
    if(ev.target&&box(ev.target)){paint();save();}});
  document.getElementById('save').addEventListener('click',save);
@@ -482,4 +783,5 @@ td.xlast{position:relative;padding-right:32px}
  load();
  window.addEventListener('beforeunload',save);
 })();
-</script></body></html>
+</script>
+</body></html>
