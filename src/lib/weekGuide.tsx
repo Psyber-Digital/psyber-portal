@@ -97,23 +97,23 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     },
   },
   5: {
-    bannerIntro: "We build your first session together, in the hour, from a template. There is a floor you only have to clear.",
+    bannerIntro: "Build as you go. You create the first session of your program in full, ready to deliver with confidence. The rest can wait.",
     note: {
       fromLabel: "A Note From Your Coach",
       initial: "D",
-      body: (<><span className="block">{"This session works differently: the slide template already has the gaps marked, you leave the call with it finished, and we send you the file afterwards."}</span><span className="block mt-3">{"So the pre-work is deliberately light. Please do not polish, and please do not open a design tool."}</span><span className="block mt-3">{"One thing to read before we speak, because it is the most important instruction in this program: there is a minimum standard, and once you have cleared it you are finished. Not when it feels finished. When it clears the floor."}</span></>),
+      body: (<><span className="block">{"Start from your Session 04 sheet. Your first session is built from it."}</span></>),
     },
-    budget: { total: "20 minutes, plus your list", parts: [{ value: "5 min", label: "to watch" }, { value: "15 min", label: "rough first pass" }, { value: "ongoing", label: "your list" }] },
+    budget: { total: "120 minutes", parts: [{ value: "7 min", label: "to watch" }, { value: "105 min", label: "for the sheet: about an hour, a break, then about 45 minutes" }, { value: "10 min", label: "for one run-through out loud" }] },
     videoStep: {
-      mins: "approx 5 min",
+      mins: "approx 7 min",
       title: "Pre-work video — creation",
-      blurb: (<>{"What your first session is actually for, the minimum it has to contain, and the template we fill in together on the call."}</>),
+      blurb: (<>{"The simplest version of your program that works, and why we build it just in time."}</>),
     },
     workbookStep: {
-      mins: "25 min",
+      mins: "105 min",
       title: "Your Working Sheet",
-      blurb: (<>{"This sheet runs in the same order as the template, block for slide, so whichever you open first the other one fills in. Rough first thoughts only — four scruffy lines is a good outcome, and we build the rest together on the call."}</>),
-      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
+      blurb: (<>{"Six steps that build the first session of your program: its slides, notes, worksheet and Principle Card. Two sittings, with a worked example for every step. Send what you have at least 24 hours before our next call. The floor is enough."}</>),
+      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy. Send it to us, with whatever files you have, at least 24 hours before our next call."}</>),
     },
   },
   6: {

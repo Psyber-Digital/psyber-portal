@@ -23,6 +23,9 @@ export const WEEK_VIDEOS: Record<number, WeekVideo> = {
   // Session 04 · Structure — Adam on eleven_v3, 5:15, first publish 7 Oct 2026. Locked:
   // view=disable, embed whitelisted to both portal domains, download/add/comments off.
   4: { id: "1233658259", title: "Session 4 · Pre-Work" },
+  // Session 05 · Creation — Adam on eleven_v3, 6:46, first publish 15 Oct 2026. Locked:
+  // view=disable, embed whitelisted to both portal domains, download/add/comments off.
+  5: { id: "1236356579", title: "Session 5 · Pre-Work" },
 };
 
 // The onboarding video, shown at the top of the portal home rather than as a week.

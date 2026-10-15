@@ -38,7 +38,6 @@ export const WEEK_RESOURCES: Record<number, PortalResource[]> = {
   ],
   5: [
     { href: "/session-05/Session-05-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
-    { href: "/session-05/Your-First-Session-Template.html", label: "Your First Session — the template", sub: "Worked example beside your version · fill it live", icon: "◆", open: true },
   ],
   6: [
     { href: "/session-06/Session-06-Principle-Card.html", label: "The Principle Card", sub: "One page · pin it up", icon: "▤", open: true },
