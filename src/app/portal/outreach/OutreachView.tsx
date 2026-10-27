@@ -79,7 +79,10 @@ export function OutreachView({
       uncategorised: by((c) => c.relevance === "unsure"),
       contacted: by((c) => c.status !== "not_contacted"),
       replied: by((c) =>
-        ["replied", "interested", "converted", "follow_up_required"].includes(c.status),
+        ["replied", "interested", "offer_made", "converted", "follow_up_required"].includes(c.status),
+      ),
+      offers: by((c) =>
+        ["offer_made", "converted"].includes(c.status),
       ),
       converted: by((c) => c.status === "converted"),
       dueToday: by(
@@ -144,7 +147,7 @@ export function OutreachView({
               Sweep your email, your phone and your social accounts. Everyone is
               either a lead or a way into another network.
             </p>
-            <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+            <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-6">
               <Stat label="Relevant" value={stats.relevant} />
               <Stat label="Connectors" value={stats.connectors} />
               <Stat
@@ -153,6 +156,7 @@ export function OutreachView({
                 tone={stats.uncategorised ? "orange" : undefined}
               />
               <Stat label="Contacted" value={stats.contacted} />
+              <Stat label="Offers made" value={stats.offers} />
               <Stat
                 label="Converted"
                 value={stats.converted}

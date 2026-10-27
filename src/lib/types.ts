@@ -76,6 +76,7 @@ export type ContactStatus =
   | "contacted"
   | "replied"
   | "interested"
+  | "offer_made"
   | "not_interested"
   | "follow_up_required"
   | "converted";
