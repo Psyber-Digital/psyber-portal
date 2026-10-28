@@ -16,11 +16,12 @@ export type JoinState = { error?: string; refusal?: Refusal; sent?: boolean };
 // The answers the SQL reads. Key names must match lane_gate_refusal exactly:
 // a missing or misspelt key is read as a refusal.
 type Answers = {
-  license: "independent" | "training" | "none" | "";
+  license: "independent" | "retired" | "training" | "none" | "";
   license_type: string;
   license_state: string;
   license_number: string;
   program_for: string;
+  niche_unknown: boolean;
   tick_not_treatment: boolean;
   tick_outside_caseload: boolean;
   coaches_therapy_clients: boolean | null;
@@ -30,6 +31,7 @@ type Answers = {
 
 const TRACKED = [
   "license",
+  "niche_unknown",
   "tick_not_treatment",
   "tick_outside_caseload",
   "coaches_therapy_clients",
@@ -54,17 +56,20 @@ const yesNo = (v: unknown) => (v === true || v === false ? v : null);
 // Rebuild the answers from known keys only, with real types, so nothing extra
 // from the browser reaches the database.
 function clean(raw: Record<string, unknown>): Answers {
-  const license = ["independent", "training", "none"].includes(
+  const license = ["independent", "retired", "training", "none"].includes(
     raw.license as string,
   )
     ? (raw.license as Answers["license"])
     : "";
+  const held = license === "independent" || license === "retired";
+  const nicheUnknown = bool(raw.niche_unknown);
   return {
     license,
-    license_type: license === "independent" ? str(raw.license_type, 40) : "",
-    license_state: license === "independent" ? str(raw.license_state, 40) : "",
-    license_number: license === "independent" ? str(raw.license_number, 60) : "",
-    program_for: str(raw.program_for, 1000),
+    license_type: held ? str(raw.license_type, 40) : "",
+    license_state: held ? str(raw.license_state, 40) : "",
+    license_number: held ? str(raw.license_number, 60) : "",
+    program_for: nicheUnknown ? "" : str(raw.program_for, 1000),
+    niche_unknown: nicheUnknown,
     tick_not_treatment: bool(raw.tick_not_treatment),
     tick_outside_caseload: bool(raw.tick_outside_caseload),
     coaches_therapy_clients: yesNo(raw.coaches_therapy_clients),
@@ -89,9 +94,12 @@ function cleanFirst(raw: unknown) {
 // An unanswered question is a prompt to answer it, never a refusal.
 function missing(a: Answers): string | null {
   if (!a.license) return "Answer question 1.";
-  if (a.license === "independent" && (!a.license_type || !a.license_state || !a.license_number))
+  if (
+    (a.license === "independent" || a.license === "retired") &&
+    (!a.license_type || !a.license_state || !a.license_number)
+  )
     return "Add your license type, state and number.";
-  if (!a.program_for) return "Answer question 2.";
+  if (!a.program_for && !a.niche_unknown) return "Answer question 2.";
   if (a.coaches_therapy_clients === null) return "Answer question 3.";
   if (a.coaches_minors === null) return "Answer question 4.";
   if (a.coaches_minors && a.minors_parent_consent === null)

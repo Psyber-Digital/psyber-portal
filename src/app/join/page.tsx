@@ -62,11 +62,12 @@ const REFUSALS: Record<Refusal, { title: string; body: string; retry: boolean }>
 };
 
 type Gate = {
-  license: "" | "independent" | "training" | "none";
+  license: "" | "independent" | "retired" | "training" | "none";
   license_type: string;
   license_state: string;
   license_number: string;
   program_for: string;
+  niche_unknown: boolean;
   tick_not_treatment: boolean;
   tick_outside_caseload: boolean;
   coaches_therapy_clients: boolean | null;
@@ -82,6 +83,7 @@ const blank: Gate = {
   license_state: "",
   license_number: "",
   program_for: "",
+  niche_unknown: false,
   tick_not_treatment: false,
   tick_outside_caseload: false,
   coaches_therapy_clients: null,
@@ -248,14 +250,14 @@ export default function JoinPage() {
       <form action={action} onSubmit={onSubmit} className="psy-card p-8">
         <h1 className="font-disp text-xl font-semibold">Before you start</h1>
         <p className="mt-1.5 text-sm leading-relaxed text-slate">
-          This program is for licensed US clinicians building a coaching offer
-          alongside their clinical work. Four quick questions make sure it’s the
-          right fit.
+          This program is for licensed US clinicians, practicing or retired,
+          who are building a coaching offer. Four quick questions make sure
+          it’s the right fit.
         </p>
 
         <Question n={1}>
-          Do you hold an active, independent license to practice as a mental
-          health clinician in the US?
+          Do you hold an independent license to practice as a mental health
+          clinician in the US, or did you before you retired?
         </Question>
         <Choice
           name="license"
@@ -264,7 +266,14 @@ export default function JoinPage() {
         >
           Yes
         </Choice>
-        {gate.license === "independent" && (
+        <Choice
+          name="license"
+          checked={gate.license === "retired"}
+          onChange={() => choose("license", "retired")}
+        >
+          Yes, and I’m now retired from clinical work
+        </Choice>
+        {(gate.license === "independent" || gate.license === "retired") && (
           <div className="ml-6">
             <label className="psy-label">License type</label>
             <select
@@ -316,15 +325,22 @@ export default function JoinPage() {
         </Question>
         <p className="mt-1 text-xs text-slate">One or two sentences.</p>
         <textarea
-          className="psy-input mt-2 min-h-[88px]"
+          className="psy-input mt-2 min-h-[88px] disabled:opacity-40"
           maxLength={1000}
-          value={gate.program_for}
+          disabled={gate.niche_unknown}
+          value={gate.niche_unknown ? "" : gate.program_for}
           onChange={(e) => setGate({ ...gate, program_for: e.target.value })}
         />
         <p className="mt-1.5 text-xs leading-relaxed text-slate">
           Describe the people in general terms. Please don’t include anything
           about your therapy clients, here or anywhere in the portal.
         </p>
+        <Tick
+          checked={gate.niche_unknown}
+          onChange={(v) => choose("niche_unknown", v)}
+        >
+          I’m not sure yet. Choosing who it’s for is part of the program.
+        </Tick>
         <Tick
           checked={gate.tick_not_treatment}
           onChange={(v) => setGate({ ...gate, tick_not_treatment: v })}
