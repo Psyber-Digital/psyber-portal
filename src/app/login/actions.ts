@@ -16,8 +16,8 @@ function siteUrl() {
   return `${proto}://${host}`;
 }
 
-// Magic-link sign-in / register. One OTP flow; on register we attach the name
-// as user metadata so the DB trigger records it on the new profile.
+// Magic-link sign-in for existing accounts only. New accounts are made on
+// /join, behind the lane gate (Don, 28 Oct), so this never creates a user.
 export async function sendMagicLink(
   _prev: AuthState,
   formData: FormData,
@@ -25,24 +25,21 @@ export async function sendMagicLink(
   const email = String(formData.get("email") ?? "")
     .toLowerCase()
     .trim();
-  const fullName = String(formData.get("full_name") ?? "").trim();
-  const mode = String(formData.get("mode") ?? "login");
 
   if (!email) return { error: "Enter your email address." };
-  if (mode === "register" && !fullName)
-    return { error: "Enter your name." };
 
   const supabase = createClient();
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
       emailRedirectTo: `${siteUrl()}/auth/confirm`,
-      shouldCreateUser: true,
-      data: mode === "register" ? { full_name: fullName } : undefined,
+      shouldCreateUser: false,
     },
   });
 
-  if (error) return { error: error.message };
+  // Same screen whether or not the email has an account, so the page never
+  // reveals who is registered.
+  if (error) console.error("login: link not sent:", error.status, error.message);
   return { sent: true };
 }
 

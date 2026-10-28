@@ -11,7 +11,7 @@ import {
 
 const initial: AuthState = {};
 
-type Mode = "password" | "link" | "register";
+type Mode = "password" | "link";
 
 function SubmitButton({ label, pendingLabel }: { label: string; pendingLabel: string }) {
   const { pending } = useFormStatus();
@@ -32,8 +32,8 @@ function ErrorNote({ message }: { message: string }) {
 
 export default function LoginPage() {
   const [mode, setMode] = useState<Mode>("password");
-  // Two independent actions: password sign-in, and the magic-link flow (used for
-  // both the link fallback and registration).
+  // Two independent actions: password sign-in, and the magic-link fallback.
+  // New accounts are made only on /join, behind the lane gate (Don, 28 Oct).
   const [pwState, pwAction] = useFormState(signInWithPassword, initial);
   const [linkState, linkAction] = useFormState(sendMagicLink, initial);
 
@@ -46,8 +46,8 @@ export default function LoginPage() {
           <div className="mb-3 text-2xl">✉️</div>
           <h1 className="font-disp text-xl font-semibold">Check your email</h1>
           <p className="mt-2 text-sm leading-relaxed text-slate">
-            We’ve sent a secure sign-in link. Open it on this device to enter
-            the portal. You can close this tab.
+            If this email has an account, we’ve sent a secure sign-in link.
+            Open it on this device to enter the portal. You can close this tab.
           </p>
         </div>
       </main>
@@ -104,13 +104,9 @@ export default function LoginPage() {
             </p>
             <p className="mt-3 text-center text-sm text-slate">
               New client?{" "}
-              <button
-                type="button"
-                onClick={() => setMode("register")}
-                className="font-semibold text-blue"
-              >
+              <a href="/join" className="font-semibold text-blue">
                 Register here
-              </button>
+              </a>
             </p>
           </>
         )}
@@ -154,51 +150,6 @@ export default function LoginPage() {
           </>
         )}
 
-        {mode === "register" && (
-          <>
-            <h1 className="font-disp text-xl font-semibold">
-              Create your account
-            </h1>
-            <p className="mb-1 mt-1.5 text-sm leading-relaxed text-slate">
-              Register to begin. We’ll email you a secure link to confirm.
-              Access to each week is granted by your practitioner after your
-              session.
-            </p>
-
-            <form action={linkAction}>
-              <input type="hidden" name="mode" value="register" />
-              <label className="psy-label">Full name</label>
-              <input
-                name="full_name"
-                className="psy-input"
-                placeholder="Your name"
-              />
-              <label className="psy-label">Email</label>
-              <input
-                name="email"
-                type="email"
-                autoComplete="email"
-                className="psy-input"
-                placeholder="you@email.com"
-              />
-
-              {linkState.error && <ErrorNote message={linkState.error} />}
-
-              <SubmitButton label="Create account" pendingLabel="Sending…" />
-            </form>
-
-            <p className="mt-5 text-center text-sm text-slate">
-              Already registered?{" "}
-              <button
-                type="button"
-                onClick={() => setMode("password")}
-                className="font-semibold text-blue"
-              >
-                Sign in
-              </button>
-            </p>
-          </>
-        )}
       </div>
     </main>
   );
