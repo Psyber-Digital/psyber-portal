@@ -25,6 +25,10 @@ type Answers = {
   coaches_therapy_clients: boolean | null;
 };
 
+// Change this whenever the terms change, so each account records which
+// version it accepted.
+const TERMS_VERSION = "build-terms-v4-draft-2026-10-27";
+
 const TRACKED = [
   "license",
   "tick_not_treatment",
@@ -123,6 +127,11 @@ export async function join(
   if (rpcError) return { error: "Something went wrong. Please try again." };
   if (refusal) return { refusal: refusal as Refusal };
 
+  // Build terms 12.2: the tick box is the acceptance, so it is required here,
+  // and the version accepted is stored with the answers.
+  if (formData.get("accept_terms") !== "on")
+    return { error: "Tick the box to accept the terms." };
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -130,7 +139,12 @@ export async function join(
       emailRedirectTo: `${siteUrl()}/auth/confirm`,
       data: {
         full_name: fullName,
-        gate: { ...answers, first: cleanFirst(raw.first) },
+        gate: {
+          ...answers,
+          terms_version: TERMS_VERSION,
+          terms_accepted_at: new Date().toISOString(),
+          first: cleanFirst(raw.first),
+        },
       },
     },
   });

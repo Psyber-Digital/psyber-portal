@@ -13,6 +13,8 @@ import { join, type JoinState, type Refusal } from "./actions";
 const initial: JoinState = {};
 
 const NEWSLETTER_URL = process.env.NEXT_PUBLIC_NEWSLETTER_URL ?? "";
+// The published terms. Until they are live, the box shows without a link.
+const TERMS_URL = process.env.NEXT_PUBLIC_TERMS_URL ?? "";
 
 const LICENSE_TYPES = ["LCSW", "LPC", "LMFT", "Psychologist", "Other"];
 
@@ -165,6 +167,7 @@ export default function JoinPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
   // Bumped by "try again", so a refusal already shown can be dismissed.
   const [shownFor, setShownFor] = useState<JoinState | null>(null);
 
@@ -377,6 +380,33 @@ export default function JoinPage() {
         />
 
         <input type="hidden" name="gate" value={payload} />
+
+        {/* Build terms 12.2: ticking this box is how the terms are accepted. */}
+        <label className="mt-5 flex cursor-pointer items-start gap-2.5 text-sm leading-relaxed text-off">
+          <input
+            type="checkbox"
+            name="accept_terms"
+            checked={acceptTerms}
+            onChange={(e) => setAcceptTerms(e.target.checked)}
+            className="mt-1 accent-[#5aa9ff]"
+          />
+          <span>
+            I accept the{" "}
+            {TERMS_URL ? (
+              <a
+                href={TERMS_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="font-semibold text-blue"
+              >
+                terms
+              </a>
+            ) : (
+              "terms"
+            )}
+            .
+          </span>
+        </label>
 
         {state.error && (
           <p className="mt-4 rounded-[9px] border border-bad/30 bg-bad/10 px-3 py-2.5 text-sm text-[#f0a99f]">
