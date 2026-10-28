@@ -54,11 +54,6 @@ const REFUSALS: Record<Refusal, { title: string; body: string; retry: boolean }>
     body: "Coaching someone who is or was your therapy client, or a close family member of a current client, creates a dual relationship, so this program doesn't support it. The coaching you build here is for people who have never been your therapy clients. You're welcome to join the newsletter.",
     retry: false,
   },
-  D: {
-    title: "Under 18",
-    body: "Coaching anyone under 18 needs written consent from their parent or guardian, making clear the coaching is not therapy, before they start. The program can't support it without that. Check your state's rules and your licensing board's guidance on working with minors too. You're welcome to try again, or to join the newsletter.",
-    retry: true,
-  },
 };
 
 type Gate = {
@@ -66,13 +61,9 @@ type Gate = {
   license_type: string;
   license_state: string;
   license_number: string;
-  program_for: string;
-  niche_unknown: boolean;
   tick_not_treatment: boolean;
   tick_outside_caseload: boolean;
   coaches_therapy_clients: boolean | null;
-  coaches_minors: boolean | null;
-  minors_parent_consent: boolean | null;
 };
 
 type First = Partial<Record<keyof Gate, string | boolean>>;
@@ -82,13 +73,9 @@ const blank: Gate = {
   license_type: "",
   license_state: "",
   license_number: "",
-  program_for: "",
-  niche_unknown: false,
   tick_not_treatment: false,
   tick_outside_caseload: false,
   coaches_therapy_clients: null,
-  coaches_minors: null,
-  minors_parent_consent: null,
 };
 
 function SubmitButton() {
@@ -251,7 +238,7 @@ export default function JoinPage() {
         <h1 className="font-disp text-xl font-semibold">Before you start</h1>
         <p className="mt-1.5 text-sm leading-relaxed text-slate">
           This program is for licensed US clinicians, practicing or retired,
-          who are building a coaching offer. Four quick questions make sure
+          who are building a coaching offer. Three quick questions make sure
           it’s the right fit.
         </p>
 
@@ -320,27 +307,7 @@ export default function JoinPage() {
           No
         </Choice>
 
-        <Question n={2}>
-          Who is your coaching program for, and what will it help them achieve?
-        </Question>
-        <p className="mt-1 text-xs text-slate">One or two sentences.</p>
-        <textarea
-          className="psy-input mt-2 min-h-[88px] disabled:opacity-40"
-          maxLength={1000}
-          disabled={gate.niche_unknown}
-          value={gate.niche_unknown ? "" : gate.program_for}
-          onChange={(e) => setGate({ ...gate, program_for: e.target.value })}
-        />
-        <p className="mt-1.5 text-xs leading-relaxed text-slate">
-          Describe the people in general terms. Please don’t include anything
-          about your therapy clients, here or anywhere in the portal.
-        </p>
-        <Tick
-          checked={gate.niche_unknown}
-          onChange={(v) => choose("niche_unknown", v)}
-        >
-          I’m not sure yet. Choosing who it’s for is part of the program.
-        </Tick>
+        <Question n={2}>Your coaching program</Question>
         <Tick
           checked={gate.tick_not_treatment}
           onChange={(v) => setGate({ ...gate, tick_not_treatment: v })}
@@ -376,44 +343,6 @@ export default function JoinPage() {
         >
           Yes
         </Choice>
-
-        <Question n={4}>Will anyone under 18 take part in your coaching?</Question>
-        <Choice
-          name="q4"
-          checked={gate.coaches_minors === false}
-          onChange={() => choose("coaches_minors", false)}
-        >
-          No
-        </Choice>
-        <Choice
-          name="q4"
-          checked={gate.coaches_minors === true}
-          onChange={() => choose("coaches_minors", true)}
-        >
-          Yes
-        </Choice>
-        {gate.coaches_minors === true && (
-          <div className="ml-6">
-            <p className="mt-3 text-sm font-medium leading-relaxed text-off">
-              Will you have written consent from a parent or guardian, stating
-              that the coaching is not therapy, before each one starts?
-            </p>
-            <Choice
-              name="q4b"
-              checked={gate.minors_parent_consent === true}
-              onChange={() => choose("minors_parent_consent", true)}
-            >
-              Yes
-            </Choice>
-            <Choice
-              name="q4b"
-              checked={gate.minors_parent_consent === false}
-              onChange={() => choose("minors_parent_consent", false)}
-            >
-              No
-            </Choice>
-          </div>
-        )}
 
         <h2 className="mt-9 font-disp text-[15px] font-semibold text-off">
           Your account

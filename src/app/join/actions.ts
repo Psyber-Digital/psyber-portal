@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 // means no account is created; null means sign up, and the handle_new_user
 // trigger grants Foundations.
 
-export type Refusal = "A1" | "A2" | "B1" | "B2" | "C" | "D";
+export type Refusal = "A1" | "A2" | "B1" | "B2" | "C";
 export type JoinState = { error?: string; refusal?: Refusal; sent?: boolean };
 
 // The answers the SQL reads. Key names must match lane_gate_refusal exactly:
@@ -20,23 +20,16 @@ type Answers = {
   license_type: string;
   license_state: string;
   license_number: string;
-  program_for: string;
-  niche_unknown: boolean;
   tick_not_treatment: boolean;
   tick_outside_caseload: boolean;
   coaches_therapy_clients: boolean | null;
-  coaches_minors: boolean | null;
-  minors_parent_consent: boolean | null;
 };
 
 const TRACKED = [
   "license",
-  "niche_unknown",
   "tick_not_treatment",
   "tick_outside_caseload",
   "coaches_therapy_clients",
-  "coaches_minors",
-  "minors_parent_consent",
 ] as const;
 
 function siteUrl() {
@@ -62,20 +55,14 @@ function clean(raw: Record<string, unknown>): Answers {
     ? (raw.license as Answers["license"])
     : "";
   const held = license === "independent" || license === "retired";
-  const nicheUnknown = bool(raw.niche_unknown);
   return {
     license,
     license_type: held ? str(raw.license_type, 40) : "",
     license_state: held ? str(raw.license_state, 40) : "",
     license_number: held ? str(raw.license_number, 60) : "",
-    program_for: nicheUnknown ? "" : str(raw.program_for, 1000),
-    niche_unknown: nicheUnknown,
     tick_not_treatment: bool(raw.tick_not_treatment),
     tick_outside_caseload: bool(raw.tick_outside_caseload),
     coaches_therapy_clients: yesNo(raw.coaches_therapy_clients),
-    coaches_minors: yesNo(raw.coaches_minors),
-    minors_parent_consent:
-      raw.coaches_minors === true ? yesNo(raw.minors_parent_consent) : false,
   };
 }
 
@@ -99,11 +86,7 @@ function missing(a: Answers): string | null {
     (!a.license_type || !a.license_state || !a.license_number)
   )
     return "Add your license type, state and number.";
-  if (!a.program_for && !a.niche_unknown) return "Answer question 2.";
   if (a.coaches_therapy_clients === null) return "Answer question 3.";
-  if (a.coaches_minors === null) return "Answer question 4.";
-  if (a.coaches_minors && a.minors_parent_consent === null)
-    return "Answer the second part of question 4.";
   return null;
 }
 
@@ -154,6 +137,7 @@ export async function join(
 
   // Never show Supabase's own text: it can reveal that an email is registered.
   if (error) {
+    console.error("join: signUp failed:", error.status, error.message);
     if (/already registered|already exists/i.test(error.message))
       return { sent: true };
     if (/email/i.test(error.message) && /invalid/i.test(error.message))
