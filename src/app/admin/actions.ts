@@ -71,10 +71,12 @@ export async function addClient(
   }
 
   // Set their name and starting week. Default 1 unlocks Week 01 immediately
-  // (a week shows only when published AND number <= current_week).
+  // (a week shows only when published AND number <= current_week). Clients
+  // created here are one-on-one clients; new profiles otherwise start as
+  // 'pending' (0007_tiers_signup_gate.sql).
   await admin
     .from("profiles")
-    .update({ full_name: fullName, current_week: week })
+    .update({ full_name: fullName, current_week: week, tier: "flagship" })
     .eq("id", data.user.id);
 
   revalidatePath("/admin");

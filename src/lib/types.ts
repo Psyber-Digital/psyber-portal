@@ -1,4 +1,6 @@
 export type Role = "client" | "admin";
+// Offer Ladder (ADR-0027). Set by the database, never by the client.
+export type Tier = "pending" | "foundations" | "build" | "flagship";
 export type FileKind = "worksheet" | "resource";
 
 export interface Profile {
@@ -7,6 +9,7 @@ export interface Profile {
   full_name: string;
   role: Role;
   current_week: number;
+  tier?: Tier;
   created_at: string;
   // Completion machinery (ADR-0020/0021). Nullable: the portal behaves
   // identically when they are unset.
