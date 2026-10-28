@@ -12,7 +12,6 @@ import { join, type JoinState, type Refusal } from "./actions";
 
 const initial: JoinState = {};
 
-const NEWSLETTER_URL = process.env.NEXT_PUBLIC_NEWSLETTER_URL ?? "";
 // The published terms. Until they are live, the box shows without a link.
 const TERMS_URL = process.env.NEXT_PUBLIC_TERMS_URL ?? "";
 
@@ -33,27 +32,27 @@ const STATES = [
 const REFUSALS: Record<Refusal, { title: string; body: string; retry: boolean }> = {
   A1: {
     title: "In training",
-    body: "This program is built for independently licensed clinicians, because it teaches how to run coaching alongside clinical work. Once you're licensed independently, we'd be glad to have you. In the meantime, you're welcome to join the newsletter.",
+    body: "This program is built for independently licensed clinicians, because it teaches how to run coaching alongside clinical work. Once you're licensed independently, we'd be glad to have you. In the meantime, you're welcome to follow along.",
     retry: false,
   },
   A2: {
     title: "Not a clinician",
-    body: "This program is built only for licensed US mental health clinicians, so it isn't the right fit. You're welcome to join the newsletter.",
+    body: "This program is built only for licensed US mental health clinicians, so it isn't the right fit. You're welcome to follow along.",
     retry: false,
   },
   B1: {
     title: "Coaching that treats a condition",
-    body: "Coaching here is non-clinical by design. A program that treats a mental health condition belongs in your clinical work. If you'd like to build your program around what people will achieve, you're welcome to try again. Or you can join the newsletter.",
+    body: "Coaching here is non-clinical by design. A program that treats a mental health condition belongs in your clinical work. If you'd like to build your program around what people will achieve, you're welcome to try again. Or you're welcome to follow along.",
     retry: true,
   },
   B2: {
     title: "Clients from the caseload",
-    body: "Your coaching clients need to come from outside your clinical work, including your caseload, waitlist and clinical referral sources. The program is built around finding them there. You're welcome to join the newsletter.",
+    body: "Your coaching clients need to come from outside your clinical work, including your caseload, waitlist and clinical referral sources. The program is built around finding them there. You're welcome to follow along.",
     retry: false,
   },
   C: {
     title: "Current or former therapy clients",
-    body: "Coaching someone who is or was your therapy client, or a close family member of a current client, creates a dual relationship, so this program doesn't support it. The coaching you build here is for people who have never been your therapy clients. You're welcome to join the newsletter.",
+    body: "Coaching someone who is or was your therapy client, or a close family member of a current client, creates a dual relationship, so this program doesn't support it. The coaching you build here is for people who have never been your therapy clients. You're welcome to follow along.",
     retry: false,
   },
 };
@@ -145,20 +144,6 @@ function Question({ n, children }: { n: number; children: React.ReactNode }) {
   );
 }
 
-function NewsletterLink() {
-  if (!NEWSLETTER_URL)
-    return (
-      <span className="psy-btn-ghost mt-6 w-full opacity-60">
-        [NEWSLETTER LINK]
-      </span>
-    );
-  return (
-    <a href={NEWSLETTER_URL} className="psy-btn-ghost mt-6 w-full">
-      Join the newsletter
-    </a>
-  );
-}
-
 export default function JoinPage() {
   const [state, action] = useFormState(join, initial);
   const [gate, setGate] = useState<Gate>(blank);
@@ -226,7 +211,6 @@ export default function JoinPage() {
               Change my answers
             </button>
           )}
-          <NewsletterLink />
         </div>
       </main>
     );
