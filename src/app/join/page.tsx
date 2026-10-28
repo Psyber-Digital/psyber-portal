@@ -210,8 +210,8 @@ export default function JoinPage() {
           <div className="mb-3 text-2xl">✉️</div>
           <h1 className="font-disp text-xl font-semibold">Check your email</h1>
           <p className="mt-2 text-sm leading-relaxed text-slate">
-            We’ve sent you a link to confirm your email. Open it on this
-            device, and Session 1 will be waiting for you.
+            If this email is new to us, we’ve sent you a link to confirm it.
+            Open it on this device, and Session 1 will be waiting for you.
           </p>
         </div>
       </main>

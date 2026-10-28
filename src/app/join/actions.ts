@@ -144,7 +144,14 @@ export async function join(
     },
   });
 
-  if (error) return { error: error.message };
+  // Never show Supabase's own text: it can reveal that an email is registered.
+  if (error) {
+    if (/already registered|already exists/i.test(error.message))
+      return { sent: true };
+    if (/email/i.test(error.message) && /invalid/i.test(error.message))
+      return { error: "Check your email address." };
+    return { error: "We couldn’t create your account. Please try again." };
+  }
 
   // With email confirmation off, Supabase signs the person straight in.
   if (data.session) redirect("/");
