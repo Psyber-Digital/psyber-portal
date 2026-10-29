@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { stripe, syncSubscription } from "@/lib/stripe";
 import { startCheckout } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 // Build billing (Offer Ladder stage 4). What a self-serve member sees:
 //   Foundations → the two plans and a button to Stripe's payment page.
-//   Just paid   → "confirming" until the webhook moves them to Build.
+//   Just paid   → we ask Stripe about their checkout directly (below), so
+//                 they don't depend on the webhook arriving first.
 //   Build       → their plan, the next date, and "Manage billing".
 // Flagship clients and admins never reach this page.
-// WORDING: draft, waiting for Don's approval (board card, 29 Oct).
+// WORDING: passed lane-guard and voice-guard; shown to Don on board card r11.
 
 const PLAN_NAME: Record<string, string> = { month: "Monthly", year: "Yearly" };
 
@@ -26,13 +28,27 @@ function day(iso: string | null) {
 export default async function BillingPage({
   searchParams,
 }: {
-  searchParams?: { joined?: string };
+  searchParams?: { joined?: string; session_id?: string; t?: string };
 }) {
   const supabase = createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
+
+  // Back from Stripe's payment page. Read the checkout from Stripe with our
+  // secret key (never trust the browser), and only if it belongs to this
+  // person, sync its subscription: the same path the webhook takes.
+  const sessionId = searchParams?.session_id;
+  if (sessionId && /^cs_[A-Za-z0-9_]+$/.test(sessionId)) {
+    try {
+      const cs = await stripe().checkout.sessions.retrieve(sessionId);
+      const subId = typeof cs.subscription === "string" ? cs.subscription : cs.subscription?.id;
+      if (cs.client_reference_id === user.id && subId) await syncSubscription(subId);
+    } catch (e) {
+      console.error("billing: checkout check failed:", e);
+    }
+  }
 
   const [{ data: profile }, { data: sub }] = await Promise.all([
     supabase.from("profiles").select("tier, role").eq("id", user.id).single(),
@@ -55,15 +71,22 @@ export default async function BillingPage({
     </p>
   );
 
-  // Paid, but Stripe's confirmation hasn't reached us yet. Usually seconds.
+  // Paid, but Stripe hasn't confirmed it yet. Usually seconds. The page
+  // checks again every 3 seconds, ten times, then stops.
   if (profile.tier === "foundations" && searchParams?.joined) {
+    const tries = Math.max(0, parseInt(searchParams.t ?? "0", 10) || 0);
+    const again = `/portal/billing?joined=1&t=${tries + 1}${
+      sessionId ? `&session_id=${encodeURIComponent(sessionId)}` : ""
+    }`;
     return (
       <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
-        <meta httpEquiv="refresh" content="3" />
+        {tries < 10 && <meta httpEquiv="refresh" content={`3;url=${again}`} />}
         <div className="psy-card p-8 text-center">
           <h1 className="font-disp text-xl font-semibold">Confirming your payment…</h1>
           <p className="mt-2 text-sm leading-relaxed text-slate">
-            This usually takes a few seconds. The page will update by itself.
+            {tries < 10
+              ? "This usually takes a few seconds. The page will update by itself."
+              : "This is taking longer than usual. Refresh this page in a minute."}
           </p>
         </div>
         {back}

@@ -102,7 +102,7 @@ export async function startCheckout(formData: FormData) {
     subscription_data: {
       metadata: { user_id: user.id, renewal_consent_at: new Date().toISOString() },
     },
-    success_url: `${siteUrl()}/portal/billing?joined=1`,
+    success_url: `${siteUrl()}/portal/billing?joined=1&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${siteUrl()}/portal/billing`,
   });
 

@@ -99,7 +99,7 @@ export default async function PortalPage({
 
       {!hasPassword && <SetPasswordPrompt />}
 
-      {/* Foundations members: the way into Build. WORDING: draft (29 Oct). */}
+      {/* Foundations members: the way into Build. WORDING: board card r11. */}
       {profile?.tier === "foundations" && (
         <a
           href="/portal/billing"
@@ -147,7 +147,7 @@ export default async function PortalPage({
           <ThisWeek week={focused} files={filesFor(focused.id)} />
 
           {/* Build members open the next session themselves (terms 2.2).
-              Session 3 waits for niche approval (0011). WORDING: draft. */}
+              Session 3 waits for niche approval (0011). WORDING: board card r11. */}
           {profile?.tier === "build" && !viewingPast && current && (
             (profile.completed_week ?? 0) >= current.number ? (
               current.number === 2 && !profile.niche_approved_at ? (

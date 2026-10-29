@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 // The page before Stripe's own billing page (Build terms 4.1, 4.2, 4.3, 8.2).
 // It says what cancelling does before anyone reaches the cancel button.
-// WORDING: draft, waiting for Don's approval (board card, 29 Oct).
+// WORDING: passed lane-guard and voice-guard; shown to Don on board card r11.
 export default async function ManageBillingPage() {
   const supabase = createClient();
   const {
