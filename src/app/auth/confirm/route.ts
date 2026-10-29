@@ -18,5 +18,17 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  // Supabase's default email templates send a one-time ?code= instead of a
+  // token_hash (the test project can't use custom templates without custom
+  // SMTP). Accept that too. It needs the same browser that started sign-up.
+  const code = searchParams.get("code");
+  if (code) {
+    const supabase = createClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`);
+    }
+  }
+
   return NextResponse.redirect(`${origin}/login?error=link`);
 }
