@@ -39,7 +39,7 @@ export default async function AdminClinicPage() {
       <h2 className="mb-3 mt-8 font-disp text-base font-semibold">Recordings</h2>
       <p className="mb-3 text-sm text-slate">
         Upload to Vimeo as private and embeddable only on the portal, like the session videos.
-        Members see each recording for 90 days. After that it disappears here; delete it on Vimeo too.
+        Members see each recording for 90 days. After that they can't, and it's flagged below so you can delete it on Vimeo.
       </p>
       <RecordingForm />
       <ul className="mt-5 space-y-2">
