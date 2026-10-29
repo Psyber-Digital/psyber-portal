@@ -128,7 +128,7 @@ export function place1dEmail(p: {
       "Tomorrow, your place in the program is released.",
       `Your progress goes with it: ${p.completed} sessions finished, and your place at Session ${p.session}, ${p.sessionTitle}.`,
       "Come back after today and you start again at Session 1.",
-      "Rejoin today and you keep all of it.",
+      "Rejoin today and you keep your place.",
     ],
     { label: "Rejoin and keep my place", path: "/portal/billing" },
   );
