@@ -5,7 +5,9 @@ import { openBillingPortal } from "../actions";
 
 export const dynamic = "force-dynamic";
 
-// The page before Stripe's own billing page (Build terms 4.1, 4.2, 4.3, 8.2).
+// The page before Stripe's own billing page (Build terms 4.1, 4.2, 4.3, 4.4, 8.2, 9.3).
+// States every member right in full; emails may be selective, this page may not
+// (Don, 29 Oct, PREFERENCES selective-persuasion rule, choice A).
 // It says what cancelling does before anyone reaches the cancel button.
 // WORDING: passed lane-guard and voice-guard; shown to Don on board card r11.
 export default async function ManageBillingPage() {
@@ -32,8 +34,8 @@ export default async function ManageBillingPage() {
         <h2 className="mt-5 font-disp text-base font-semibold">If you cancel</h2>
         <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
           <li>You keep Build until the end of the month or year you’ve paid for.</li>
-          <li>Then you move to Foundations. You keep Session 1 and your contact list.</li>
-          <li>Your place in the program is kept for one month. Rejoin after that and you start again from Session 1.</li>
+          <li>Then you move to Foundations. You keep Session 1 and your contact list, which you can export at any time.</li>
+          <li>Your place in the program is kept for one month after Build ends. Rejoin after that and you start again from Session 1.</li>
           <li>Anything you’ve written stays yours.</li>
           <li>Yearly plan: a full refund if you ask within 14 days of paying.</li>
           <li>Monthly plan: no refunds.</li>
