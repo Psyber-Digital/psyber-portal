@@ -132,8 +132,7 @@ export default async function BillingPage({
         <h1 className="font-disp text-xl font-semibold">Join Build</h1>
         <p className="mt-2 text-sm leading-relaxed text-slate">
           All seven sessions, each opening as you complete the one before, plus
-          the weekly group clinic. Session 3 opens once your niche is approved
-          at a clinic.
+          the weekly group clinic for help along the way.
         </p>
         <p className="mt-2 text-sm leading-relaxed text-slate">
           Your membership renews automatically until you cancel: $149 a month on

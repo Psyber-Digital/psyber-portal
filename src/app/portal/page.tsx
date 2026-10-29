@@ -147,24 +147,25 @@ export default async function PortalPage({
           <ThisWeek week={focused} files={filesFor(focused.id)} />
 
           {/* Build members open the next session themselves (terms 2.2).
-              Session 3 waits for niche approval (0011). WORDING: board card r11. */}
-          {profile?.tier === "build" && !viewingPast && current && (
-            (profile.completed_week ?? 0) >= current.number ? (
-              current.number === 2 && !profile.niche_approved_at ? (
-                <div className="psy-card mt-6 p-5 text-sm text-slate">
-                  Session 2 is complete. Session 3 opens once your niche is
-                  approved at a weekly clinic.
-                </div>
-              ) : null
-            ) : (
+              Finishing Session 2 means they're happy with their niche; help
+              comes from the weekly clinic, not an approval (Don, r11, 29 Oct).
+              WORDING: board card r11. */}
+          {profile?.tier === "build" && !viewingPast && current &&
+            (profile.completed_week ?? 0) < current.number && (
               <form action={finishSession} className="mt-6">
                 <input type="hidden" name="week" value={current.number} />
                 <button type="submit" className="psy-btn w-full sm:w-auto">
-                  Mark Session {current.number} complete
+                  {current.number === 2
+                    ? "I’m happy with my niche. Open Session 3"
+                    : `Mark Session ${current.number} complete`}
                 </button>
+                {current.number === 2 && (
+                  <p className="mt-2 text-xs leading-relaxed text-slate">
+                    Not sure yet? Bring it to the weekly clinic for help.
+                  </p>
+                )}
               </form>
-            )
-          )}
+            )}
         </>
       ) : (
         <div className="psy-card p-10 text-center text-sm text-mut">

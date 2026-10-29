@@ -12,10 +12,10 @@ export interface Profile {
   tier?: Tier;
   // current_week capped by tier (generated in the database, 0010).
   access_week?: number;
-  // Build members: highest session marked complete, and when Don approved
-  // their niche (0011). Session 3 waits for that approval.
+  // Build members: highest session marked complete, and when they said they
+  // were happy with their niche, which opens Session 3 (0011, 0012).
   completed_week?: number;
-  niche_approved_at?: string | null;
+  niche_confirmed_at?: string | null;
   created_at: string;
   // Completion machinery (ADR-0020/0021). Nullable: the portal behaves
   // identically when they are unset.
