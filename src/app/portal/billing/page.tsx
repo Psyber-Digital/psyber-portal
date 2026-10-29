@@ -132,12 +132,13 @@ export default async function BillingPage({
         <h1 className="font-disp text-xl font-semibold">Join Build</h1>
         <p className="mt-2 text-sm leading-relaxed text-slate">
           All seven sessions, each opening as you complete the one before, plus
-          the weekly group clinic.
+          the weekly group clinic. Session 3 opens once your niche is approved
+          at a clinic.
         </p>
         <p className="mt-2 text-sm leading-relaxed text-slate">
-          Your membership renews automatically each month or year. Your card is
-          charged until you cancel. Cancel any time from Manage billing on your
-          account page.
+          Your membership renews automatically until you cancel: $149 a month on
+          the monthly plan, or $1,197 a year on the yearly plan. Cancel any time
+          from Manage billing on your account page.
         </p>
         <form action={startCheckout}>
           {/* Separate renewal consent, apart from the terms (adviser Q2,
@@ -146,6 +147,11 @@ export default async function BillingPage({
             <input type="checkbox" name="accept_renewal" required className="mt-1" />
             <span>I agree my Build membership renews automatically until I cancel.</span>
           </label>
+          {/* Refund position on the sign-up page (adviser Q13, terms 4.3-4.4). */}
+          <p className="mt-3 text-xs leading-relaxed text-slate">
+            Yearly plan: a full refund within 14 days of paying. Monthly plan: no
+            refunds.
+          </p>
           <button name="plan" value="monthly" className="psy-btn mt-5 w-full">
             Monthly · $149 a month
           </button>

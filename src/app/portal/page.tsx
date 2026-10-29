@@ -160,7 +160,7 @@ export default async function PortalPage({
               <form action={finishSession} className="mt-6">
                 <input type="hidden" name="week" value={current.number} />
                 <button type="submit" className="psy-btn w-full sm:w-auto">
-                  Mark Session {pad(current.number)} complete
+                  Mark Session {current.number} complete
                 </button>
               </form>
             )
