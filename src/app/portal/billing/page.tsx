@@ -1,0 +1,129 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { startCheckout } from "./actions";
+
+export const dynamic = "force-dynamic";
+
+// Build billing (Offer Ladder stage 4). What a self-serve member sees:
+//   Foundations → the two plans and a button to Stripe's payment page.
+//   Just paid   → "confirming" until the webhook moves them to Build.
+//   Build       → their plan, the next date, and "Manage billing".
+// Flagship clients and admins never reach this page.
+// WORDING: draft, waiting for Don's approval (board card, 29 Oct).
+
+const PLAN_NAME: Record<string, string> = { month: "Monthly", year: "Yearly" };
+
+function day(iso: string | null) {
+  if (!iso) return "";
+  return new Date(iso).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+export default async function BillingPage({
+  searchParams,
+}: {
+  searchParams?: { joined?: string };
+}) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const [{ data: profile }, { data: sub }] = await Promise.all([
+    supabase.from("profiles").select("tier, role").eq("id", user.id).single(),
+    supabase
+      .from("subscriptions")
+      .select("status, billing_interval, current_period_end, cancel_at_period_end")
+      .eq("user_id", user.id)
+      .maybeSingle(),
+  ]);
+
+  if (!profile || profile.role === "admin" || !["foundations", "build"].includes(profile.tier)) {
+    redirect("/portal");
+  }
+
+  const back = (
+    <p className="mt-5 text-center text-sm text-slate">
+      <Link href="/portal" className="font-semibold text-blue">
+        ← Back to the portal
+      </Link>
+    </p>
+  );
+
+  // Paid, but Stripe's confirmation hasn't reached us yet. Usually seconds.
+  if (profile.tier === "foundations" && searchParams?.joined) {
+    return (
+      <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
+        <meta httpEquiv="refresh" content="3" />
+        <div className="psy-card p-8 text-center">
+          <h1 className="font-disp text-xl font-semibold">Confirming your payment…</h1>
+          <p className="mt-2 text-sm leading-relaxed text-slate">
+            This usually takes a few seconds. The page will update by itself.
+          </p>
+        </div>
+        {back}
+      </main>
+    );
+  }
+
+  if (profile.tier === "build") {
+    const ending = sub?.cancel_at_period_end;
+    const pastDue = sub?.status === "past_due";
+    return (
+      <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
+        <div className="psy-card p-8">
+          <h1 className="font-disp text-xl font-semibold">Your Build membership</h1>
+          <p className="mt-2 text-sm leading-relaxed text-slate">
+            {PLAN_NAME[sub?.billing_interval ?? ""] ?? "Build"} plan.{" "}
+            {/* While a payment is overdue Stripe has already moved the date on,
+                so "renews on" would be wrong. The warning below says it all. */}
+            {pastDue
+              ? null
+              : ending
+                ? `It ends on ${day(sub?.current_period_end ?? null)}. Then you move to Foundations.`
+                : `It renews on ${day(sub?.current_period_end ?? null)}.`}
+          </p>
+          {pastDue && (
+            <p className="mt-4 rounded-[9px] border border-bad/30 bg-bad/10 px-3 py-2.5 text-sm text-[#f0a99f]">
+              Your last payment didn’t go through. Update your card to keep Build.
+            </p>
+          )}
+          <Link href="/portal/billing/manage" className="psy-btn mt-5 block w-full text-center">
+            Manage billing
+          </Link>
+        </div>
+        {back}
+      </main>
+    );
+  }
+
+  // Foundations: offer Build.
+  return (
+    <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
+      <div className="psy-card p-8">
+        <h1 className="font-disp text-xl font-semibold">Join Build</h1>
+        <p className="mt-2 text-sm leading-relaxed text-slate">
+          All seven sessions, the weekly group clinic and your contact list.
+          Cancel any time from this page.
+        </p>
+        <form action={startCheckout}>
+          <button name="plan" value="monthly" className="psy-btn mt-5 w-full">
+            Monthly · $149 a month
+          </button>
+          <button name="plan" value="yearly" className="psy-btn mt-3 w-full">
+            Yearly · $1,197 a year
+          </button>
+        </form>
+        <p className="mt-4 text-xs leading-relaxed text-slate">
+          Payment is taken by Stripe. We never see your card details.
+        </p>
+      </div>
+      {back}
+    </main>
+  );
+}

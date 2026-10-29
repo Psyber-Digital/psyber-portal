@@ -14,9 +14,22 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  // Self-serve members manage Build from here (Build terms 4.1).
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("tier")
+    .eq("id", user.id)
+    .single();
+  const selfServe = profile?.tier === "foundations" || profile?.tier === "build";
+
   return (
     <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
       <SetPasswordForm />
+      {selfServe && (
+        <Link href="/portal/billing" className="psy-btn mt-5 block w-full text-center">
+          {profile?.tier === "build" ? "Manage billing" : "Join Build"}
+        </Link>
+      )}
       <p className="mt-5 text-center text-sm text-slate">
         <Link href="/portal" className="font-semibold text-blue">
           ← Back to the portal

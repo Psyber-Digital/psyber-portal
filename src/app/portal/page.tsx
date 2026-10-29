@@ -46,7 +46,9 @@ export default async function PortalPage({
   // metadata when they save one via /portal/account).
   const hasPassword = user.user_metadata?.has_password === true;
 
-  const currentWeek = profile?.current_week ?? 0;
+  // How far they may see, not how far they have got: Foundations is capped at
+  // Session 1 even if a lapsed Build member had gone further (0010).
+  const currentWeek = profile?.access_week ?? 0;
 
   // RLS returns only published weeks; files returns only entitled rows. The
   // shared-files count powers the nav badge — RLS already excludes expired items,
@@ -95,6 +97,19 @@ export default async function PortalPage({
       <PortalNav badge={uncollected ?? 0} />
 
       {!hasPassword && <SetPasswordPrompt />}
+
+      {/* Foundations members: the way into Build. WORDING: draft (29 Oct). */}
+      {profile?.tier === "foundations" && (
+        <a
+          href="/portal/billing"
+          className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
+        >
+          <span className="text-sm text-slate">
+            You’re on Foundations: Session 1 and your contact list.
+          </span>
+          <span className="psy-btn">Join Build</span>
+        </a>
+      )}
 
       <WelcomeVideo currentWeek={currentWeek} />
 

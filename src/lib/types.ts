@@ -10,6 +10,8 @@ export interface Profile {
   role: Role;
   current_week: number;
   tier?: Tier;
+  // current_week capped by tier (generated in the database, 0010).
+  access_week?: number;
   created_at: string;
   // Completion machinery (ADR-0020/0021). Nullable: the portal behaves
   // identically when they are unset.
