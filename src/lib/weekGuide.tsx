@@ -41,7 +41,7 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     note: {
       fromLabel: "A Note From Your Coach",
       initial: "D",
-      body: (<><span className="block">{"More pre-work than most this week, deliberately. Generating and researching are things you can do alone. Deciding is not — that is what our session is for."}</span><span className="block mt-3">{"Do the stages in separate sittings if you can. Generating and judging at once flattens your ideas, and a night’s gap usually produces something you would not have reached in one go."}</span><span className="block mt-3">{"Nothing goes out this week. You need the words before you can tell anyone, and that is the next session — so this week is yours to think in."}</span></>),
+      body: (<><span className="block">{"More pre-work than most this week, deliberately. Generating and researching are things you do alone. If you’re unsure at the end, deciding is what our next call is for."}</span><span className="block mt-3">{"Do the stages in separate sittings if you can. Generating and judging at once flattens your ideas, and a night’s gap usually produces something you would not have reached in one go."}</span><span className="block mt-3">{"Nothing goes out this week. You need the words before you can tell anyone, and that is the next session — so this week is yours to think in."}</span></>),
     },
     budget: { total: "95 minutes", parts: [{ value: "7 min", label: "to watch" }, { value: "45 min", label: "generating" }, { value: "45 min", label: "researching three" }] },
     videoStep: {
@@ -52,7 +52,7 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     workbookStep: {
       mins: "25 min",
       title: "Your Working Sheet",
-      blurb: (<>{"Three stages, in order: generate everything, narrow it down, then research your top three. Finish each stage before moving on. Do not pick a winner — bring all three and what you found, and we choose together on the call."}</>),
+      blurb: (<>{"Three stages, in order: generate everything, narrow it down, then research your top three. Finish each stage before moving on. Then pick the one you’re happiest with. Not sure? Bring all three and what you found to your next call or weekly drop-in, and we choose together."}</>),
       caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
     },
   },
