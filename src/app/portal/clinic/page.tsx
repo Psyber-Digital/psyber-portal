@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 // The weekly group clinic, for Build members (Offer Ladder stage 5; Build terms
 // 2.3 and 7). RLS decides who sees the Zoom link and the recordings (0015); this
-// page only chooses what to show. WORDING: draft, for Don's approval.
+// page only chooses what to show. WORDING: approved by Don, board card r23 (29 Oct).
 export default async function ClinicPage() {
   const supabase = createClient();
   const {
