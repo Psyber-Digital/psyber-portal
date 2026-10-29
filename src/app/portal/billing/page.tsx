@@ -131,9 +131,14 @@ export default async function BillingPage({
       <div className="psy-card p-8">
         <h1 className="font-disp text-xl font-semibold">Join Build</h1>
         <p className="mt-2 text-sm leading-relaxed text-slate">
-          All seven sessions, each opening as you complete the one before, plus
-          the weekly group clinic for help along the way.
+          The full program, at your own pace.
         </p>
+        {/* What's inside, not how many sessions (Don, r11, 29 Oct). */}
+        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
+          <li>Every session, each with its video, Working Sheet and Principle Card</li>
+          <li>A live group clinic every week, for questions and help</li>
+          <li>Each session opens as you complete the one before</li>
+        </ul>
         <p className="mt-2 text-sm leading-relaxed text-slate">
           Your membership renews automatically until you cancel: $149 a month on
           the monthly plan, or $1,197 a year on the yearly plan. Cancel any time

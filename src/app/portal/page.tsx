@@ -106,7 +106,8 @@ export default async function PortalPage({
           className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
         >
           <span className="text-sm text-slate">
-            Build adds Sessions 2 to 7 and the weekly group clinic.
+            Build opens every session, with its video, Working Sheet and
+            Principle Card, plus a live group clinic every week.
           </span>
           <span className="psy-btn">Join Build</span>
         </a>
