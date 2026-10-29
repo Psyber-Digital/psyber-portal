@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { SetPasswordForm } from "./SetPasswordForm";
+import { CloseAccountForm } from "./CloseAccountForm";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,12 @@ export default async function AccountPage() {
     .eq("id", user.id)
     .single();
   const selfServe = profile?.tier === "foundations" || profile?.tier === "build";
+  const { data: sub } = await supabase
+    .from("subscriptions")
+    .select("status")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const paying = ["active", "trialing", "past_due"].includes(sub?.status ?? "");
 
   return (
     <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
@@ -30,6 +37,7 @@ export default async function AccountPage() {
           {profile?.tier === "build" ? "Manage billing" : "Join Build"}
         </Link>
       )}
+      {selfServe && <CloseAccountForm paying={paying} />}
       <p className="mt-5 text-center text-sm text-slate">
         <Link href="/portal" className="font-semibold text-blue">
           ← Back to the portal
