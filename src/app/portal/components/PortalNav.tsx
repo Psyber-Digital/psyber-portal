@@ -12,12 +12,14 @@ const TABS = [
   { href: "/portal/outreach", label: "The List" },
 ];
 
-export function PortalNav({ badge }: { badge?: number }) {
+// The Clinic tab shows for Build members only (Offer Ladder stage 5).
+export function PortalNav({ badge, clinic }: { badge?: number; clinic?: boolean }) {
   const pathname = usePathname();
+  const tabs = clinic ? [...TABS, { href: "/portal/clinic", label: "Clinic" }] : TABS;
 
   return (
     <nav className="-mt-2 mb-7 flex flex-wrap gap-2">
-      {TABS.map((t) => {
+      {tabs.map((t) => {
         // "/portal" must match only itself, or it would light up on every page.
         const active = t.href === "/portal" ? pathname === "/portal" : pathname.startsWith(t.href);
         return (

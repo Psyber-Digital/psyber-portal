@@ -49,6 +49,10 @@ export default async function AdminPage() {
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-5 pb-24 pt-7">
       <Header name={me.full_name || "Admin"} role="admin" />
+      {/* Offer Ladder stage 5: the weekly clinic for Build members. */}
+      <p className="-mt-2 mb-4 text-sm">
+        <a href="/admin/clinic" className="font-semibold text-blue">Weekly clinic →</a>
+      </p>
       <AdminDashboard
         clients={(clients ?? []) as Profile[]}
         weeks={(weeks ?? []) as Week[]}

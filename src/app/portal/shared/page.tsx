@@ -40,7 +40,7 @@ export default async function SharedFilesPage() {
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
       <Header name={profile?.full_name || "Client"} role="client" />
-      <PortalNav badge={uncollected} />
+      <PortalNav badge={uncollected} clinic={profile?.tier === "build"} />
 
       <SectionHead>Shared Files</SectionHead>
       <p className="mx-0.5 mb-5 max-w-[70ch] text-[13.5px] leading-relaxed text-mut">

@@ -40,7 +40,7 @@ export default async function OutreachPage() {
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
       <Header name={profile?.full_name || "Client"} role="client" />
-      <PortalNav badge={uncollected ?? 0} />
+      <PortalNav badge={uncollected ?? 0} clinic={profile?.tier === "build"} />
 
       {/* One name for one thing. The nav tab was renamed to "The List" (df6ac53) but
           this heading and the guide dialog still said "your contact database", so a
