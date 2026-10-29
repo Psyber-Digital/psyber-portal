@@ -108,10 +108,21 @@ export default async function BillingPage({
       <div className="psy-card p-8">
         <h1 className="font-disp text-xl font-semibold">Join Build</h1>
         <p className="mt-2 text-sm leading-relaxed text-slate">
-          All seven sessions, the weekly group clinic and your contact list.
-          Cancel any time from this page.
+          All seven sessions, each opening as you complete the one before, plus
+          the weekly group clinic.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-slate">
+          Your membership renews automatically each month or year. Your card is
+          charged until you cancel. Cancel any time from Manage billing on your
+          account page.
         </p>
         <form action={startCheckout}>
+          {/* Separate renewal consent, apart from the terms (adviser Q2,
+              approved by Don in m06). Checked again on the server. */}
+          <label className="mt-5 flex items-start gap-2.5 text-sm leading-relaxed text-slate">
+            <input type="checkbox" name="accept_renewal" required className="mt-1" />
+            <span>I agree my Build membership renews automatically until I cancel.</span>
+          </label>
           <button name="plan" value="monthly" className="psy-btn mt-5 w-full">
             Monthly · $149 a month
           </button>
@@ -120,7 +131,7 @@ export default async function BillingPage({
           </button>
         </form>
         <p className="mt-4 text-xs leading-relaxed text-slate">
-          Payment is taken by Stripe. We never see your card details.
+          Stripe takes the payment. We never see your card details.
         </p>
       </div>
       {back}

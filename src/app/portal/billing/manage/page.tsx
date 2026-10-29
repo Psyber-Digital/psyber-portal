@@ -31,10 +31,11 @@ export default async function ManageBillingPage() {
         </p>
         <h2 className="mt-5 font-disp text-base font-semibold">If you cancel</h2>
         <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
-          <li>You keep Build until the end of the month or year you have paid for.</li>
+          <li>You keep Build until the end of the month or year you’ve paid for.</li>
           <li>Then you move to Foundations. You keep Session 1 and your contact list.</li>
-          <li>Your place in the program is saved if you rejoin.</li>
-          <li>Yearly plan: a full refund if you ask within 14 days of a yearly payment.</li>
+          <li>Anything you’ve written stays yours.</li>
+          <li>Yearly plan: a full refund if you ask within 14 days of paying.</li>
+          <li>Monthly plan: no refunds.</li>
         </ul>
         <form action={openBillingPortal}>
           <button type="submit" className="psy-btn mt-6 w-full">

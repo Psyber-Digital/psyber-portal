@@ -53,6 +53,9 @@ export async function startCheckout(formData: FormData) {
   const plan = String(formData.get("plan") ?? "") as BuildPlan;
   if (!(plan in BUILD_PRICES)) redirect("/portal/billing");
 
+  // The renewal tick box (adviser Q2). The browser requires it too.
+  if (formData.get("accept_renewal") !== "on") redirect("/portal/billing");
+
   const { user, profile, sub } = await signedInMember();
   // Already paying: never sell the same person a second subscription.
   if (sub && ACTIVE.includes(sub.status ?? "")) redirect("/portal/billing");
@@ -95,7 +98,10 @@ export async function startCheckout(formData: FormData) {
     customer: customerId,
     client_reference_id: user.id,
     line_items: [{ price: prices[0].id, quantity: 1 }],
-    subscription_data: { metadata: { user_id: user.id } },
+    // Kept on the subscription as the record of the renewal tick box.
+    subscription_data: {
+      metadata: { user_id: user.id, renewal_consent_at: new Date().toISOString() },
+    },
     success_url: `${siteUrl()}/portal/billing?joined=1`,
     cancel_url: `${siteUrl()}/portal/billing`,
   });
