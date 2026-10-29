@@ -28,7 +28,7 @@ const CLIENT_CLOSING_TEXT = `If anything comes up or you'd like a hand, just rep
 Kindest regards,
 Asher · Psyber Digital`;
 
-function portalUrl(path = "/portal") {
+export function portalUrl(path = "/portal") {
   const base = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://psyber-portal.vercel.app").replace(
     /\/$/,
     "",
@@ -236,7 +236,7 @@ Open the admin dashboard: ${url}`;
 // Every Psyber transactional email shares this shell. `paragraphs` and
 // `greeting` are escaped (they can contain client-supplied text); `closingHtml`
 // is raw because it is developer-authored and carries markup.
-function emailShellHtml({
+export function emailShellHtml({
   eyebrow,
   greeting,
   paragraphs,

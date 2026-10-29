@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/purge-shared-files",
       "schedule": "17 * * * *"
+    },
+    {
+      "path": "/api/cron/build-emails",
+      "schedule": "0 14 * * *"
     }
   ]
 }

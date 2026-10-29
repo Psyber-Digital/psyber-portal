@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { maybeSendCancelEmail } from "@/lib/buildEmails";
 
 // Build billing (Offer Ladder stage 4, ADR-0027). Server-only: the secret key
 // is read from a non-public env var, so this module can never reach the
@@ -102,5 +103,20 @@ export async function syncSubscription(subscriptionId: string) {
     p_user: userId,
   });
   if (rpcError) throw new Error(`stripe sync: access failed: ${rpcError.message}`);
+
+  // Just cancelled? Send the approved cancel email, once per subscription.
+  // Best-effort: an email problem must never undo or repeat the sync.
+  try {
+    await maybeSendCancelEmail(userId, {
+      id: sub.id,
+      cancel_at_period_end: sub.cancel_at_period_end,
+      status: sub.status,
+      interval: interval ?? null,
+      periodEnd: item?.current_period_end ?? null,
+    });
+  } catch (e) {
+    console.error("stripe sync: cancel email failed:", e);
+  }
+
   return tier as string | null;
 }

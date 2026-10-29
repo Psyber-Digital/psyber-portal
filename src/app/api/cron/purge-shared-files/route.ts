@@ -3,6 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { purgeExpiredSharedFiles } from "@/lib/purge";
 
 export const dynamic = "force-dynamic";
+// Never reuse a cached database read (same fault found in the Build email job,
+// 29 Oct): the scheduled call doesn't touch cookies, so nothing else forces it.
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 // Hourly sweep that removes the bytes of expired coach→client documents.
 // Scheduled from vercel.json. Expiry itself is enforced by RLS (see 0004), so a
