@@ -15,7 +15,7 @@ const TABS = [
 // The Clinic tab shows for Build members only (Offer Ladder stage 5).
 export function PortalNav({ badge, clinic }: { badge?: number; clinic?: boolean }) {
   const pathname = usePathname();
-  const tabs = clinic ? [...TABS, { href: "/portal/clinic", label: "Clinic" }] : TABS;
+  const tabs = clinic ? [...TABS, { href: "/portal/clinic", label: "Drop-in" }] : TABS;
 
   return (
     <nav className="-mt-2 mb-7 flex flex-wrap gap-2">

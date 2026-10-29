@@ -31,7 +31,7 @@ export default async function AdminClinicPage() {
       <p className="mb-4 text-sm">
         <Link href="/admin" className="font-semibold text-blue">← Admin</Link>
       </p>
-      <h1 className="font-disp text-xl font-semibold">Weekly clinic</h1>
+      <h1 className="font-disp text-xl font-semibold">Weekly drop-in</h1>
       <p className="mb-5 mt-1 text-sm text-slate">Next: {clinicLabel(nextClinic().start)}. Build members only.</p>
 
       <SettingsForm zoom={settings?.zoom_url ?? ""} notice={settings?.notice ?? ""} />

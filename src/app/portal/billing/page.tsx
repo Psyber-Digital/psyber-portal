@@ -136,7 +136,7 @@ export default async function BillingPage({
         {/* What's inside, not how many sessions (Don, r11, 29 Oct). */}
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
           <li>Every session, each with its video, Working Sheet and Principle Card</li>
-          <li>A live group clinic every week, for questions and help</li>
+          <li>A live group drop-in every week, for questions and help</li>
           <li>Each session opens as you complete the one before</li>
         </ul>
         <p className="mt-2 text-sm leading-relaxed text-slate">

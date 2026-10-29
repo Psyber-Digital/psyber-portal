@@ -18,7 +18,7 @@ export function SettingsForm({ zoom, notice }: { zoom: string; notice: string })
       <label className="psy-label">Zoom link (the recurring meeting)</label>
       <input name="zoom_url" defaultValue={zoom} className="psy-input" placeholder="https://us02web.zoom.us/j/…" />
       <label className="psy-label">Notice for members (cancellations, changes). Leave empty to hide.</label>
-      <input name="notice" defaultValue={notice} className="psy-input" placeholder="This week's clinic moves to Thursday, same time." />
+      <input name="notice" defaultValue={notice} className="psy-input" placeholder="This week's drop-in moves to Thursday, same time." />
       <button className="psy-btn mt-4">Save</button>
       <Message state={state} />
     </form>
@@ -29,7 +29,7 @@ export function RecordingForm() {
   const [state, action] = useFormState(addRecording, initial);
   return (
     <form action={action} className="psy-card p-6">
-      <label className="psy-label">Clinic date</label>
+      <label className="psy-label">Drop-in date</label>
       <input name="clinic_date" type="date" className="psy-input" />
       <label className="psy-label">Vimeo link or video number</label>
       <input name="vimeo" className="psy-input" placeholder="https://vimeo.com/123456789/abcdef1234" />

@@ -52,7 +52,7 @@ export default async function AdminPage() {
       {/* Offer Ladder stage 5: the weekly clinic for Build members. */}
       <p className="-mt-2 mb-4 text-sm">
         <a href="/admin/members" className="mr-5 font-semibold text-blue">Members →</a>
-        <a href="/admin/clinic" className="font-semibold text-blue">Weekly clinic →</a>
+        <a href="/admin/clinic" className="font-semibold text-blue">Weekly drop-in →</a>
       </p>
       <AdminDashboard
         clients={(clients ?? []) as Profile[]}

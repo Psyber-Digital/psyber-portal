@@ -78,7 +78,7 @@ export function cancelEmail(p: {
     paras.push(
       `You paid on ${day(p.refund.paidOn)}. If you'd like a full refund, reply to this email by ${day(p.refund.deadline)}.`,
     );
-  paras.push(`Until ${end}, the weekly clinic is still yours. Bring whatever you're working on.`);
+  paras.push(`Until ${end}, the weekly drop-in is still yours. Bring whatever you're working on.`);
   return render(p.to, p.name, `Your Build membership ends on ${end}`, "Your Build membership", paras, {
     label: "Manage billing",
     path: "/portal/billing",
@@ -104,7 +104,7 @@ export function place7dEmail(p: {
       `You've already put in the work. ${p.completed} sessions done.`,
       `Your place at Session ${p.session}, ${p.sessionTitle}, is held for you until ${pd}.`,
       "After that, it's released. Your progress resets, and you'd start again at Session 1, walking every session you've finished all over again.",
-      `Rejoin before ${pd} and you pick up exactly where you stopped, with the weekly clinic behind you for the next step.`,
+      `Rejoin before ${pd} and you pick up exactly where you stopped, with the weekly drop-in behind you for the next step.`,
       "You started this to build your coaching program. The quickest way to finish it is from where you are now.",
     ],
     { label: "Rejoin and keep my place", path: "/portal/billing" },
@@ -155,7 +155,7 @@ export function renewalEmail(p: {
       "Staying? It renews on its own and you carry straight on.",
       `To cancel, go to Manage billing on your account page before ${rd}. You keep Build until then.`,
       "Changed your mind after it renews? You can ask for a full refund within 14 days of the payment.",
-      "The weekly clinic is the best place to bring what you're working on next.",
+      "The weekly drop-in is the best place to bring what you're working on next.",
     ],
     { label: "Manage billing", path: "/portal/billing" },
   );

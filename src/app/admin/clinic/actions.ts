@@ -37,7 +37,7 @@ export async function addRecording(
   const raw = String(formData.get("vimeo") ?? "").trim();
   const m = raw.match(/(?:vimeo\.com\/(?:video\/)?)?(\d{5,})(?:[/?](?:h=)?([0-9a-f]{6,}))?/);
   const title = String(formData.get("title") ?? "").trim().slice(0, 120);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Pick the clinic date." };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Pick the drop-in date." };
   if (!m) return { error: "Paste the Vimeo link or video number." };
 
   const supabase = createClient();

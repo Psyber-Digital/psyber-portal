@@ -107,7 +107,7 @@ export default async function PortalPage({
         >
           <span className="text-sm text-slate">
             Build opens every session, with its video, Working Sheet and
-            Principle Card, plus a live group clinic every week.
+            Principle Card, plus a live group drop-in every week.
           </span>
           <span className="psy-btn">Join Build</span>
         </a>
@@ -149,7 +149,7 @@ export default async function PortalPage({
 
           {/* Build members open the next session themselves (terms 2.2).
               Finishing Session 2 means they're happy with their niche; help
-              comes from the weekly clinic, not an approval (Don, r11, 29 Oct).
+              comes from the weekly drop-in, not an approval (Don, r11, 29 Oct).
               WORDING: board card r11. */}
           {profile?.tier === "build" && !viewingPast && current &&
             (profile.completed_week ?? 0) < current.number && (
@@ -162,7 +162,7 @@ export default async function PortalPage({
                 </button>
                 {current.number === 2 && (
                   <p className="mt-2 text-xs leading-relaxed text-slate">
-                    Not sure yet? Bring it to the weekly clinic for help.
+                    Not sure yet? Bring it to the weekly drop-in for help.
                   </p>
                 )}
               </form>

@@ -10,7 +10,8 @@ export const dynamic = "force-dynamic";
 
 // The weekly group clinic, for Build members (Offer Ladder stage 5; Build terms
 // 2.3 and 7). RLS decides who sees the Zoom link and the recordings (0015); this
-// page only chooses what to show. WORDING: approved by Don, board card r23 (29 Oct).
+// page only chooses what to show. WORDING: approved by Don, board card r23 (29 Oct);
+// "clinic" renamed "drop-in" to match Sessions 2 and 6 (Don, Audit card n2a, 29 Oct).
 export default async function ClinicPage() {
   const supabase = createClient();
   const {
@@ -47,14 +48,14 @@ export default async function ClinicPage() {
       <Header name={profile?.full_name || "Member"} role="client" />
       <PortalNav badge={uncollected ?? 0} clinic />
 
-      <SectionHead>The weekly clinic</SectionHead>
+      <SectionHead>The weekly drop-in</SectionHead>
       <div className="psy-card p-6 sm:p-8">
         {settings?.notice && (
           <p className="mb-4 rounded-[9px] border border-orange/40 bg-orange/10 px-3 py-2.5 text-sm text-orange">
             {settings.notice}
           </p>
         )}
-        <div className="psy-eyebrow text-blue">{live ? "On now" : "Next clinic"}</div>
+        <div className="psy-eyebrow text-blue">{live ? "On now" : "Next drop-in"}</div>
         <h2 className="mt-1 font-disp text-xl font-semibold">{clinicLabel(start)}</h2>
         <p className="mt-2 text-sm leading-relaxed text-slate">
           One hour, live on Zoom. Bring what you’re working on: your niche, your
@@ -67,13 +68,13 @@ export default async function ClinicPage() {
             rel="noopener noreferrer"
             className="psy-btn mt-5 inline-block"
           >
-            {live ? "Join the clinic now" : "Join on Zoom"}
+            {live ? "Join the drop-in now" : "Join on Zoom"}
           </a>
         ) : (
-          <p className="mt-5 text-sm text-slate">The Zoom link appears here before the first clinic.</p>
+          <p className="mt-5 text-sm text-slate">The Zoom link appears here before the first drop-in.</p>
         )}
         <p className="mt-5 text-xs leading-relaxed text-slate">
-          Clinics are recorded for members who miss them. Keep examples general:
+          Drop-ins are recorded for members who miss them. Keep examples general:
           nothing about your therapy clients, and nothing that identifies anyone on
           your contact list.
         </p>
@@ -85,7 +86,7 @@ export default async function ClinicPage() {
           {recordings.map((r) => (
             <div key={r.id} className="psy-card p-4">
               <VimeoEmbed
-                video={{ id: r.vimeo_id, hash: r.vimeo_hash || undefined, title: r.title || "Clinic recording" }}
+                video={{ id: r.vimeo_id, hash: r.vimeo_hash || undefined, title: r.title || "Drop-in recording" }}
               />
               <p className="mt-3 text-sm font-semibold">
                 {new Date(`${r.clinic_date}T12:00:00Z`).toLocaleDateString("en-US", {
@@ -99,9 +100,9 @@ export default async function ClinicPage() {
           ))}
         </div>
       ) : (
-        <div className="psy-card p-6 text-sm text-slate">Recordings of past clinics appear here.</div>
+        <div className="psy-card p-6 text-sm text-slate">Recordings of past drop-ins appear here.</div>
       )}
-      <p className="mt-3 text-xs text-slate">Recordings stay here for 90 days after each clinic.</p>
+      <p className="mt-3 text-xs text-slate">Recordings stay here for 90 days after each drop-in.</p>
     </div>
   );
 }
