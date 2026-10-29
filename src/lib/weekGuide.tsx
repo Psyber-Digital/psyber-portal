@@ -117,23 +117,23 @@ export const WEEK_GUIDE: Record<number, WeekGuide> = {
     },
   },
   6: {
-    bannerIntro: "The discovery call, step by step — a conversation you are already unusually good at, with a structure for the last ten minutes.",
+    bannerIntro: "Phase two ends here. You turn your program into an offer with a price, and you practice the conversation that turns interest into a client.",
     note: {
       fromLabel: "A Note From Your Coach",
       initial: "D",
-      body: (<><span className="block">{"Most of our session is rehearsal rather than discussion. Come ready to say things out loud."}</span><span className="block mt-3">{"The two parts people find hardest are saying the price and then staying quiet, and answering the two questions that only come up for therapists. We practice both."}</span><span className="block mt-3">{"If you have had any real conversations already, bring what happened — especially the ones that went badly."}</span></>),
+      body: (<><span className="block">{"Come to our next call or weekly drop-in ready to run your discovery call out loud."}</span><span className="block mt-3">{"If you've had a real conversation already, bring what happened, especially one that went badly. Leave out names and anything that identifies them."}</span></>),
     },
-    budget: { total: "50 minutes", parts: [{ value: "8 min", label: "to watch" }, { value: "25 min", label: "for the sheet" }, { value: "15 min", label: "out loud" }] },
+    budget: { total: "167 minutes", parts: [{ value: "7 min", label: "to watch" }, { value: "145 min", label: "for the sheet: about 45 minutes, a break, then about 100" }, { value: "15 min", label: "for one run-through out loud" }] },
     videoStep: {
-      mins: "approx 8 min",
-      title: "Pre-work video — the conversation",
-      blurb: (<>{"The discovery call in order, from setting the agenda to asking for the decision — including the price moment and the action-taking discount."}</>),
+      mins: "approx 7 min",
+      title: "Pre-work video — offer & conversation",
+      blurb: (<>{"Your offer and your price, then the discovery call in order, from the agenda to the ask."}</>),
     },
     workbookStep: {
-      mins: "25 min",
+      mins: "145 min",
       title: "Your Working Sheet",
-      blurb: (<>{"This sheet follows the call in order. Write your own version of each step, then read the whole thing aloud twice before our session."}</>),
-      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy, and send it to me 24 hours before we speak."}</>),
+      blurb: (<>{"Seven steps in two sittings: your offer and your price, then your call guide, your call slides and your answers to common concerns, said out loud. A worked example for every step."}</>),
+      caveat: (<>{"Your answers save in this browser only. Use Download / print to keep a copy. Send it to us, with your call guide (and slides, if you made them), at least 24 hours before our next call, or bring them to the weekly drop-in."}</>),
     },
   },
   7: {
