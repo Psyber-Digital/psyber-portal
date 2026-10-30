@@ -12,7 +12,11 @@ export const dynamic = "force-dynamic";
 // price (ADR-0027), so no price is shown here.
 // WORDING: from the approved Build email (call-script proposal §3), for Don's
 // review on board card r33.
-const CALL_URL = "https://calendly.com/psyberdigital/coaching-application";
+// Foundations members book the strategy call. Build members get their own
+// event, so Don can tell them apart (Don, r34, 30 Oct): a secret Calendly event
+// copied from the strategy call, without the application questions.
+const STRATEGY_CALL_URL = "https://calendly.com/psyberdigital/coaching-application";
+const BUILD_CALL_URL = "https://calendly.com/psyberdigital/build-to-one-on-one";
 const CREDIT_CAP_CENTS = 100_000;
 
 function dollars(cents: number) {
@@ -107,7 +111,7 @@ export default async function OneOnOnePage() {
             </div>
           )}
           <a
-            href={CALL_URL}
+            href={build ? BUILD_CALL_URL : STRATEGY_CALL_URL}
             target="_blank"
             rel="noopener"
             className="psy-btn inline-flex w-full justify-center"
