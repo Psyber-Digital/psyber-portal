@@ -61,7 +61,8 @@ export default async function OneOnOnePage() {
           call on the right, so it reads as part of the portal (Don, r33). */}
       <div className="psy-card grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_280px] md:gap-10">
         {/* Benefits as bullets, "we" not "Asher" (Don, r33, 30 Oct). Every
-            line is what the one-on-one program includes (BUSINESS_CONTEXT). */}
+            line is what the one-on-one program includes (BUSINESS_CONTEXT).
+            The post-launch check-in bullet was removed: Don queried it (r33). */}
         <div>
           <h2 className="font-disp text-xl font-semibold text-off">
             Build your coaching program with us beside you
@@ -70,7 +71,6 @@ export default async function OneOnOnePage() {
             {[
               "One-on-one sessions with us, every step of the way",
               "Personal feedback on your niche, message, offer and program",
-              "Weekly check-ins for 12 weeks after you launch",
               "We stay with you until you have your first paying coaching client",
               "The guarantee covers you if you do the work",
             ].map((b) => (
