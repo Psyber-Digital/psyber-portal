@@ -56,20 +56,32 @@ export default async function OneOnOnePage() {
       {/* Two columns on desktop: the case on the left, the credit and the
           call on the right, so it reads as part of the portal (Don, r33). */}
       <div className="psy-card grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_280px] md:gap-10">
+        {/* Benefits as bullets, "we" not "Asher" (Don, r33, 30 Oct). Every
+            line is what the one-on-one program includes (BUSINESS_CONTEXT). */}
         <div>
-          <p className="text-[15px] leading-relaxed text-off">
-            With one-on-one support, Asher works with you through every session,
-            until you have your first paying coaching client. The guarantee
-            covers you if you do the work. He takes on a small number of
-            one-on-one clients at a time.
-          </p>
-          <p className="mt-4 text-sm leading-relaxed text-slate">
-            It starts with a call with Asher, to see where you are and whether
-            one-on-one is the right next step.
+          <h2 className="font-disp text-xl font-semibold text-off">
+            Build your coaching program with us beside you
+          </h2>
+          <ul className="mt-4 space-y-2.5 text-[15px] leading-relaxed text-sec">
+            {[
+              "One-on-one sessions with us, every step of the way",
+              "Personal feedback on your niche, message, offer and program",
+              "Weekly check-ins for 12 weeks after you launch",
+              "We stay with you until you have your first paying coaching client",
+              "The guarantee covers you if you do the work",
+            ].map((b) => (
+              <li key={b} className="flex gap-2.5">
+                <span className="mt-[3px] text-blue">✓</span>
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-5 text-sm leading-relaxed text-slate">
+            We take on a small number of one-on-one clients at a time.
           </p>
         </div>
 
-        <div className="flex flex-col justify-between gap-5 rounded-[12px] border border-line bg-white/[0.02] p-5">
+        <div className="flex flex-col justify-center gap-5 rounded-[12px] border border-line bg-white/[0.02] p-5">
           {build ? (
             <div>
               <div className="psy-eyebrow text-blue">Your Build credit</div>
@@ -89,7 +101,8 @@ export default async function OneOnOnePage() {
             <div>
               <div className="psy-eyebrow text-blue">Start with a call</div>
               <p className="mt-2 text-sm leading-relaxed text-slate">
-                Pick a time that suits you.
+                We’ll look at where you are and whether one-on-one is your right
+                next step. Pick a time that suits you.
               </p>
             </div>
           )}
