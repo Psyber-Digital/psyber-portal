@@ -113,15 +113,17 @@ export default async function PortalPage({
 
       {!hasPassword && <SetPasswordPrompt />}
 
-      {/* Foundations members: the way into Build. WORDING: board card r11. */}
+      {/* Foundations members: the way into Build. WORDING: board card r11,
+          re-sold per Codex VOICE-20261030-2 (Don, 30 Oct). */}
       {profile?.tier === "foundations" && (
         <a
           href="/portal/billing"
           className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
         >
           <span className="text-sm text-slate">
-            Build opens every session, with its video, Working Sheet and
-            Principle Card, plus a live group drop-in every week.
+            <span className="font-semibold text-off">Launch your coaching program at your own pace.</span>{" "}
+            Build gives you every session and all its resources, plus a live
+            drop-in every week. Take your program from first idea to ready to sell.
           </span>
           <span className="psy-btn">Join Build</span>
         </a>

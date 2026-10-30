@@ -132,16 +132,29 @@ export default async function BillingPage({
   return (
     <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
       <div className="psy-card p-8">
-        <h1 className="font-disp text-xl font-semibold">Join Build</h1>
+        {/* Sold, not described (Codex VOICE-20261030-1 and -2, Don 30 Oct):
+            lead with launching at your own pace, all the resources and the
+            weekly drop-in; say who it's for; never define it by what
+            one-on-one adds. What's inside, not how many sessions (r11). */}
+        <div className="psy-eyebrow text-blue">Introducing Build</div>
+        <h1 className="mt-1 font-disp text-xl font-semibold">
+          Launch your coaching program at your own pace
+        </h1>
         <p className="mt-2 text-sm leading-relaxed text-slate">
-          The full program, at your own pace.
+          You get every resource for the job, plus a weekly drop-in for help
+          with whatever comes up. The sessions take you from first idea to a
+          coaching program ready to sell. Some people prefer to work this way.
+          They don’t need someone looking over their shoulder. Build is for them.
         </p>
-        {/* What's inside, not how many sessions (Don, r11, 29 Oct). */}
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
           <li>Every session, each with its video, Working Sheet and Principle Card</li>
-          <li>A live group drop-in every week, for questions and help</li>
-          <li>Each session opens as you complete the one before</li>
+          <li>A live group drop-in every week, for help with whatever you need</li>
+          <li>Each session opens as you finish the one before, so your next step is always clear</li>
+          <li>Go as fast as your week allows</li>
         </ul>
+        <p className="mt-3 text-sm font-semibold leading-relaxed text-off">
+          Every week you wait is another week your program isn’t for sale.
+        </p>
         <p className="mt-2 text-sm leading-relaxed text-slate">
           Your membership renews automatically until you cancel: $149 a month on
           the monthly plan, or $1,197 a year on the yearly plan. Cancel any time
@@ -165,6 +178,10 @@ export default async function BillingPage({
           <button name="plan" value="yearly" className="psy-btn mt-3 w-full">
             Yearly · $1,197 a year
           </button>
+          {/* 12 × $149 = $1,788, so yearly saves $591: 3.97 months at $149. */}
+          <p className="mt-2 text-center text-xs text-slate">
+            Yearly saves you $591, nearly four months free.
+          </p>
         </form>
         <p className="mt-4 text-xs leading-relaxed text-slate">
           Stripe takes the payment. We never see your card details.
