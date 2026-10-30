@@ -21,6 +21,7 @@ export const STATUSES: {
   { value: "contacted", label: "Contacted", tone: "blue" },
   { value: "replied", label: "Replied", tone: "blue" },
   { value: "interested", label: "Interested", tone: "orange" },
+  { value: "offer_made", label: "Offer Made", tone: "orange" },
   { value: "follow_up_required", label: "Follow-Up Required", tone: "orange" },
   { value: "converted", label: "Converted to Client", tone: "good" },
   { value: "not_interested", label: "Not Interested", tone: "bad" },
@@ -93,6 +94,7 @@ export function normaliseStatus(raw: string): ContactStatus {
   if (["replied", "responded", "reply"].includes(v)) return "replied";
   if (["interested", "keen", "warm", "callbooked", "booked"].includes(v))
     return "interested";
+  if (["offermade", "offered", "pricegiven", "proposalsent"].includes(v)) return "offer_made";
   if (["notinterested", "no", "declined", "lost", "nothanks"].includes(v))
     return "not_interested";
   if (["followuprequired", "followup", "tofollowup", "chase", "chasing"].includes(v))

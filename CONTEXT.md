@@ -6,7 +6,7 @@ Verify, wire up, test, and deploy the pre-built Psyber client portal (Next.js + 
 ## Progress
 - [x] §1 Ingest — already unzipped into this folder; README/TESTING agree with BRIEF.
 - [x] §2 Build verified — `npm install`, `typecheck`, `build` all clean (9 routes).
-- [x] §3 Accounts & config — Supabase project `awovtppvjifjhabuzoyg`, region London eu-west-2. `.env.local` filled (3 Supabase values + site URL).
+- [x] §3 Accounts & config — Supabase project `awovtppvjifjhabuzoyg`, region Ireland eu-west-1 (corrected 28 Oct 2026; earlier notes said London). `.env.local` filled (3 Supabase values + site URL).
 - [x] §4 Database — linked + `db push` applied 0001/0002/0003; seed loaded (weeks 1–2 published, 3 draft); private `worksheets` bucket live.
 - [x] §5 Testing — ALL 9 acceptance tests passed (headless harness + curl). Results recorded in TESTING.md. Test artifacts cleaned; DB back to clean seed.
 - [x] §6 Deploy — DONE. Private repo github.com/Psyber-Digital/psyber-portal → Vercel Pro at https://psyber-portal.vercel.app (Node 22), since fronted by the custom domain **https://portal.psyberdigital.com** — that is the address clients are given → deployed URL in Supabase redirect URLs → acceptance tests re-run against prod (all pass) → Asher promoted to admin.
@@ -20,7 +20,7 @@ Verify, wire up, test, and deploy the pre-built Psyber client portal (Next.js + 
 Local repo initialised in this folder, one commit on `main`. `.env.local` git-ignored (verified). Ready to push once the GitHub repo exists.
 
 ## Supabase project
-Ref `awovtppvjifjhabuzoyg` · region London (eu-west-2) · Data API on · auto-expose tables on · automatic RLS on. Personal access token used for CLI (`sbp_…`, revocable). DB password held by Asher.
+Ref `awovtppvjifjhabuzoyg` · region Ireland (eu-west-1) · Data API on · auto-expose tables on · automatic RLS on. Personal access token used for CLI (`sbp_…`, revocable). DB password held by Asher.
 
 ## Fixes made to delivered code
 1. `src/lib/supabase/server.ts` + `src/middleware.ts` — typed the `setAll(cookiesToSet)`
@@ -261,3 +261,7 @@ production, so they always take you off localhost. And check what is on port
 3000 first — `ClientPortal-B` runs there with `NEXT_PUBLIC_PREVIEW=1`, which
 short-circuits the auth gate in middleware and serves fixtures, so it looks like
 a working portal while checking nothing.
+
+## Before the next client is added (27 Oct 2026)
+- Supabase is on the **Free plan** (read on the billing page, 27 Oct): no daily backups. Don chose to stay on Free until the next client signs, then upgrade to Pro ($25/mo). Remind him when "Add Client" is next used.
+- Local commit 0ea3f1d adds the "Offer made" status (migration 0007 + code). NOT pushed. Run the migration first (SQL editor), then push.
