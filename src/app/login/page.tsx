@@ -74,7 +74,10 @@ export default function LoginPage() {
               </p>
             )}
             {notice === "link" && (
-              <ErrorNote message="That link has expired or was already used. Sign in below, or email yourself a new link." />
+              <p className="mb-4 rounded-[9px] border border-bad/30 bg-bad/10 px-3 py-2.5 text-sm text-[#f0a99f]">
+                That link has expired or was already used. Sign in below, or
+                email yourself a new link.
+              </p>
             )}
             <h1 className="font-disp text-xl font-semibold">Welcome back</h1>
             <p className="mb-1 mt-1.5 text-sm leading-relaxed text-slate">

@@ -140,6 +140,9 @@ export async function join(
       emailRedirectTo: confirmUrl(siteUrl()),
       data: {
         full_name: fullName,
+        // A password is set here, so the portal's "Set a password" prompt
+        // (which reads this flag) must not appear.
+        has_password: true,
         gate: {
           ...answers,
           terms_version: TERMS_VERSION,
