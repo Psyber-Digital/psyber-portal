@@ -133,11 +133,15 @@ export async function join(
   if (formData.get("accept_terms") !== "on")
     return { error: "Tick the box to accept the terms." };
 
+  // From a "Join Build" button (/join?plan=build): after confirming, go
+  // straight to the Build payment page instead of the portal home.
+  const afterJoin = formData.get("plan") === "build" ? "/portal/billing" : undefined;
+
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: confirmUrl(siteUrl()),
+      emailRedirectTo: confirmUrl(siteUrl(), afterJoin),
       data: {
         full_name: fullName,
         // A password is set here, so the portal's "Set a password" prompt
@@ -164,7 +168,7 @@ export async function join(
   }
 
   // With email confirmation off, Supabase signs the person straight in.
-  if (data.session) redirect("/");
+  if (data.session) redirect(afterJoin ?? "/");
 
   // Same screen whether or not the email already had an account, so the page
   // never reveals who is registered.

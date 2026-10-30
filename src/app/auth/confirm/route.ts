@@ -8,7 +8,10 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const next = searchParams.get("next") ?? "/";
+  // Only a path on this site, never "//other.site" or "/\\other.site", so a
+  // crafted email link can't send someone elsewhere after they sign in.
+  const asked = searchParams.get("next") ?? "/";
+  const next = /^\/(?![\/\\])/.test(asked) ? asked : "/";
 
   if (token_hash && type) {
     const supabase = createClient();

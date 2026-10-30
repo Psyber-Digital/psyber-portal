@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
@@ -155,6 +155,12 @@ export default function JoinPage() {
   const [acceptTerms, setAcceptTerms] = useState(false);
   // Bumped by "try again", so a refusal already shown can be dismissed.
   const [shownFor, setShownFor] = useState<JoinState | null>(null);
+  // /join?plan=build, from a "Join Build" button: same questions, then the
+  // confirm link lands on the Build payment page.
+  const [plan, setPlan] = useState<"build" | "">("");
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("plan") === "build") setPlan("build");
+  }, []);
 
   // Radios: the first choice made is the first answer.
   function choose<K extends keyof Gate>(key: K, value: Gate[K]) {
@@ -228,6 +234,11 @@ export default function JoinPage() {
           who are building a coaching offer. Three quick questions make sure
           it’s the right fit.
         </p>
+        {plan === "build" && (
+          <p className="mt-2 text-sm leading-relaxed text-sec">
+            After you confirm your email, you’ll choose your Build plan.
+          </p>
+        )}
 
         <Question n={1}>
           Do you hold an independent license to practice as a mental health
@@ -364,6 +375,7 @@ export default function JoinPage() {
         />
 
         <input type="hidden" name="gate" value={payload} />
+        <input type="hidden" name="plan" value={plan} />
 
         {/* Build terms 12.2: ticking this box is how the terms are accepted. */}
         <label className="mt-5 flex cursor-pointer items-start gap-2.5 text-sm leading-relaxed text-off">
