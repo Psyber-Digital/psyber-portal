@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import Image from "next/image";
 import {
@@ -37,6 +37,14 @@ export default function LoginPage() {
   const [pwState, pwAction] = useFormState(signInWithPassword, initial);
   const [linkState, linkAction] = useFormState(sendMagicLink, initial);
 
+  // Set by /auth/confirm when an email link lands here instead of the portal.
+  const [notice, setNotice] = useState<"confirmed" | "link" | null>(null);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("notice") === "confirmed") setNotice("confirmed");
+    else if (q.get("error") === "link") setNotice("link");
+  }, []);
+
   // The magic-link flow shows a "check your email" confirmation on success.
   if (linkState.sent) {
     return (
@@ -60,6 +68,14 @@ export default function LoginPage() {
       <div className="psy-card p-8">
         {mode === "password" && (
           <>
+            {notice === "confirmed" && (
+              <p className="mb-4 rounded-[9px] border border-blue/30 bg-blue/10 px-3 py-2.5 text-sm text-sec">
+                Your email is confirmed. Sign in below to continue.
+              </p>
+            )}
+            {notice === "link" && (
+              <ErrorNote message="That link has expired or was already used. Sign in below, or email yourself a new link." />
+            )}
             <h1 className="font-disp text-xl font-semibold">Welcome back</h1>
             <p className="mb-1 mt-1.5 text-sm leading-relaxed text-slate">
               Sign in with your email and password.

@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { confirmUrl } from "@/lib/authLink";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthState = { error?: string; sent?: boolean };
@@ -32,7 +33,7 @@ export async function sendMagicLink(
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${siteUrl()}/auth/confirm`,
+      emailRedirectTo: confirmUrl(siteUrl()),
       shouldCreateUser: false,
     },
   });

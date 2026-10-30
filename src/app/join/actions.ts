@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { confirmUrl } from "@/lib/authLink";
 import { createClient } from "@/lib/supabase/server";
 
 // Self-serve sign-up behind the lane gate (Offer Ladder stage 3, ADR-0027).
@@ -136,7 +137,7 @@ export async function join(
     email,
     password,
     options: {
-      emailRedirectTo: `${siteUrl()}/auth/confirm`,
+      emailRedirectTo: confirmUrl(siteUrl()),
       data: {
         full_name: fullName,
         gate: {

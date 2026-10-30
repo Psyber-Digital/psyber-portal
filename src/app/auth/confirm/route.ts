@@ -28,6 +28,11 @@ export async function GET(request: NextRequest) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`);
     }
+    // Supabase only issues a code after it has checked the email link, so the
+    // email is confirmed. The exchange fails when the link opens in a different
+    // browser from the one that signed up. Ask them to sign in here instead.
+    console.error("confirm: code exchange failed:", error.message);
+    return NextResponse.redirect(`${origin}/login?notice=confirmed`);
   }
 
   return NextResponse.redirect(`${origin}/login?error=link`);
