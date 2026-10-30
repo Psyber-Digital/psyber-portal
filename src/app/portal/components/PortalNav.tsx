@@ -53,10 +53,16 @@ export function PortalNav({
         );
       })}
       {oneOnOne && (
+        // Same shape as the tabs so it sits in the strip naturally; blue, not
+        // orange, so it reads as a way up rather than a section (Don, r33).
         <Link
           href="/portal/one-on-one"
           aria-current={pathname.startsWith("/portal/one-on-one") ? "page" : undefined}
-          className="inline-flex items-center rounded-[10px] bg-blue px-4 py-2.5 font-disp text-[13px] font-semibold text-ink transition hover:brightness-110 sm:ml-auto"
+          className={`inline-flex items-center rounded-[10px] border px-4 py-2.5 font-disp text-[13px] text-blue transition ${
+            pathname.startsWith("/portal/one-on-one")
+              ? "border-blue/60 bg-blue/[0.14]"
+              : "border-blue/35 bg-blue/[0.06] hover:border-blue/60"
+          }`}
         >
           One-on-one support
         </Link>

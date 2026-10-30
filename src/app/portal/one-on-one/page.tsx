@@ -53,41 +53,55 @@ export default async function OneOnOnePage() {
       <PortalNav badge={uncollected ?? 0} clinic={build} oneOnOne />
 
       <SectionHead>One-on-one support</SectionHead>
-      <div className="psy-card max-w-[640px] p-6 sm:p-8">
-        <p className="text-[15px] leading-relaxed text-off">
-          With one-on-one support, Asher works with you through every session,
-          until you have your first paying coaching client. The guarantee
-          covers you if you do the work. He takes on a small number of
-          one-on-one clients at a time.
-        </p>
+      {/* Two columns on desktop: the case on the left, the credit and the
+          call on the right, so it reads as part of the portal (Don, r33). */}
+      <div className="psy-card grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_280px] md:gap-10">
+        <div>
+          <p className="text-[15px] leading-relaxed text-off">
+            With one-on-one support, Asher works with you through every session,
+            until you have your first paying coaching client. The guarantee
+            covers you if you do the work. He takes on a small number of
+            one-on-one clients at a time.
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-slate">
+            It starts with a call with Asher, to see where you are and whether
+            one-on-one is the right next step.
+          </p>
+        </div>
 
-        {build && (
-          <>
-            <p className="mt-4 text-sm leading-relaxed text-slate">
-              What you’ve paid for Build comes off the one-on-one fee, up to
-              $1,000.{credit > 0 && <> So far, that’s {dollars(credit)}.</>} The
-              credit ends when your Build membership does.
-            </p>
-            <p className="mt-2 text-xs leading-relaxed text-slate">
-              It can’t be combined with other discounts. If another discount is
-              bigger, you get that one instead.
-            </p>
-          </>
-        )}
-
-        <p className="mt-4 text-sm leading-relaxed text-slate">
-          It starts with a call with Asher, to see where you are and whether
-          one-on-one is the right next step.
-        </p>
-
-        <a
-          href={CALL_URL}
-          target="_blank"
-          rel="noopener"
-          className="psy-btn mt-6 inline-flex w-full justify-center sm:w-auto"
-        >
-          Book a call
-        </a>
+        <div className="flex flex-col justify-between gap-5 rounded-[12px] border border-line bg-white/[0.02] p-5">
+          {build ? (
+            <div>
+              <div className="psy-eyebrow text-blue">Your Build credit</div>
+              <div className="mt-1 font-disp text-3xl font-semibold text-off">
+                {dollars(credit)}
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-slate">
+                What you’ve paid for Build comes off the one-on-one fee, up to
+                $1,000. The credit ends when your Build membership does.
+              </p>
+              <p className="mt-2 text-xs leading-relaxed text-slate">
+                It can’t be combined with other discounts. If another discount
+                is bigger, you get that one instead.
+              </p>
+            </div>
+          ) : (
+            <div>
+              <div className="psy-eyebrow text-blue">Start with a call</div>
+              <p className="mt-2 text-sm leading-relaxed text-slate">
+                Pick a time that suits you.
+              </p>
+            </div>
+          )}
+          <a
+            href={CALL_URL}
+            target="_blank"
+            rel="noopener"
+            className="psy-btn inline-flex w-full justify-center"
+          >
+            Book a call
+          </a>
+        </div>
       </div>
     </div>
   );
