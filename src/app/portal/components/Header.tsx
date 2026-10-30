@@ -14,10 +14,12 @@ export function Header({ name, role }: { name: string; role: "client" | "admin" 
       />
       {/* min-w-0 + truncate: on a narrow phone the name shrinks with an ellipsis
           rather than pushing "Sign out" off-screen (which used to force the whole
-          page wider than the viewport). The badge and button never shrink. */}
+          page wider than the viewport). The badge and button never shrink.
+          At 390px even an empty name left "Sign out" 35px off-screen, so the
+          badge is hidden on phones (found 30 Oct). */}
       <div className="flex min-w-0 items-center gap-2.5 text-[13px] text-sec sm:gap-3.5">
         <span
-          className={`shrink-0 rounded-full px-2.5 py-1 font-disp text-[10px] uppercase tracking-[1.5px] ${
+          className={`hidden shrink-0 rounded-full px-2.5 py-1 sm:inline font-disp text-[10px] uppercase tracking-[1.5px] ${
             role === "admin"
               ? "border border-blue/25 bg-blue/[0.12] text-blue"
               : "border border-orange/40 bg-orange/[0.14] text-orange"

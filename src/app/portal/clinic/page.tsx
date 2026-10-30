@@ -46,7 +46,7 @@ export default async function ClinicPage() {
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
       <Header name={profile?.full_name || "Member"} role="client" />
-      <PortalNav badge={uncollected ?? 0} clinic />
+      <PortalNav badge={uncollected ?? 0} clinic oneOnOne />
 
       <SectionHead>The weekly drop-in</SectionHead>
       <div className="psy-card p-6 sm:p-8">

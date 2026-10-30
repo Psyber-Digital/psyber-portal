@@ -94,6 +94,9 @@ export default async function BillingPage({
     );
   }
 
+  // Just paid and Build is confirmed: straight to the portal (Don, r33).
+  if (profile.tier === "build" && searchParams?.joined) redirect("/portal?joined=1");
+
   if (profile.tier === "build") {
     const ending = sub?.cancel_at_period_end;
     const pastDue = sub?.status === "past_due";

@@ -15,6 +15,8 @@ import { BookingPanel } from "./components/BookingPanel";
 import { pad, stripWeekPrefix } from "@/lib/week";
 import { touchActivity } from "@/lib/activity";
 import { finishSession } from "./finishActions";
+import { FinishForm } from "./components/FinishForm";
+import { ScrollTopOnChange } from "./components/ScrollTopOnChange";
 
 export const dynamic = "force-dynamic";
 const BOOK_ID = "book";
@@ -22,7 +24,7 @@ const BOOK_ID = "book";
 export default async function PortalPage({
   searchParams,
 }: {
-  searchParams?: { week?: string };
+  searchParams?: { week?: string; joined?: string };
 }) {
   const supabase = createClient();
 
@@ -95,7 +97,19 @@ export default async function PortalPage({
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
       <Header name={profile?.full_name || "Client"} role="client" />
-      <PortalNav badge={uncollected ?? 0} clinic={profile?.tier === "build"} />
+      {profile?.tier === "build" && <ScrollTopOnChange value={profile.completed_week ?? 0} />}
+      <PortalNav
+        badge={uncollected ?? 0}
+        clinic={profile?.tier === "build"}
+        oneOnOne={profile?.tier === "foundations" || profile?.tier === "build"}
+      />
+
+      {/* Straight from Stripe's payment page (billing sends them here). */}
+      {profile?.tier === "build" && searchParams?.joined && (
+        <p className="mb-6 rounded-[9px] border border-blue/30 bg-blue/10 px-4 py-3 text-sm text-sec">
+          Welcome to Build. Each session you finish opens the next.
+        </p>
+      )}
 
       {!hasPassword && <SetPasswordPrompt />}
 
@@ -153,19 +167,21 @@ export default async function PortalPage({
               WORDING: board card r11. */}
           {profile?.tier === "build" && !viewingPast && current &&
             (profile.completed_week ?? 0) < current.number && (
-              <form action={finishSession} className="mt-6">
-                <input type="hidden" name="week" value={current.number} />
-                <button type="submit" className="psy-btn w-full sm:w-auto">
-                  {current.number === 2
+              <FinishForm
+                action={finishSession}
+                week={current.number}
+                label={
+                  current.number === 2
                     ? "I’m happy with my niche. Open Session 3"
-                    : `Mark Session ${current.number} complete`}
-                </button>
+                    : `Mark Session ${current.number} complete`
+                }
+              >
                 {current.number === 2 && (
                   <p className="mt-2 text-xs leading-relaxed text-slate">
                     Not sure yet? Bring it to the weekly drop-in for help.
                   </p>
                 )}
-              </form>
+              </FinishForm>
             )}
         </>
       ) : (

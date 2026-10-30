@@ -13,7 +13,17 @@ const TABS = [
 ];
 
 // The Clinic tab shows for Build members only (Offer Ladder stage 5).
-export function PortalNav({ badge, clinic }: { badge?: number; clinic?: boolean }) {
+// Self-serve members (Foundations and Build) also see a "One-on-one support"
+// button on every page, so moving up is always one tap away (Don, r33, 30 Oct).
+export function PortalNav({
+  badge,
+  clinic,
+  oneOnOne,
+}: {
+  badge?: number;
+  clinic?: boolean;
+  oneOnOne?: boolean;
+}) {
   const pathname = usePathname();
   const tabs = clinic ? [...TABS, { href: "/portal/clinic", label: "Drop-in" }] : TABS;
 
@@ -42,6 +52,15 @@ export function PortalNav({ badge, clinic }: { badge?: number; clinic?: boolean 
           </Link>
         );
       })}
+      {oneOnOne && (
+        <Link
+          href="/portal/one-on-one"
+          aria-current={pathname.startsWith("/portal/one-on-one") ? "page" : undefined}
+          className="inline-flex items-center rounded-[10px] bg-blue px-4 py-2.5 font-disp text-[13px] font-semibold text-ink transition hover:brightness-110 sm:ml-auto"
+        >
+          One-on-one support
+        </Link>
+      )}
     </nav>
   );
 }
