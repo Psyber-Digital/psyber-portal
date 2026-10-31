@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { confirmUrl } from "@/lib/authLink";
+import { turnstileOk } from "@/lib/turnstile";
 import { createClient } from "@/lib/supabase/server";
 
 // Self-serve sign-up behind the lane gate (Offer Ladder stage 3, ADR-0027).
@@ -117,6 +118,12 @@ export async function join(
   if (!email) return { error: "Enter your email address." };
   if (password.length < 8)
     return { error: "Your password needs at least 8 characters." };
+
+  // Spam check first, so a bot never reaches the database.
+  const h = headers();
+  const ip = (h.get("x-forwarded-for") ?? "").split(",")[0].trim() || null;
+  if (!(await turnstileOk(str(formData.get("cf-turnstile-response"), 2048), ip)))
+    return { error: "Please wait for the security check to finish, then try again." };
 
   const supabase = createClient();
 

@@ -6,6 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { join, type JoinState, type Refusal } from "./actions";
 import { Brand } from "@/app/portal/components/Brand";
+import { Turnstile } from "./Turnstile";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 // Self-serve sign-up for Foundations (Offer Ladder stage 3, ADR-0027).
 // Question and refusal wording is copied word for word from the approved
@@ -404,6 +407,8 @@ export default function JoinPage() {
             .
           </span>
         </label>
+
+        {TURNSTILE_SITE_KEY && <Turnstile siteKey={TURNSTILE_SITE_KEY} resetOn={state} />}
 
         {state.error && (
           <p className="mt-4 rounded-[9px] border border-bad/30 bg-bad/10 px-3 py-2.5 text-sm text-[#f0a99f]">
