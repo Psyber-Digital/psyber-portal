@@ -6,8 +6,8 @@ import { Brand } from "@/app/portal/components/Brand";
 
 // Public Build landing page, for people who said at call booking that they'd
 // rather have a roadmap, resources and drop-ins than one-on-one support (Don,
-// Emails m35, 30 Oct). Sold to Codex VOICE-20261030-1 and -2. Wording reuses
-// the approved pay page (board r35). Facts must match the Build terms.
+// Emails m35, 30 Oct). Sold to Codex VOICE-20261030-1 and -2. Framed to Codex
+// VOICE-20261031-1 (go it alone, and avoid the pitfalls; Don, m41, 31 Oct). Facts must match the Build terms.
 //
 // The video is made by Audit (board m41/m42). Until it is published, the page
 // shows a still panel in its place. Set BUILD_VIDEO to the Vimeo id and hash.
@@ -18,13 +18,15 @@ const STRATEGY_CALL_URL = "https://calendly.com/psyberdigital/coaching-applicati
 export const metadata = {
   title: "Build™ · Psyber Digital",
   description:
-    "Launch your coaching program at your own pace. Every session and all its resources, plus a live drop-in every week.",
+    "Launch your coaching program on your own, without the pitfalls. Every session and all its resources, plus a live drop-in every week.",
 };
 
+// Each line answers one pitfall of going it alone (Codex VOICE-20261031-1).
 const INCLUDED = [
+  "A clear first step and a proven roadmap, so you know where to start",
   "Every session, each with its video, Working Sheet and Principle Card",
-  "A live group drop-in every week, for help with whatever you need",
-  "Each session opens as you finish the one before, so your next step is always clear",
+  "Each session opens as you finish the one before, so you only work on what matters next",
+  "A live group drop-in every week, for help before a wrong turn costs you weeks",
   "Go as fast as your week allows",
 ];
 
@@ -38,12 +40,13 @@ export default function BuildPage() {
       <section className="text-center">
         <div className="psy-eyebrow text-sec">Introducing <Brand name="Build" tm /></div>
         <h1 className="mx-auto mt-2 max-w-[640px] font-disp text-3xl font-semibold leading-tight text-off sm:text-4xl">
-          Launch your coaching program at your own pace
+          Launch your coaching program on your own, without the pitfalls
         </h1>
         <p className="mx-auto mt-4 max-w-[600px] text-[15px] leading-relaxed text-slate">
-          You get every resource for the job, plus a weekly drop-in for help
-          with whatever comes up. The sessions take you from first idea to a
-          coaching program ready to sell.
+          Some people want to do it themselves, at their own pace. They don’t need constant
+          support. But going it alone has its pitfalls: not knowing where to
+          start, too much information, months spent on the wrong thing. We
+          designed <Brand name="Build" /> so you can go it alone and avoid them.
         </p>
       </section>
 
@@ -73,10 +76,6 @@ export default function BuildPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-5 text-sm leading-relaxed text-slate">
-            Some people prefer to work this way. They don’t need someone looking
-            over their shoulder. <Brand name="Build" /> is for them.
-          </p>
         </div>
 
         <div className="psy-card flex flex-col gap-4 p-6">

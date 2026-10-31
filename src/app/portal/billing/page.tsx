@@ -133,24 +133,25 @@ export default async function BillingPage({
   return (
     <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
       <div className="psy-card p-8">
-        {/* Sold, not described (Codex VOICE-20261030-1 and -2, Don 30 Oct):
-            lead with launching at your own pace, all the resources and the
-            weekly drop-in; say who it's for; never define it by what
+        {/* Sold, not described (Codex VOICE-20261030-1, -2 and 20261031-1):
+            for people who go it alone and want to avoid the pitfalls; all the
+            resources and the weekly drop-in; never define it by what
             one-on-one adds. What's inside, not how many sessions (r11). */}
         <div className="psy-eyebrow text-sec">Introducing <Brand name="Build" tm /></div>
         <h1 className="mt-1 font-disp text-xl font-semibold">
-          Launch your coaching program at your own pace
+          Launch your coaching program on your own, without the pitfalls
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-slate">
-          You get every resource for the job, plus a weekly drop-in for help
-          with whatever comes up. The sessions take you from first idea to a
-          coaching program ready to sell. Some people prefer to work this way.
-          They don’t need someone looking over their shoulder. <Brand name="Build" /> is for them.
+          Some people want to do it themselves, at their own pace. They don’t need constant
+          support. But going it alone has its pitfalls: not knowing where to
+          start, too much information, months spent on the wrong thing. We
+          designed <Brand name="Build" /> so you can go it alone and avoid them.
         </p>
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
+          <li>A clear first step and a proven roadmap, so you know where to start</li>
           <li>Every session, each with its video, Working Sheet and Principle Card</li>
-          <li>A live group drop-in every week, for help with whatever you need</li>
-          <li>Each session opens as you finish the one before, so your next step is always clear</li>
+          <li>Each session opens as you finish the one before, so you only work on what matters next</li>
+          <li>A live group drop-in every week, for help before a wrong turn costs you weeks</li>
           <li>Go as fast as your week allows</li>
         </ul>
         <p className="mt-3 text-sm font-semibold leading-relaxed text-off">
