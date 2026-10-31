@@ -2,6 +2,7 @@
 
 import { useFormState, useFormStatus } from "react-dom";
 import { closeAccount, type CloseState } from "./closeActions";
+import { Brand } from "../components/Brand";
 
 const initial: CloseState = {};
 
@@ -35,7 +36,7 @@ export function CloseAccountForm({ paying }: { paying: boolean }) {
           .
         </li>
         {paying && (
-          <li>Your Build membership stops now. There’s no refund for the time left.</li>
+          <li>Your <Brand name="Build" tm /> membership stops now. There’s no refund for the time left.</li>
         )}
       </ul>
       <form action={formAction}>

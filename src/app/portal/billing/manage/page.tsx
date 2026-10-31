@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { openBillingPortal } from "../actions";
+import { Brand } from "../../components/Brand";
 
 export const dynamic = "force-dynamic";
 
@@ -33,9 +34,9 @@ export default async function ManageBillingPage() {
         </p>
         <h2 className="mt-5 font-disp text-base font-semibold">If you cancel</h2>
         <ul className="mt-2 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
-          <li>You keep Build until the end of the month or year you’ve paid for.</li>
-          <li>Then you move to Foundations. You keep Session 1 and your contact list, which you can export at any time.</li>
-          <li>Your place in the program is kept for one month after Build ends. Rejoin after that and you start again from Session 1.</li>
+          <li>You keep <Brand name="Build" tm /> until the end of the month or year you’ve paid for.</li>
+          <li>Then you move to <Brand name="Foundations" tm />. You keep Session 1 and your contact list, which you can export at any time.</li>
+          <li>Your place in the program is kept for one month after <Brand name="Build" /> ends. Rejoin after that and you start again from Session 1.</li>
           <li>Anything you’ve written stays yours.</li>
           <li>Yearly plan: a full refund if you ask within 14 days of paying.</li>
           <li>Monthly plan: no refunds.</li>

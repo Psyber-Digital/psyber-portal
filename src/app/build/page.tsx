@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { VimeoEmbed } from "@/app/portal/components/VimeoEmbed";
 import type { WeekVideo } from "@/lib/videos";
+import { Brand } from "@/app/portal/components/Brand";
 
 // Public Build landing page, for people who said at call booking that they'd
 // rather have a roadmap, resources and drop-ins than one-on-one support (Don,
@@ -15,7 +16,7 @@ const BUILD_VIDEO: WeekVideo | null = null;
 const STRATEGY_CALL_URL = "https://calendly.com/psyberdigital/coaching-application";
 
 export const metadata = {
-  title: "Build · Psyber Digital",
+  title: "Build™ · Psyber Digital",
   description:
     "Launch your coaching program at your own pace. Every session and all its resources, plus a live drop-in every week.",
 };
@@ -35,7 +36,7 @@ export default function BuildPage() {
       </div>
 
       <section className="text-center">
-        <div className="psy-eyebrow text-blue">Introducing Build</div>
+        <div className="psy-eyebrow text-sec">Introducing <Brand name="Build" tm /></div>
         <h1 className="mx-auto mt-2 max-w-[640px] font-disp text-3xl font-semibold leading-tight text-off sm:text-4xl">
           Launch your coaching program at your own pace
         </h1>
@@ -55,7 +56,7 @@ export default function BuildPage() {
             style={{ paddingTop: "56.25%" }}
           >
             <span className="absolute inset-0 flex items-center justify-center font-disp text-lg text-sec">
-              Introducing Build
+              Introducing&nbsp;<Brand name="Build" />
             </span>
           </div>
         )}
@@ -74,7 +75,7 @@ export default function BuildPage() {
           </ul>
           <p className="mt-5 text-sm leading-relaxed text-slate">
             Some people prefer to work this way. They don’t need someone looking
-            over their shoulder. Build is for them.
+            over their shoulder. <Brand name="Build" /> is for them.
           </p>
         </div>
 

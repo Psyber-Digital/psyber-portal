@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Header } from "../components/Header";
 import { PortalNav } from "../components/PortalNav";
 import { SectionHead } from "../components/SectionHead";
+import { Brand } from "../components/Brand";
 
 export const dynamic = "force-dynamic";
 
@@ -88,13 +89,13 @@ export default async function OneOnOnePage() {
         <div className="flex flex-col justify-center gap-5 rounded-[12px] border border-line bg-white/[0.02] p-5">
           {build ? (
             <div>
-              <div className="psy-eyebrow text-blue">Your Build credit</div>
+              <div className="psy-eyebrow text-sec">Your <Brand name="Build" tm /> credit</div>
               <div className="mt-1 font-disp text-3xl font-semibold text-off">
                 {dollars(credit)}
               </div>
               <p className="mt-2 text-sm leading-relaxed text-slate">
-                What you’ve paid for Build comes off the one-on-one fee, up to
-                $1,000. The credit ends when your Build membership does.
+                What you’ve paid for <Brand name="Build" /> comes off the one-on-one fee, up to
+                $1,000. The credit ends when your <Brand name="Build" /> membership does.
               </p>
               <p className="mt-2 text-xs leading-relaxed text-slate">
                 It can’t be combined with other discounts. If another discount

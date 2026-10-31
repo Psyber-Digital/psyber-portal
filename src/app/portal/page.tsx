@@ -17,6 +17,7 @@ import { touchActivity } from "@/lib/activity";
 import { finishSession } from "./finishActions";
 import { FinishForm } from "./components/FinishForm";
 import { ScrollTopOnChange } from "./components/ScrollTopOnChange";
+import { Brand } from "./components/Brand";
 
 export const dynamic = "force-dynamic";
 const BOOK_ID = "book";
@@ -107,7 +108,7 @@ export default async function PortalPage({
       {/* Straight from Stripe's payment page (billing sends them here). */}
       {profile?.tier === "build" && searchParams?.joined && (
         <p className="mb-6 rounded-[9px] border border-blue/30 bg-blue/10 px-4 py-3 text-sm text-sec">
-          Welcome to Build. Each session you finish opens the next.
+          Welcome to <Brand name="Build" tm />. Each session you finish opens the next.
         </p>
       )}
 
@@ -122,7 +123,7 @@ export default async function PortalPage({
         >
           <span className="text-sm text-slate">
             <span className="font-semibold text-off">Launch your coaching program at your own pace.</span>{" "}
-            Build gives you every session and all its resources, plus a live
+            <Brand name="Build" tm /> gives you every session and all its resources, plus a live
             drop-in every week. Take your program from first idea to ready to sell.
           </span>
           <span className="psy-btn">Join Build</span>

@@ -5,6 +5,7 @@ import { useFormState, useFormStatus } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { join, type JoinState, type Refusal } from "./actions";
+import { Brand } from "@/app/portal/components/Brand";
 
 // Self-serve sign-up for Foundations (Offer Ladder stage 3, ADR-0027).
 // Question and refusal wording is copied word for word from the approved
@@ -236,7 +237,7 @@ export default function JoinPage() {
         </p>
         {plan === "build" && (
           <p className="mt-2 text-sm leading-relaxed text-sec">
-            After you confirm your email, you’ll choose your Build plan.
+            After you confirm your email, you’ll choose your <Brand name="Build" tm /> plan.
           </p>
         )}
 

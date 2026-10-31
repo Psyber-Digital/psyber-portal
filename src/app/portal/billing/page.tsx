@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { stripe, syncSubscription } from "@/lib/stripe";
 import { startCheckout } from "./actions";
+import { Brand } from "../components/Brand";
 
 export const dynamic = "force-dynamic";
 
@@ -103,7 +104,7 @@ export default async function BillingPage({
     return (
       <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
         <div className="psy-card p-8">
-          <h1 className="font-disp text-xl font-semibold">Your Build membership</h1>
+          <h1 className="font-disp text-xl font-semibold">Your <Brand name="Build" tm /> membership</h1>
           <p className="mt-2 text-sm leading-relaxed text-slate">
             {PLAN_NAME[sub?.billing_interval ?? ""] ?? "Build"} plan.{" "}
             {/* While a payment is overdue Stripe has already moved the date on,
@@ -111,12 +112,12 @@ export default async function BillingPage({
             {pastDue
               ? null
               : ending
-                ? `It ends on ${day(sub?.current_period_end ?? null)}. Then you move to Foundations.`
+                ? <>It ends on {day(sub?.current_period_end ?? null)}. Then you move to <Brand name="Foundations" tm />.</>
                 : `It renews on ${day(sub?.current_period_end ?? null)}.`}
           </p>
           {pastDue && (
             <p className="mt-4 rounded-[9px] border border-bad/30 bg-bad/10 px-3 py-2.5 text-sm text-[#f0a99f]">
-              Your last payment didn’t go through. Update your card to keep Build.
+              Your last payment didn’t go through. Update your card to keep <Brand name="Build" />.
             </p>
           )}
           <Link href="/portal/billing/manage" className="psy-btn mt-5 block w-full text-center">
@@ -136,7 +137,7 @@ export default async function BillingPage({
             lead with launching at your own pace, all the resources and the
             weekly drop-in; say who it's for; never define it by what
             one-on-one adds. What's inside, not how many sessions (r11). */}
-        <div className="psy-eyebrow text-blue">Introducing Build</div>
+        <div className="psy-eyebrow text-sec">Introducing <Brand name="Build" tm /></div>
         <h1 className="mt-1 font-disp text-xl font-semibold">
           Launch your coaching program at your own pace
         </h1>
@@ -144,7 +145,7 @@ export default async function BillingPage({
           You get every resource for the job, plus a weekly drop-in for help
           with whatever comes up. The sessions take you from first idea to a
           coaching program ready to sell. Some people prefer to work this way.
-          They don’t need someone looking over their shoulder. Build is for them.
+          They don’t need someone looking over their shoulder. <Brand name="Build" /> is for them.
         </p>
         <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
           <li>Every session, each with its video, Working Sheet and Principle Card</li>
@@ -165,7 +166,7 @@ export default async function BillingPage({
               approved by Don in m06). Checked again on the server. */}
           <label className="mt-5 flex items-start gap-2.5 text-sm leading-relaxed text-slate">
             <input type="checkbox" name="accept_renewal" required className="mt-1" />
-            <span>I agree my Build membership renews automatically until I cancel.</span>
+            <span>I agree my <Brand name="Build" /> membership renews automatically until I cancel.</span>
           </label>
           {/* Refund position on the sign-up page (adviser Q13, terms 4.3-4.4). */}
           <p className="mt-3 text-xs leading-relaxed text-slate">
