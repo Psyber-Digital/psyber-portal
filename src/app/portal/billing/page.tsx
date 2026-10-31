@@ -106,7 +106,7 @@ export default async function BillingPage({
         <div className="psy-card p-8">
           <h1 className="font-disp text-xl font-semibold">Your <Brand name="Build" tm /> membership</h1>
           <p className="mt-2 text-sm leading-relaxed text-slate">
-            {PLAN_NAME[sub?.billing_interval ?? ""] ?? "Build"} plan.{" "}
+            {PLAN_NAME[sub?.billing_interval ?? ""] ?? "Build™"} plan.{" "}
             {/* While a payment is overdue Stripe has already moved the date on,
                 so "renews on" would be wrong. The warning below says it all. */}
             {pastDue

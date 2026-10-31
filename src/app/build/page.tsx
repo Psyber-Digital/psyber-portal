@@ -52,7 +52,7 @@ export default function BuildPage() {
 
       <section className="mt-9">
         {BUILD_VIDEO ? (
-          <VimeoEmbed video={BUILD_VIDEO} title="Introducing Build" />
+          <VimeoEmbed video={BUILD_VIDEO} title="Introducing Build™" />
         ) : (
           <div
             className="relative flex w-full items-center justify-center overflow-hidden rounded-[12px] border border-line bg-white/[0.02]"
@@ -89,7 +89,7 @@ export default function BuildPage() {
             <p className="mt-1 text-xs text-slate">Saves you $591, nearly four months free.</p>
           </div>
           <Link href="/join?plan=build" className="psy-btn mt-2 w-full justify-center">
-            Join Build
+            Join Build™
           </Link>
           {/* Renewal and refund terms beside the button (terms 3.2, 4.1-4.4). */}
           <p className="text-xs leading-relaxed text-slate">

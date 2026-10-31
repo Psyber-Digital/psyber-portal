@@ -47,12 +47,18 @@ function render(
   const first = (name ?? "").trim().split(/\s+/)[0];
   const greeting = first ? `Hi ${first},` : "Hi,";
   const url = portalUrl(cta.path);
-  const text = `${greeting}\n\n${paragraphs.join("\n\n")}\n\n${cta.label}: ${url}\n\n${CLOSING_TEXT}`;
+  // Build: ™ on every mention, and bold orange in the email body (Don, Emails
+  // m37, 31 Oct). Subject, eyebrow, button and plain text get the ™ only.
+  const tm = (s: string) => s.replace(/\bBuild\b(?!™)/g, "Build™");
+  const tmHtml = (s: string) =>
+    s.replace(/\bBuild\b(?!™)/g, '<strong style="color:#F08328;">Build™</strong>');
+  subject = tm(subject);
+  const text = tm(`${greeting}\n\n${paragraphs.join("\n\n")}\n\n${cta.label}: ${url}\n\n${CLOSING_TEXT}`);
   const html = emailShellHtml({
-    eyebrow,
+    eyebrow: tm(eyebrow),
     greeting,
-    paragraphs,
-    ctaLabel: `${cta.label} &rarr;`,
+    paragraphs: paragraphs.map(tmHtml),
+    ctaLabel: `${tm(cta.label)} &rarr;`,
     url,
     closingHtml: CLOSING_HTML,
   });

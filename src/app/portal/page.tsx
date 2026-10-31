@@ -126,7 +126,7 @@ export default async function PortalPage({
             <Brand name="Build" tm /> gives you a clear roadmap, every session and all its resources,
             plus a live drop-in every week. Take your program from first idea to ready to sell.
           </span>
-          <span className="psy-btn">Join Build</span>
+          <span className="psy-btn">Join Build™</span>
         </a>
       )}
 
