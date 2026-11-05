@@ -100,6 +100,7 @@ export default async function OutreachPage() {
 
       <OutreachView
         contacts={(data ?? []) as Contact[]}
+        freeListFull={profile?.tier === "foundations" && (data?.length ?? 0) >= 50}
         serverToday={new Date().toISOString().slice(0, 10)}
         weekCutoff={new Date(Date.now() - 7 * 86_400_000).toISOString()}
       />

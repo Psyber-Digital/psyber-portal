@@ -25,6 +25,7 @@ type Answers = {
   tick_not_treatment: boolean;
   tick_outside_caseload: boolean;
   coaches_therapy_clients: boolean | null;
+  one_on_one: boolean | null;
 };
 
 // Change this whenever the terms change, so each account records which
@@ -69,6 +70,7 @@ function clean(raw: Record<string, unknown>): Answers {
     tick_not_treatment: bool(raw.tick_not_treatment),
     tick_outside_caseload: bool(raw.tick_outside_caseload),
     coaches_therapy_clients: yesNo(raw.coaches_therapy_clients),
+    one_on_one: yesNo(raw.one_on_one),
   };
 }
 
@@ -93,6 +95,7 @@ function missing(a: Answers): string | null {
   )
     return "Add your license type, state and number.";
   if (a.coaches_therapy_clients === null) return "Answer question 3.";
+  if (a.one_on_one === null) return "Tell us if you'd like one-on-one support.";
   return null;
 }
 

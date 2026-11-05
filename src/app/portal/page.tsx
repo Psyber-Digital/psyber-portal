@@ -15,6 +15,7 @@ import { BookingPanel } from "./components/BookingPanel";
 import { pad, stripWeekPrefix } from "@/lib/week";
 import { touchActivity } from "@/lib/activity";
 import { finishSession } from "./finishActions";
+import { deadlineDay, offerOpen, STRATEGY_CALL_URL } from "@/lib/upsellEmails";
 import { FinishForm } from "./components/FinishForm";
 import { ScrollTopOnChange } from "./components/ScrollTopOnChange";
 import { Brand } from "./components/Brand";
@@ -82,6 +83,11 @@ export default async function PortalPage({
   const focused = unlocked.find((w) => w.number === selectedNum) ?? current;
   const viewingPast = Boolean(focused && current && focused.number !== current.number);
 
+  // The first-month offer (0016). Only someone who has never paid has dates here.
+  const offerIsOpen = profile?.tier === "foundations" && !profile.lapsed_at && offerOpen(profile);
+  const freeFinished =
+    profile?.tier === "foundations" && !profile.lapsed_at && Boolean(profile.session1_finished_at);
+
   const filesFor = (weekId: string) => visibleFiles.filter((f) => f.week_id === weekId);
 
   // Full program outline for the stepper — every session, including ones not yet
@@ -116,7 +122,20 @@ export default async function PortalPage({
 
       {/* Foundations members: the way into Build. WORDING: board card r11,
           re-sold per Codex VOICE-20261030-2 and 20261031-1. */}
-      {profile?.tier === "foundations" && (
+      {profile?.tier === "foundations" && offerIsOpen && (
+        <a
+          href="/portal/billing"
+          className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
+        >
+          <span className="text-sm text-slate">
+            Your first month of <Brand name="Build" tm /> is $99 until {deadlineDay(profile.offer_ends_at!)},
+            then $149 a month, renewing automatically until you cancel.
+          </span>
+          <span className="psy-btn">Claim it</span>
+        </a>
+      )}
+
+      {profile?.tier === "foundations" && !offerIsOpen && (
         <a
           href="/portal/billing"
           className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
@@ -141,6 +160,7 @@ export default async function PortalPage({
           weeks={outline}
           currentWeek={current?.number ?? currentWeek}
           selected={focused?.number}
+          nextNote={profile?.tier === "foundations" ? "Opens in Build™" : undefined}
         />
       )}
 
@@ -168,6 +188,38 @@ export default async function PortalPage({
               Finishing Session 2 means they're happy with their niche; help
               comes from the weekly drop-in, not an approval (Don, r11, 29 Oct).
               WORDING: board card r11. */}
+          {/* Foundations: finishing Session 1 opens nothing, but it starts the
+              first-month offer (0016). WORDING: board card m03, 5 Nov 2026. */}
+          {profile?.tier === "foundations" && !profile.lapsed_at && !freeFinished && !viewingPast &&
+            current?.number === 1 && (
+              <FinishForm action={finishSession} week={1} label="Mark Session 1 complete" />
+            )}
+          {freeFinished && offerIsOpen && (
+            <div className="psy-card mt-6 p-5">
+              <p className="font-disp text-base font-semibold text-off">
+                Session 1 done. Next is Session 2: your niche.
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-slate">
+                Your first month of <Brand name="Build" tm /> is $99 instead of $149 until{" "}
+                {deadlineDay(profile!.offer_ends_at!)}. This offer doesn’t come back.
+              </p>
+              <p className="mt-2 text-xs leading-relaxed text-slate">
+                Then it’s $149 a month, renewing automatically until you cancel. Cancel online any time.
+              </p>
+              <a href="/portal/billing" className="psy-btn mt-4 inline-block">Claim my $99 first month</a>
+            </div>
+          )}
+          {freeFinished && !profile?.offer_started_at && profile?.wants_one_on_one && (
+            <div className="psy-card mt-6 p-5">
+              <p className="font-disp text-base font-semibold text-off">
+                Session 1 done. Your next step is a call about one-on-one support.
+              </p>
+              <a href={STRATEGY_CALL_URL} target="_blank" rel="noopener" className="psy-btn mt-4 inline-block">
+                Book a call
+              </a>
+            </div>
+          )}
+
           {profile?.tier === "build" && !viewingPast && current &&
             (profile.completed_week ?? 0) < current.number && (
               <FinishForm

@@ -97,6 +97,16 @@ export default function BuildPage() {
             Renews automatically until you cancel. Monthly: cancel any time, no
             refunds. Yearly: a full refund within 14 days of paying.
           </p>
+          {/* The free way in (Don, 5 Nov 2026, board m03 and m04). */}
+          <div className="border-t border-line pt-4">
+            <p className="text-sm leading-relaxed text-slate">
+              Start free with <Brand name="Foundations" tm />, your first tangible step:
+              Session 1, and a contact list for up to 50 names.
+            </p>
+            <Link href="/join" className="psy-btn-ghost mt-3 block w-full text-center">
+              Try it free
+            </Link>
+          </div>
         </div>
       </section>
 

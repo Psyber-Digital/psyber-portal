@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Header } from "../../portal/components/Header";
+import { markCallBooked } from "./actions";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +54,7 @@ export default async function MembersPage() {
   const [{ data: people }, { data: gates }, { data: subs }, { data: refusals }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, email, full_name, tier, current_week, completed_week, niche_confirmed_at, lapsed_at, last_activity_at, created_at")
+      .select("id, email, full_name, tier, current_week, completed_week, niche_confirmed_at, lapsed_at, last_activity_at, created_at, wants_one_on_one, session1_finished_at, offer_taken_at, call_booked_at, list_full_at")
       .in("tier", ["build", "foundations", "pending"])
       .neq("role", "admin")
       .order("created_at", { ascending: false }),
@@ -86,6 +87,17 @@ export default async function MembersPage() {
       <p className="mb-6 mt-1 text-sm text-slate">
         Self-serve members. Open a name to see their sign-up answers. Flagship clients are on the main admin page.
       </p>
+
+      {/* How the upsell is doing (Don, board m03, 5 Nov 2026). */}
+      <section className="mb-8">
+        <h2 className="mb-3 font-disp text-base font-semibold">Upgrades</h2>
+        <ul className="grid gap-1 text-sm text-slate sm:grid-cols-2">
+          <li>Asked about one-on-one: {(people ?? []).filter((p) => p.wants_one_on_one).length}</li>
+          <li>Finished Session 1 on the free level: {(people ?? []).filter((p) => p.session1_finished_at).length}</li>
+          <li>Took the $99 offer: {(people ?? []).filter((p) => p.offer_taken_at).length}</li>
+          <li>Hit the 50-name cap: {(people ?? []).filter((p) => p.list_full_at).length}</li>
+        </ul>
+      </section>
 
       {groups.map((g) => {
         const rows = (people ?? []).filter((p) => p.tier === g.tier);
@@ -136,12 +148,25 @@ export default async function MembersPage() {
                         <span className="text-orange">Place held until {day(placeUntil.toISOString())}</span>
                       )}
                       {isQuiet && <span className="font-semibold text-orange">Quiet {quiet} days</span>}
+                      {p.wants_one_on_one && (
+                        <span className="font-semibold text-blue">
+                          {p.call_booked_at ? `Call booked ${day(p.call_booked_at)}` : "Wants one-on-one"}
+                        </span>
+                      )}
                       {gate && gate.flagged_words.length > 0 && (
                         <span className="font-semibold text-orange">Check: {gate.flagged_words.join(", ")}</span>
                       )}
                     </summary>
                     <div className="mt-3 grid gap-x-6 gap-y-1 border-t border-line pt-3 text-slate sm:grid-cols-2">
                       <span>Joined {day(p.created_at)}</span>
+                      {p.tier === "foundations" && !p.call_booked_at && (
+                        <form action={markCallBooked} className="sm:col-span-2">
+                          <input type="hidden" name="id" value={p.id} />
+                          <button className="psy-btn-ghost !px-3 !py-1.5 !text-xs">
+                            Call booked: stop their upgrade emails
+                          </button>
+                        </form>
+                      )}
                       <span>Last active {quiet === null ? "never" : quiet === 0 ? "today" : `${quiet} days ago`}</span>
                       {s && (
                         <span>

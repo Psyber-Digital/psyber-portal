@@ -69,6 +69,7 @@ type Gate = {
   tick_not_treatment: boolean;
   tick_outside_caseload: boolean;
   coaches_therapy_clients: boolean | null;
+  one_on_one: boolean | null;
 };
 
 type First = Partial<Record<keyof Gate, string | boolean>>;
@@ -81,6 +82,7 @@ const blank: Gate = {
   tick_not_treatment: false,
   tick_outside_caseload: false,
   coaches_therapy_clients: null,
+  one_on_one: null,
 };
 
 function SubmitButton() {
@@ -345,6 +347,29 @@ export default function JoinPage() {
         >
           Yes
         </Choice>
+
+        {/* Don, 5 Nov 2026: decides which upsell emails they get. Not a
+            coaching-rule question, so it's unnumbered and never refuses. */}
+        <h2 className="mt-9 font-disp text-[15px] font-semibold leading-snug text-off">
+          Would you like personalized one-on-one support?
+        </h2>
+        <Choice
+          name="one_on_one"
+          checked={gate.one_on_one === true}
+          onChange={() => setGate((g) => ({ ...g, one_on_one: true }))}
+        >
+          Yes, tell me more
+        </Choice>
+        <Choice
+          name="one_on_one"
+          checked={gate.one_on_one === false}
+          onChange={() => setGate((g) => ({ ...g, one_on_one: false }))}
+        >
+          Not right now
+        </Choice>
+        <p className="mt-2 text-xs leading-relaxed text-slate">
+          Your answer decides the next step we show you and the emails we send.
+        </p>
 
         <h2 className="mt-9 font-disp text-[15px] font-semibold text-off">
           Your account

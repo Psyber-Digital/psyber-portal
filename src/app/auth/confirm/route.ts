@@ -1,6 +1,14 @@
 import { type EmailOtpType } from "@supabase/supabase-js";
 import { type NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendDueUpsell } from "@/lib/upsellEmails";
+
+// The first upsell email goes the moment an email is confirmed. Safe on every
+// sign-in: anything already sent is skipped, and it never blocks the redirect.
+async function afterConfirm(supabase: ReturnType<typeof createClient>) {
+  const { data } = await supabase.auth.getUser();
+  if (data.user) await sendDueUpsell(data.user.id);
+}
 
 // Magic-link landing route. Supabase sends the user here with a token_hash;
 // we verify it, which sets the session cookie, then send them onward.
@@ -17,6 +25,7 @@ export async function GET(request: NextRequest) {
     const supabase = createClient();
     const { error } = await supabase.auth.verifyOtp({ type, token_hash });
     if (!error) {
+      await afterConfirm(supabase);
       return NextResponse.redirect(`${origin}${next}`);
     }
   }
@@ -29,6 +38,7 @@ export async function GET(request: NextRequest) {
     const supabase = createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      await afterConfirm(supabase);
       return NextResponse.redirect(`${origin}${next}`);
     }
     // Supabase only issues a code after it has checked the email link, so the

@@ -15,6 +15,17 @@ const COACH_INBOX = "asher@psyberdigital.com";
 
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+export const escHtml = esc;
+
+// Paragraphs that are already safe HTML, in the shell's style.
+export function paragraphsHtml(html: string[]) {
+  return html
+    .map(
+      (p) =>
+        `              <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#28324a;">${p}</p>`,
+    )
+    .join("\n");
+}
 
 // The closing every client-facing email shares: the offer of help, then the
 // sign-off. Raw HTML — developer-authored, never interpolated with user input.
@@ -43,11 +54,13 @@ export async function sendEmail({
   subject,
   html,
   text,
+  headers,
 }: {
   to: string;
   subject: string;
   html: string;
   text: string;
+  headers?: Record<string, string>;
 }): Promise<void> {
   const key = process.env.RESEND_API_KEY;
   if (!key) throw new Error("RESEND_API_KEY is not set");
@@ -58,7 +71,7 @@ export async function sendEmail({
       Authorization: `Bearer ${key}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ from: FROM, reply_to: REPLY_TO, to, subject, html, text }),
+    body: JSON.stringify({ from: FROM, reply_to: REPLY_TO, to, subject, html, text, ...(headers ? { headers } : {}) }),
   });
 
   if (!res.ok) {
@@ -243,6 +256,9 @@ export function emailShellHtml({
   ctaLabel,
   url,
   closingHtml,
+  bodyHtml,
+  preheader,
+  footerHtml,
 }: {
   eyebrow: string;
   greeting: string;
@@ -250,15 +266,17 @@ export function emailShellHtml({
   ctaLabel: string;
   url: string;
   closingHtml: string[];
+  // Already-safe HTML, used instead of `paragraphs` when an email needs markup.
+  bodyHtml?: string;
+  preheader?: string;
+  footerHtml?: string;
 }): string {
-  const bodyParas = paragraphs
-    .map(
-      (p) =>
-        `              <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#28324a;">${esc(
-          p,
-        )}</p>`,
-    )
-    .join("\n");
+  const bodyParas = bodyHtml ?? paragraphsHtml(paragraphs.map(esc));
+  // The hidden preview line. The long run of invisible characters stops Apple
+  // Mail pulling header text into the preview (fixed for the broadcasts, 23 Oct).
+  const hiddenPreview = preheader
+    ? `  <div style="display:none;max-height:0;overflow:hidden;">${esc(preheader)}${"&#847; ".repeat(90)}</div>\n`
+    : "";
   const closing = closingHtml
     .map(
       (p, i) =>
@@ -270,7 +288,7 @@ export function emailShellHtml({
   return `<!doctype html>
 <html lang="en">
 <body style="margin:0;padding:0;background:#f4f7fb;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:32px 16px;">
+${hiddenPreview}  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:32px 16px;">
     <tr>
       <td align="center">
         <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="max-width:480px;width:100%;background:#ffffff;border:1px solid #e3e9f2;border-radius:16px;overflow:hidden;font-family:'Helvetica Neue',Arial,sans-serif;">
@@ -301,7 +319,7 @@ ${closing}
           </tr>
           <tr>
             <td style="padding:16px 34px;border-top:1px solid #eef2f8;">
-              <p style="margin:0;font-size:12px;color:#8894a8;">Psyber Digital &middot; <a href="https://psyberdigital.com" style="color:#5a6784;">psyberdigital.com</a></p>
+              ${footerHtml ? `<p style="margin:0;font-size:12px;line-height:1.5;color:#8894a8;">${footerHtml}</p>` : `<p style="margin:0;font-size:12px;color:#8894a8;">Psyber Digital &middot; <a href="https://psyberdigital.com" style="color:#5a6784;">psyberdigital.com</a></p>`}
             </td>
           </tr>
         </table>

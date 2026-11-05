@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { runDailyBuildEmails } from "@/lib/buildEmails";
+import { runDailyUpsellEmails } from "@/lib/upsellEmails";
 
 export const dynamic = "force-dynamic";
 // Never reuse a cached database read: found 29 Oct, the job sent a reminder
@@ -22,5 +23,7 @@ export async function GET(request: NextRequest) {
 
   const report = await runDailyBuildEmails();
   console.log("build emails:", JSON.stringify(report));
-  return NextResponse.json({ report });
+  const upsell = await runDailyUpsellEmails();
+  console.log("upsell emails:", JSON.stringify(upsell));
+  return NextResponse.json({ report, upsell });
 }

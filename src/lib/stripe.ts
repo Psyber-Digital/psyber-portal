@@ -20,6 +20,10 @@ export const BUILD_PRICES = {
 } as const;
 export type BuildPlan = keyof typeof BUILD_PRICES;
 
+// $50 off one invoice: the $99 first month (Don, board m01, 5 Nov 2026). The same
+// id must exist in Stripe test and live.
+export const FIRST_MONTH_COUPON = "build_first_month_50";
+
 // Writes one subscription's current state to the database, then lets the
 // database decide the person's tier (apply_build_access, 0010).
 //
@@ -103,6 +107,15 @@ export async function syncSubscription(subscriptionId: string) {
     p_user: userId,
   });
   if (rpcError) throw new Error(`stripe sync: access failed: ${rpcError.message}`);
+
+  // Record that the first-month offer was taken, for Don's Members page.
+  if (sub.metadata?.first_month_offer === "1" && ACTIVE.includes(sub.status)) {
+    await admin
+      .from("profiles")
+      .update({ offer_taken_at: new Date().toISOString() })
+      .eq("id", userId)
+      .is("offer_taken_at", null);
+  }
 
   // Just cancelled? Send the approved cancel email, once per subscription.
   // Best-effort: an email problem must never undo or repeat the sync.

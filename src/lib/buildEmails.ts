@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { emailShellHtml, portalUrl, sendEmail } from "@/lib/email";
+import { emailShellHtml, escHtml, paragraphsHtml, portalUrl, sendEmail } from "@/lib/email";
 import { stripe } from "@/lib/stripe";
 
 // Build member emails (Offer Ladder m17). Wording approved by Don on board card
@@ -11,8 +11,17 @@ import { stripe } from "@/lib/stripe";
 // With EMAIL_DRY_RUN=1, or no email key set, nothing is sent: the email is
 // returned (and logged to the console) so it can be checked.
 
-export type Kind = "cancel" | "place_7d" | "place_1d" | "renewal_yearly";
-export type Rendered = { to: string; subject: string; text: string; html: string };
+export type Kind =
+  | "cancel" | "place_7d" | "place_1d" | "renewal_yearly"
+  | "upsell_a" | "upsell_b" | "upsell_c"
+  | "upsell_1" | "upsell_2" | "upsell_3" | "upsell_4" | "upsell_5" | "upsell_6" | "upsell_7" | "upsell_8";
+export type Rendered = {
+  to: string;
+  subject: string;
+  text: string;
+  html: string;
+  headers?: Record<string, string>;
+};
 
 const CLOSING_TEXT = `If anything comes up or you'd like a hand, just reply to this email - it comes straight to me.
 
@@ -57,7 +66,9 @@ function render(
   const html = emailShellHtml({
     eyebrow: tm(eyebrow),
     greeting,
-    paragraphs: paragraphs.map(tmHtml),
+    paragraphs: [],
+    // Escaped first, then branded: the shell would otherwise show the tags.
+    bodyHtml: paragraphsHtml(paragraphs.map((p) => tmHtml(escHtml(p)))),
     ctaLabel: `${tm(cta.label)} &rarr;`,
     url,
     closingHtml: CLOSING_HTML,

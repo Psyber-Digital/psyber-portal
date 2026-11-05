@@ -1,5 +1,6 @@
 "use client";
 
+import { Brand } from "../components/Brand";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import type { Contact, ContactStatus } from "@/lib/types";
@@ -47,7 +48,10 @@ export function OutreachView({
   contacts,
   serverToday,
   weekCutoff,
+  freeListFull = false,
 }: {
+  // A Foundations member at the 50-name cap (Don, board m02, 5 Nov 2026).
+  freeListFull?: boolean;
   contacts: Contact[];
   serverToday: string;
   // ISO timestamp for "7 days ago", computed on the server and passed in so the
@@ -172,6 +176,18 @@ export function OutreachView({
         </div>
       </section>
 
+      {/* WORDING: board card m03, 5 Nov 2026. */}
+      {freeListFull && (
+        <div className="psy-card mb-4 flex flex-wrap items-center justify-between gap-3 p-5">
+          <p className="max-w-[60ch] text-sm leading-relaxed text-slate">
+            <span className="font-semibold text-off">Your list is full.</span>{" "}
+            <Brand name="Foundations" tm /> holds 50 names, and the method works toward 250.
+            Join <Brand name="Build" tm /> to keep adding.
+          </p>
+          <a href="/portal/billing" className="psy-btn">Join Build™</a>
+        </div>
+      )}
+
       {/* Ways in. Pasting names is the realistic first pass; CSV is for the
           spreadsheet they already keep. */}
       <div className="mb-4 flex flex-wrap gap-2">
@@ -207,7 +223,7 @@ export function OutreachView({
               router.refresh();
               if (res?.error) flash("warn", res.error);
               else {
-                flash("ok", `${res.added} name${res.added === 1 ? "" : "s"} added.`);
+                flash("ok", `${res.added} name${res.added === 1 ? "" : "s"} added.${res.warning ? ` ${res.warning}` : ""}`);
                 setPanel("none");
               }
             })

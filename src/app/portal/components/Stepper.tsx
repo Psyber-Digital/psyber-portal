@@ -10,10 +10,13 @@ export function Stepper({
   weeks,
   currentWeek,
   selected,
+  nextNote,
 }: {
   weeks: WeekOutline[];
   currentWeek: number;
   selected?: number;
+  // Shown on the first closed session, e.g. "Opens in Build™" for free members.
+  nextNote?: string;
 }) {
   return (
     <section className="psy-card mb-[22px] p-4 sm:mb-[26px] sm:p-6">
@@ -43,7 +46,15 @@ export function Stepper({
               state={isCurrent ? "current" : unlocked ? "done" : "locked"}
               badge={unlocked ? (isCurrent ? "★" : "✓") : pad(w.number)}
               selected={isSelected}
-              flag={isCurrent ? "You are here" : isSelected ? "Viewing" : undefined}
+              flag={
+                isCurrent
+                  ? "You are here"
+                  : isSelected
+                    ? "Viewing"
+                    : nextNote && w.number === currentWeek + 1
+                      ? nextNote
+                      : undefined
+              }
             />
           );
         })}

@@ -13,6 +13,7 @@ import {
 } from "@/lib/contacts";
 import type { Contact } from "@/lib/types";
 import { touchActivity } from "@/lib/activity";
+import { sendDueUpsell } from "@/lib/upsellEmails";
 
 // Every action here runs entirely through the USER-SCOPED Supabase client. The
 // service role is never touched — the contacts table has one owner-only RLS
@@ -22,6 +23,20 @@ import { touchActivity } from "@/lib/activity";
 
 const MAX_IMPORT_ROWS = 1000;
 const MAX_TOTAL_CONTACTS = 5000;
+// The free list (Don, board m02, 5 Nov 2026). The database enforces it (0016);
+// these lines only turn that into a clear message and a partial add.
+const FREE_LIST_CAP = 50;
+const LIST_FULL =
+  "Your list is full. Foundations™ holds 50 names, and the method works toward 250. Join Build™ to keep adding.";
+const friendly = (message: string) => (message.includes("FREE_LIST_FULL") ? LIST_FULL : message);
+
+// How many more names this person may add, or null if there's no cap for them.
+async function freeRoom(supabase: ReturnType<typeof createClient>, userId: string) {
+  const { data: p } = await supabase.from("profiles").select("tier").eq("id", userId).single();
+  if (p?.tier !== "foundations") return null;
+  const { count } = await supabase.from("contacts").select("id", { count: "exact", head: true });
+  return Math.max(0, FREE_LIST_CAP - (count ?? 0));
+}
 
 async function requireUser() {
   const supabase = createClient();
@@ -67,9 +82,10 @@ export async function addContact(formData: FormData): Promise<ContactResult> {
     notes: str(formData, "notes", 2000),
     next_followup_date: normaliseDate(str(formData, "next_followup_date")),
   });
-  if (error) return { error: error.message };
+  if (error) return { error: friendly(error.message) };
 
   revalidatePath("/portal/outreach");
+  await sendDueUpsell(user.id);
   return { added: 1 };
 }
 
@@ -185,6 +201,11 @@ export async function importContacts(formData: FormData): Promise<ImportResult> 
   if ((existing ?? 0) + records.length > MAX_TOTAL_CONTACTS)
     return { error: `That would take you past ${MAX_TOTAL_CONTACTS} contacts.` };
 
+  const room = await freeRoom(supabase, user.id);
+  if (room === 0) return { error: LIST_FULL };
+  const overCap = room !== null && records.length > room;
+  if (room !== null) records = records.slice(0, room);
+
   const rows = records.map((r) => ({
     owner_id: user.id,
     name: r.name.slice(0, 120),
@@ -209,17 +230,20 @@ export async function importContacts(formData: FormData): Promise<ImportResult> 
   let added = 0;
   for (let i = 0; i < rows.length; i += 200) {
     const { error } = await supabase.from("contacts").insert(rows.slice(i, i + 200));
-    if (error) return { error: error.message, added };
+    if (error) return { error: friendly(error.message), added };
     added += Math.min(200, rows.length - i);
   }
 
   revalidatePath("/portal/outreach");
+  await sendDueUpsell(user.id);
   return {
     added,
     skipped: skippedForLimit,
-    warning: skippedForLimit
-      ? `Only the first ${MAX_IMPORT_ROWS} rows were imported — ${skippedForLimit} were left out.`
-      : undefined,
+    warning: overCap
+      ? LIST_FULL
+      : skippedForLimit
+        ? `Only the first ${MAX_IMPORT_ROWS} rows were imported — ${skippedForLimit} were left out.`
+        : undefined,
   };
 }
 
@@ -228,7 +252,7 @@ export async function importContacts(formData: FormData): Promise<ImportResult> 
 export async function addNames(formData: FormData): Promise<ImportResult> {
   const { supabase, user } = await requireUser();
 
-  const names = String(formData.get("names") ?? "")
+  let names = String(formData.get("names") ?? "")
     .split(/\r?\n/)
     .map((n) => n.trim())
     .filter(Boolean)
@@ -242,13 +266,19 @@ export async function addNames(formData: FormData): Promise<ImportResult> {
   if ((existing ?? 0) + names.length > MAX_TOTAL_CONTACTS)
     return { error: `That would take you past ${MAX_TOTAL_CONTACTS} contacts.` };
 
+  const room = await freeRoom(supabase, user.id);
+  if (room === 0) return { error: LIST_FULL };
+  const overCap = room !== null && names.length > room;
+  if (room !== null) names = names.slice(0, room);
+
   const { error } = await supabase
     .from("contacts")
     .insert(names.map((name) => ({ owner_id: user.id, name: name.slice(0, 120) })));
-  if (error) return { error: error.message };
+  if (error) return { error: friendly(error.message) };
 
   revalidatePath("/portal/outreach");
-  return { added: names.length };
+  await sendDueUpsell(user.id);
+  return { added: names.length, warning: overCap ? LIST_FULL : undefined };
 }
 
 export type { Contact };
