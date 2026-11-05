@@ -9,9 +9,10 @@ import { Brand } from "@/app/portal/components/Brand";
 // Emails m35, 30 Oct). Sold to Codex VOICE-20261030-1 and -2. Framed to Codex
 // VOICE-20261031-1 (go it alone, and avoid the pitfalls; Don, m41, 31 Oct). Facts must match the Build terms.
 //
-// The video is made by Audit (board m41/m42). Until it is published, the page
-// shows a still panel in its place. Set BUILD_VIDEO to the Vimeo id and hash.
-const BUILD_VIDEO: WeekVideo | null = null;
+// The video is made by Audit (board m41/m42, approved by Don on bv3, 5 Nov).
+// Its Vimeo embed is locked to the portal domains. If BUILD_VIDEO is set back
+// to null, the page shows a still panel in its place.
+const BUILD_VIDEO: WeekVideo | null = { id: "1243971172", hash: "ed44b8a740", title: "Introducing Build™" };
 
 const STRATEGY_CALL_URL = "https://calendly.com/psyberdigital/coaching-application";
 
