@@ -30,7 +30,7 @@ type Answers = {
 
 // Change this whenever the terms change, so each account records which
 // version it accepted.
-const TERMS_VERSION = "build-terms-v4-draft-2026-10-27";
+const TERMS_VERSION = "build-terms-v5-draft-2026-11-05";
 
 const TRACKED = [
   "license",
