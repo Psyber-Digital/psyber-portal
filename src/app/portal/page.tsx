@@ -8,7 +8,6 @@ import { WelcomeVideo } from "./components/WelcomeVideo";
 import { PortalNav } from "./components/PortalNav";
 import { SetPasswordPrompt } from "./components/SetPasswordPrompt";
 import { WelcomeBanner } from "./components/WelcomeBanner";
-import { Stepper } from "./components/Stepper";
 import { SectionHead } from "./components/SectionHead";
 import { ThisWeek } from "./components/ThisWeek";
 import { BookingPanel } from "./components/BookingPanel";
@@ -21,6 +20,10 @@ import { NicheLaneCheck } from "./components/NicheLaneCheck";
 import { ScrollTopOnChange } from "./components/ScrollTopOnChange";
 import { Brand } from "./components/Brand";
 import { NextMove, type MoveLinks } from "./components/NextMove";
+import { Journey, shortTitle } from "./components/Journey";
+import { Milestones } from "./components/Milestones";
+import { ThisWeekToolkit } from "./components/ThisWeek";
+import { badgesOf, badgeTickId, momentumOf } from "@/lib/milestones";
 import { movesFor } from "@/lib/moves";
 import { dueMoves, type DueContact } from "@/lib/dueMoves";
 import { weekWorkbook, weekResources } from "@/lib/resources";
@@ -110,12 +113,12 @@ export default async function PortalPage({
   // card for the current session; the materials below are unchanged.
   const tier = profile?.tier;
   const moves = current ? movesFor(current.number, tier) : [];
-  const { data: tickRows } = moves.length
-    ? await supabase.from("move_ticks").select("move_id")
-    : { data: [] as { move_id: string }[] };
+  const { data: tickRows } = current
+    ? await supabase.from("move_ticks").select("move_id, done_at")
+    : { data: [] as { move_id: string; done_at: string }[] };
   const ticked = new Set((tickRows ?? []).map((r) => r.move_id));
   // Dated cards come from the member's own list (owner-only RLS, 0005).
-  const { data: contactRows } = moves.length
+  const { data: contactRows } = current
     ? await supabase
         .from("contacts")
         .select("id, status, correspondence, first_contact_date, last_contact_date, next_followup_date, created_at")
@@ -150,6 +153,28 @@ export default async function PortalPage({
     : {};
   // Foundations has no drop-in (ADR-0027): an empty meet shows the Build line instead.
   const meet = tier === "build" ? "the drop-in" : tier === "foundations" ? "" : "our next call";
+
+  // Momentum and milestones (board r01). A badge, once earned, is kept as a
+  // tick, so taking a name off the list never takes a badge away.
+  const contactsList = (contactRows ?? []) as DueContact[];
+  const momentum = momentumOf(tickRows ?? [], contactsList.length);
+  const badges = profile
+    ? badgesOf(profile, contactsList, momentum, ticked)
+    : [];
+  const toKeep = badges.filter((b) => b.earned && !ticked.has(badgeTickId(b.key)));
+  if (toKeep.length && user) {
+    const { error: keepErr } = await supabase
+      .from("move_ticks")
+      .upsert(toKeep.map((b) => ({ user_id: user.id, move_id: badgeTickId(b.key) })), {
+        onConflict: "user_id,move_id",
+        ignoreDuplicates: true,
+      });
+    if (keepErr) console.error("keep badges failed:", keepErr.message);
+  }
+  const finishedThrough =
+    tier === "build" ? profile?.completed_week ?? 0
+    : tier === "foundations" ? (freeFinished ? 1 : 0)
+    : Math.max((current?.number ?? 1) - 1, 0);
   const buildFinishLabel = current?.number === 2
     ? "I\u2019m happy with my niche. Open Session 3"
     : `Mark Session ${current?.number} complete`;
@@ -202,23 +227,27 @@ export default async function PortalPage({
         </a>
       )}
 
-      <WelcomeVideo currentWeek={currentWeek} />
+      {/* Redesign (board r01): the move card is the centre. The welcome video
+          and the session intro move into the toolkit below it. */}
+      {!showNextMove && <WelcomeVideo currentWeek={currentWeek} />}
 
-      {current && (
+      {current && !showNextMove && (
         <WelcomeBanner week={current} intro={weekGuide(current.number)?.bannerIntro} />
       )}
 
       {outline.length > 0 && (
-        <Stepper
+        <Journey
           weeks={outline}
           currentWeek={current?.number ?? currentWeek}
           selected={focused?.number}
-          nextNote={profile?.tier === "foundations" ? "Opens in Build™" : undefined}
+          finishedThrough={finishedThrough}
+          lockedNote={profile?.tier === "foundations" ? "Sessions 2 to 7 open in Build\u2122" : undefined}
         />
       )}
 
       {showNextMove && current && (
         <NextMove
+          sessionTitle={shortTitle(current.title)}
           session={current.number}
           moves={moves}
           ticked={ticked}
@@ -241,9 +270,25 @@ export default async function PortalPage({
         />
       )}
 
+      {current && !viewingPast && badges.length > 0 && (
+        <Milestones badges={badges} momentum={momentum} memberKey={user.id.slice(0, 8)} />
+      )}
+
+      {showNextMove && current && (
+        <>
+          <ThisWeekToolkit
+            week={current}
+            files={filesFor(current.id)}
+            intro={weekGuide(current.number)?.bannerIntro}
+            welcome={currentWeek <= 1 ? <WelcomeVideo currentWeek={currentWeek} /> : undefined}
+          />
+          {currentWeek > 1 && <WelcomeVideo currentWeek={currentWeek} />}
+        </>
+      )}
+
       {focused ? (
         <>
-          {viewingPast ? (
+          {showNextMove ? null : viewingPast ? (
             <div className="mx-0.5 mb-4 mt-9 flex flex-wrap items-center gap-x-3 gap-y-2">
               <span className="psy-eyebrow whitespace-nowrap text-orange">
                 Viewing · Week {pad(focused.number)} — {stripWeekPrefix(focused.title)}
@@ -259,7 +304,7 @@ export default async function PortalPage({
           ) : (
             <SectionHead>Your work this week</SectionHead>
           )}
-          <ThisWeek week={focused} files={filesFor(focused.id)} />
+          {!showNextMove && <ThisWeek week={focused} files={filesFor(focused.id)} />}
 
           {/* Build members open the next session themselves (terms 2.2).
               Finishing Session 2 means they're happy with their niche; help

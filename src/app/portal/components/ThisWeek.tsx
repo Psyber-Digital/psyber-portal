@@ -4,6 +4,7 @@ import { weekVideo } from "@/lib/videos";
 import { weekWorkbook, weekResources, weekPrintResources, type PortalResource } from "@/lib/resources";
 import { weekGuide, type WeekGuide } from "@/lib/weekGuide";
 import { VimeoEmbed } from "./VimeoEmbed";
+import { ToolkitTabs, type ToolkitTab } from "./ToolkitTabs";
 
 // The current week's full treatment: the coach's framing note + time budget,
 // then up to three numbered steps — watch (video), complete (workbook hero),
@@ -58,6 +59,65 @@ export function ThisWeek({ week, files }: { week: Week; files: FileRow[] }) {
         )}
       </div>
     </>
+  );
+}
+
+/* ---------------- toolkit (redesign, board r01) ---------------- */
+
+// The same materials as ThisWeek, as tabs under the move card. Nothing is
+// removed: video, Working Sheet, resources (Principle Card first) and the
+// coach's note, plus the welcome video while a member is still on Session 1.
+export function ThisWeekToolkit({
+  week,
+  files,
+  intro,
+  welcome,
+}: {
+  week: Week;
+  files: FileRow[];
+  intro?: string;
+  welcome?: ReactNode;
+}) {
+  const guide = weekGuide(week.number);
+  const video = weekVideo(week.number);
+  const workbook = weekWorkbook(week.number);
+  const resources = weekResources(week.number);
+  const printResources = weekPrintResources(week.number);
+  const wsFiles = workbook
+    ? []
+    : files.filter((f) => f.kind === "worksheet").sort((a, b) => a.sort_order - b.sort_order);
+  const resFiles =
+    resources.length > 0
+      ? []
+      : files.filter((f) => f.kind === "resource").sort((a, b) => a.sort_order - b.sort_order);
+
+  const tabs: ToolkitTab[] = [];
+  if (video) tabs.push({ id: "watch", label: "Video", panel: <StepVideo n={1} guide={guide} video={video} title={week.title} /> });
+  if (workbook || wsFiles.length)
+    tabs.push({ id: "sheet", label: "Working Sheet", panel: <StepWorkbook n={2} guide={guide} workbook={workbook} wsFiles={wsFiles} /> });
+  if (resources.length || resFiles.length || printResources.length)
+    tabs.push({
+      id: "resources",
+      label: "Principle Card & resources",
+      panel: <StepResources n={3} guide={guide} resources={resources} resFiles={resFiles} printResources={printResources} />,
+    });
+  if (guide?.note) tabs.push({ id: "note", label: "Coach\u2019s note", panel: <FramingNote note={guide.note} budget={guide.budget} /> });
+  if (welcome) tabs.push({ id: "welcome", label: "Welcome video", panel: welcome });
+
+  return (
+    <section id="toolkit" className="psy-card mt-6 scroll-mt-6 p-5 sm:p-6" aria-labelledby="toolkit-title">
+      <h2 id="toolkit-title" className="font-disp text-[16px] font-semibold">
+        Session {week.number} toolkit
+      </h2>
+      <p className="mb-4 mt-0.5 max-w-[70ch] text-[13px] leading-relaxed text-mut">
+        {intro ?? "Everything for this session."}
+      </p>
+      {tabs.length ? (
+        <ToolkitTabs tabs={tabs} />
+      ) : (
+        <div className="p-8 text-center text-sm text-mut">Materials for this week are being prepared.</div>
+      )}
+    </section>
   );
 }
 
@@ -221,8 +281,7 @@ function StepVideo({
   // The video sits full card-width below the step header (not inset behind the
   // step number) so it's as large as possible — most impactful on a phone.
   return (
-    // id="watch": the next-move card's "Watch the video" button jumps here.
-    <section id="watch" className="psy-card scroll-mt-6 overflow-hidden p-5 sm:p-6">
+    <section className="psy-card overflow-hidden p-5 sm:p-6">
       <div className="flex items-start gap-4 sm:gap-5">
         <StepNum n={n} />
         <div className="min-w-0 flex-1">

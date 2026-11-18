@@ -63,3 +63,38 @@ body::before {
     transition: none !important;
   }
 }
+
+/* "Your next move" redesign (board r01, 18 Nov 2026): medals, shine, burst. */
+.psy-medal-orange {
+  background: radial-gradient(circle at 35% 30%, #ffd29e, #ff8d1e 55%, #c45f00);
+  box-shadow: 0 6px 18px rgba(255, 141, 30, 0.35);
+}
+.psy-medal-blue {
+  background: radial-gradient(circle at 35% 30%, #bfe0ff, #1e90ff 55%, #0a5cb3);
+  box-shadow: 0 6px 18px rgba(30, 144, 255, 0.35);
+}
+.psy-medal-shine { overflow: hidden; }
+.psy-medal-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.5) 50%, transparent 65%);
+  background-size: 250% 100%;
+  animation: psy-shine 3.5s ease-in-out infinite;
+}
+@keyframes psy-shine { 0%, 70% { background-position: 130% 0; } 100% { background-position: -30% 0; } }
+.psy-burst { position: fixed; pointer-events: none; z-index: 60; }
+.psy-burst i {
+  position: absolute; width: 8px; height: 8px; border-radius: 2px;
+  animation: psy-fly 0.9s ease-out forwards;
+}
+@keyframes psy-fly {
+  from { transform: translate(0, 0) rotate(0); opacity: 1; }
+  to { transform: translate(var(--x), var(--y)) rotate(260deg); opacity: 0; }
+}
+.psy-deck-card { animation: psy-deal 0.45s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes psy-deal { from { transform: translateY(14px) scale(0.98); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .psy-medal-shine::after, .psy-burst i, .psy-deck-card { animation: none; }
+}

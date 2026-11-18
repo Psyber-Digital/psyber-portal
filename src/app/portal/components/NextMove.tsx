@@ -2,11 +2,12 @@ import type { ReactNode } from "react";
 import type { Move, MoveOpens } from "@/lib/moves";
 import type { DueMove } from "@/lib/dueMoves";
 import { tickMove, untickMove } from "../moveActions";
+import { CelebrateButton } from "./CelebrateButton";
 
-// "Your next move": one card at the top of the session, the War Room's shape
-// for a member. It says what to do now, why it matters, and opens the thing
-// it uses. The session's video, sheet and resources stay below, unchanged.
-// War Room run psyber/2026-11-18-next-move.
+// "Your next move": the centre of the portal (Don, board r01, 18 Nov 2026:
+// "make the cards more centre... aesthetically pleasing... fun"). Today's dated
+// cards sit above; the session's video, sheet and resources sit in the toolkit
+// below. War Room run psyber/2026-11-18-next-move.
 
 export type MoveLinks = Partial<Record<Exclude<MoveOpens, "none">, string>>;
 
@@ -18,11 +19,61 @@ const OPEN_LABEL: Record<Exclude<MoveOpens, "none">, string> = {
   shared: "Open Shared Files",
 };
 
-// Video sits on this page; the rest open in a new tab, as they do below.
+// Video sits on this page; the rest open in a new tab, as they always have.
 const SAME_TAB: MoveOpens[] = ["video", "list", "shared"];
+
+function Label({ children }: { children: ReactNode }) {
+  return (
+    <div className="mx-0.5 mb-3 mt-7 flex items-center gap-3">
+      <span className="psy-eyebrow whitespace-nowrap text-mut">{children}</span>
+      <span className="h-px flex-1 bg-line" />
+    </div>
+  );
+}
+
+function OpenLink({ kind, href, small }: { kind: Exclude<MoveOpens, "none">; href?: string; small?: boolean }) {
+  if (!href) return null;
+  const same = SAME_TAB.includes(kind);
+  return (
+    <a
+      href={href}
+      target={same ? undefined : "_blank"}
+      rel={same ? undefined : "noopener noreferrer"}
+      className={`psy-btn-ghost ${small ? "!px-3 !py-2 !text-[13px]" : "!rounded-xl !px-5 !py-3 !text-[14.5px]"}`}
+    >
+      {OPEN_LABEL[kind]} →
+    </a>
+  );
+}
+
+function Ring({ done, total }: { done: number; total: number }) {
+  const c = 2 * Math.PI * 25;
+  return (
+    <div className="absolute right-5 top-5 h-12 w-12 sm:right-6 sm:top-6 sm:h-14 sm:w-14" aria-hidden="true">
+      <svg viewBox="0 0 58 58" className="h-full w-full -rotate-90">
+        <defs>
+          <linearGradient id="psy-ring" x1="0" x2="1">
+            <stop offset="0" stopColor="#FF8D1E" />
+            <stop offset="1" stopColor="#1E90FF" />
+          </linearGradient>
+        </defs>
+        <circle cx="29" cy="29" r="25" fill="none" stroke="#26365a" strokeWidth="5" />
+        <circle
+          cx="29" cy="29" r="25" fill="none" stroke="url(#psy-ring)" strokeWidth="5" strokeLinecap="round"
+          strokeDasharray={c} strokeDashoffset={c - (c * done) / Math.max(total, 1)}
+          className="transition-[stroke-dashoffset] duration-700"
+        />
+      </svg>
+      <span className="absolute inset-0 grid place-items-center font-disp text-[12px] font-semibold text-off sm:text-[13px]">
+        {done}/{total}
+      </span>
+    </div>
+  );
+}
 
 export function NextMove({
   session,
+  sessionTitle,
   moves,
   ticked,
   sessionFinished,
@@ -31,144 +82,139 @@ export function NextMove({
   links,
   due = [],
 }: {
-  /** Dated cards from the member's own list: follow-ups, calls, today's ten. */
-  due?: DueMove[];
   session: number;
+  /** Short name of the session, e.g. "Niche". */
+  sessionTitle: string;
   moves: Move[];
   ticked: Set<string>;
   /** The session's own "complete" is already recorded (Build / Foundations). */
   sessionFinished: boolean;
   /** The existing finish form, shown inside the card when its move comes up. */
   finish?: ReactNode;
-  /** "the drop-in" or "our next call". */
+  /** "the drop-in", "our next call", or "" for Foundations. */
   meet: string;
   links: MoveLinks;
+  /** Dated cards from the member's own list: follow-ups, calls, today's ten. */
+  due?: DueMove[];
 }) {
   if (moves.length === 0) return null;
 
   const isDone = (m: Move) => (m.finish ? sessionFinished : ticked.has(m.id));
   const doneCount = moves.filter(isDone).length;
   const current = moves.find((m) => !isDone(m));
-  const index = current ? moves.indexOf(current) + 1 : moves.length;
+  const index = current ? moves.indexOf(current) : moves.length;
+  const upNext = current ? moves.slice(index + 1).find((m) => !isDone(m)) : undefined;
 
   return (
-    <section
-      aria-labelledby="next-move-title"
-      className="psy-card mb-[18px] mt-6 border-l-[3px] border-l-orange p-5 sm:p-6"
-    >
-      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <span className="psy-eyebrow text-orange">
-          Your next move · Session {session}
-          {current && (
-            <span className="text-mut">
-              {" "}
-              · {index} of {moves.length}
+    <>
+      {due.length > 0 && (
+        <>
+          <Label>Today</Label>
+          <ul className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2" aria-label="Due today">
+            {due.map((d) => (
+              <li
+                key={d.key}
+                className="flex w-[260px] flex-none snap-start flex-col rounded-[14px] border border-line border-t-[3px] border-t-blue bg-panel p-3.5"
+              >
+                <p className="font-disp text-[14.5px] font-semibold leading-snug text-off">{d.title}</p>
+                <p className="mb-3 mt-1 flex-1 text-[12.5px] leading-relaxed text-sec">{d.why}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <OpenLink kind={d.opens} href={d.href ?? links[d.opens]} small />
+                  {d.tickIds.length > 0 && (
+                    <form action={tickMove}>
+                      {d.tickIds.map((id) => (
+                        <input key={id} type="hidden" name="move" value={id} />
+                      ))}
+                      <CelebrateButton className="psy-btn !px-3 !py-2 !text-[13px]" />
+                    </form>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      <Label>Your next move</Label>
+      <div className="relative pb-5">
+        {/* The deck: two cards waiting behind this one. */}
+        <div className="absolute inset-x-11 bottom-0 h-16 rounded-[22px] border border-line bg-panel2 opacity-40" aria-hidden="true" />
+        <div className="absolute inset-x-5 bottom-2.5 h-16 rounded-[22px] border border-line bg-panel2 opacity-75" aria-hidden="true" />
+
+        <section
+          key={current?.id ?? "all-done"}
+          aria-labelledby="next-move-title"
+          className="psy-deck-card relative z-10 overflow-hidden rounded-[22px] border border-[#33497a] bg-[linear-gradient(160deg,#1a2744_0%,#121B2E_60%)] p-5 pr-20 shadow-card sm:p-7 sm:pr-24"
+        >
+          <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#FF8D1E,#ffb36b_50%,#1E90FF)]" aria-hidden="true" />
+          <Ring done={doneCount} total={moves.length} />
+
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-orange/[0.12] px-2.5 py-1 font-disp text-[11px] font-semibold uppercase tracking-[1.2px] text-orange">
+              Session {session} · {sessionTitle}
             </span>
+            {current?.mins && (
+              <span className="rounded-full bg-blue/[0.12] px-2.5 py-1 font-disp text-[11px] font-semibold uppercase tracking-[1.2px] text-[#69b4ff]">
+                {current.mins}
+              </span>
+            )}
+          </div>
+
+          {current ? (
+            <>
+              <h2 id="next-move-title" className="mt-4 font-disp text-[21px] font-semibold leading-snug text-off sm:text-[25px]">
+                {current.title}
+              </h2>
+              <p className="mt-2 max-w-[56ch] text-[15px] leading-relaxed text-sec sm:text-[15.5px]">{current.why}</p>
+              {current.where && <p className="mt-2 text-[12.5px] text-mut">Working Sheet, {current.where}</p>}
+
+              {current.finish ? (
+                finish
+              ) : (
+                <div className="mt-5 flex flex-wrap items-center gap-2.5">
+                  {current.opens !== "none" && <OpenLink kind={current.opens} href={links[current.opens]} />}
+                  <form action={tickMove}>
+                    <input type="hidden" name="move" value={current.id} />
+                    <CelebrateButton className="psy-btn !rounded-xl !px-5 !py-3 !text-[14.5px]" />
+                  </form>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <h2 id="next-move-title" className="mt-4 font-disp text-[21px] font-semibold leading-snug text-off sm:text-[25px]">
+                Every move for Session {session} is done.
+              </h2>
+              <p className="mt-2 max-w-[56ch] text-[15px] leading-relaxed text-sec">
+                {meet
+                  ? `Well done. Bring what you made to ${meet}.`
+                  : "Well done. Sessions 2 to 7, and the weekly drop-in, open in Build™."}
+              </p>
+            </>
           )}
-        </span>
-        <Dots moves={moves} isDone={isDone} current={current} />
+        </section>
       </div>
 
-      {due.length > 0 && (
-        <ul className="mt-3 grid gap-2.5" aria-label="Due today">
-          {due.map((d) => (
-            <li
-              key={d.key}
-              className="flex flex-col gap-2.5 rounded-[10px] border border-line bg-[#0c1424] p-3.5 sm:flex-row sm:items-center"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="font-disp text-[15px] font-semibold leading-snug text-off">{d.title}</p>
-                <p className="mt-0.5 text-[13px] leading-relaxed text-sec">{d.why}</p>
-              </div>
-              <div className="flex flex-none flex-wrap items-center gap-2">
-                {(d.href ?? links[d.opens]) && (
-                  <a
-                    href={d.href ?? links[d.opens]}
-                    target={SAME_TAB.includes(d.opens) ? undefined : "_blank"}
-                    rel={SAME_TAB.includes(d.opens) ? undefined : "noopener noreferrer"}
-                    className="psy-btn-ghost !px-3 !py-2 !text-[13px]"
-                  >
-                    {OPEN_LABEL[d.opens]} →
-                  </a>
-                )}
-                {d.tickIds.length > 0 && (
-                  <form action={tickMove}>
-                    {d.tickIds.map((id) => (
-                      <input key={id} type="hidden" name="move" value={id} />
-                    ))}
-                    <button type="submit" className="psy-btn !px-3 !py-2 !text-[13px]">
-                      Done ✓
-                    </button>
-                  </form>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
+      {upNext && (
+        <p className="mx-1.5 mt-1 text-[13px] text-mut">
+          Up next: <b className="font-semibold text-sec">{upNext.title}</b>
+        </p>
       )}
 
-      {current ? (
-        <>
-          {due.length > 0 && (
-            <p className="mt-5 font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-mut">
-              Next in this session
-            </p>
-          )}
-          <h2 id="next-move-title" className="mt-2.5 font-disp text-[21px] font-semibold leading-snug text-off">
-            {current.title}
-          </h2>
-          <p className="mt-2 max-w-[64ch] text-[14.5px] leading-relaxed text-sec">{current.why}</p>
-          {(current.mins || current.where) && (
-            <p className="mt-2 text-[12.5px] text-mut">
-              {[current.mins && `⏱ ${current.mins}`, current.where && `Working Sheet, ${current.where}`]
-                .filter(Boolean)
-                .join(" · ")}
-            </p>
-          )}
-
-          {current.finish ? (
-            finish
-          ) : (
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <OpenButton move={current} links={links} />
-              <form action={tickMove}>
-                <input type="hidden" name="move" value={current.id} />
-                <button type="submit" className="psy-btn">
-                  Done ✓
-                </button>
-              </form>
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          <h2 id="next-move-title" className="mt-2.5 font-disp text-[21px] font-semibold leading-snug text-off">
-            Every move for Session {session} is done.
-          </h2>
-          <p className="mt-2 max-w-[64ch] text-[14.5px] leading-relaxed text-sec">
-            {meet
-              ? `Well done. Bring what you made to ${meet}.`
-              : "Well done. Sessions 2 to 7, and the weekly drop-in, open in Build\u2122."}
-          </p>
-        </>
-      )}
-
-      <details className="group mt-5 border-t border-dashed border-line pt-3">
+      <details className="group mx-1.5 mt-2">
         <summary className="cursor-pointer list-none text-[12.5px] text-mut marker:hidden">
           <span className="underline decoration-dotted underline-offset-2">
             <span className="group-open:hidden">All {moves.length} moves this session</span>
             <span className="hidden group-open:inline">Hide the list</span>
           </span>
-          <span className="ml-2">
-            · {doneCount} done
-          </span>
+          <span className="ml-2">· {doneCount} done</span>
         </summary>
         <ol className="mt-3 grid gap-1.5">
           {moves.map((m, i) => (
             <li key={m.id} className="flex items-start gap-3 text-[13.5px] leading-snug">
               <span
                 className={`mt-px grid h-5 w-5 flex-none place-items-center rounded-full border text-[11px] ${
-                  isDone(m) ? "border-blue bg-blue/15 text-blue" : "border-line text-mut"
+                  isDone(m) ? "border-blue bg-blue/15 text-blue" : m === current ? "border-orange text-orange" : "border-line text-mut"
                 }`}
                 aria-hidden="true"
               >
@@ -190,46 +236,6 @@ export function NextMove({
           ))}
         </ol>
       </details>
-    </section>
-  );
-}
-
-function OpenButton({ move, links }: { move: Move; links: MoveLinks }) {
-  if (move.opens === "none") return null;
-  const href = links[move.opens];
-  if (!href) return null;
-  const sameTab = SAME_TAB.includes(move.opens);
-  return (
-    <a
-      href={href}
-      target={sameTab ? undefined : "_blank"}
-      rel={sameTab ? undefined : "noopener noreferrer"}
-      className="psy-btn-ghost"
-    >
-      {OPEN_LABEL[move.opens]} →
-    </a>
-  );
-}
-
-function Dots({
-  moves,
-  isDone,
-  current,
-}: {
-  moves: Move[];
-  isDone: (m: Move) => boolean;
-  current?: Move;
-}) {
-  return (
-    <span className="flex items-center gap-1.5" aria-hidden="true">
-      {moves.map((m) => (
-        <span
-          key={m.id}
-          className={`h-2 w-2 rounded-full ${
-            isDone(m) ? "bg-blue" : m === current ? "bg-orange" : "border border-line"
-          }`}
-        />
-      ))}
-    </span>
+    </>
   );
 }
