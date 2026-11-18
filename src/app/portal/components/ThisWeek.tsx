@@ -80,8 +80,22 @@ export function ThisWeekToolkit({
 }) {
   const guide = weekGuide(week.number);
   const video = weekVideo(week.number);
-  const workbook = weekWorkbook(week.number);
-  const resources = weekResources(week.number);
+  let workbook = weekWorkbook(week.number);
+  let resources = weekResources(week.number);
+  // Session 1 (Don, board m10c A, 18 Nov 2026): the toolkit opens the updated
+  // Working Sheet the moves use. The original workbook stays, renamed, so
+  // anyone's saved answers in it are still one tap away.
+  if (week.number === 1) {
+    const updated = "/session-01/Session-01-Working-Sheet.html";
+    const original = workbook;
+    workbook = { href: updated, label: "Open your Working Sheet", open: true };
+    resources = resources.filter((r) => r.href !== updated);
+    if (original && original.href !== updated)
+      resources = [
+        ...resources,
+        { href: original.href, label: "Your original workbook", sub: "Your earlier answers stay here", icon: "◆", open: true },
+      ];
+  }
   const printResources = weekPrintResources(week.number);
   const wsFiles = workbook
     ? []

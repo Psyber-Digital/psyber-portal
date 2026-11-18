@@ -237,6 +237,14 @@ export function NextMove({
                 {isDone(m) ? "✓" : i + 1}
               </span>
               <span className={`min-w-0 flex-1 ${isDone(m) ? "text-mut" : "text-sec"}`}>{m.title}</span>
+              {m.finish && !isDone(m) && finish && m !== current && (
+                <details className="text-right">
+                  <summary className="cursor-pointer list-none text-[12px] text-mut underline decoration-dotted underline-offset-2 marker:hidden hover:text-off">
+                    Mark done
+                  </summary>
+                  <div className="text-left">{finish}</div>
+                </details>
+              )}
               {!m.finish && (
                 <form action={isDone(m) ? untickMove : tickMove}>
                   <input type="hidden" name="move" value={m.id} />

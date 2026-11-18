@@ -276,10 +276,8 @@ export async function PortalScreen({
           WORDING: board card r11. */}
       {/* Foundations: finishing Session 1 opens nothing, but it starts the
           first-month offer (0016). WORDING: board card m03, 5 Nov 2026. */}
-      {profile?.tier === "foundations" && !profile.lapsed_at && !freeFinished &&
-        focused.number === current?.number && current?.number === 1 && (
-          <FinishForm action={finishSession} week={1} label="Mark Session 1 complete" />
-        )}
+      {/* Finishing a session happens on Today: the card's last move, or "Mark
+          done" in its list (Don, board m10b A, 18 Nov 2026). */}
       {freeFinished && offerIsOpen && (
         <div className="psy-card mt-6 p-5">
           <p className="font-disp text-base font-semibold text-off">
@@ -305,15 +303,6 @@ export async function PortalScreen({
           </a>
         </div>
       )}
-      {profile?.tier === "build" && current && focused.number === current.number &&
-        (profile.completed_week ?? 0) < current.number && (
-          <FinishForm
-            action={finishSession}
-            week={current.number}
-            label={buildFinishLabel}
-            lead={current.number === 2 ? <NicheLaneCheck /> : undefined}
-          />
-        )}
     </>
   ) : (
     <div className="psy-card mt-6 p-10 text-center text-sm text-mut">
