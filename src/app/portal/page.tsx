@@ -19,6 +19,9 @@ import { deadlineDay, offerOpen, STRATEGY_CALL_URL } from "@/lib/upsellEmails";
 import { FinishForm } from "./components/FinishForm";
 import { ScrollTopOnChange } from "./components/ScrollTopOnChange";
 import { Brand } from "./components/Brand";
+import { NextMove, type MoveLinks } from "./components/NextMove";
+import { movesFor } from "@/lib/moves";
+import { weekWorkbook, weekResources } from "@/lib/resources";
 
 export const dynamic = "force-dynamic";
 const BOOK_ID = "book";
@@ -101,6 +104,44 @@ export default async function PortalPage({
     .order("number");
   const outline = (outlineRows ?? publishedWeeks) as WeekOutline[];
 
+  // "Your next move" (0017; War Room run psyber/2026-11-18-next-move). One
+  // card for the current session; the materials below are unchanged.
+  const tier = profile?.tier;
+  const moves = current ? movesFor(current.number, tier) : [];
+  const { data: tickRows } = moves.length
+    ? await supabase.from("move_ticks").select("move_id")
+    : { data: [] as { move_id: string }[] };
+  const ticked = new Set((tickRows ?? []).map((r) => r.move_id));
+  const sessionFinished =
+    tier === "build"
+      ? (profile?.completed_week ?? 0) >= (current?.number ?? 0)
+      : tier === "foundations"
+        ? freeFinished
+        : false;
+  const nextMove = moves.find((m) => (m.finish ? !sessionFinished : !ticked.has(m.id)));
+  // The finish button moves into the card when it is the next move, so the
+  // page never shows it twice.
+  const finishInCard = Boolean(nextMove?.finish);
+  const showNextMove =
+    Boolean(current) && !viewingPast && moves.length > 0 &&
+    !(tier === "foundations" && (freeFinished || profile?.lapsed_at));
+  const moveLinks: MoveLinks = current
+    ? {
+        video: "#watch",
+        // Session 1's moves follow the updated Working Sheet's three blocks.
+        sheet: current.number === 1
+          ? "/session-01/Session-01-Working-Sheet.html"
+          : weekWorkbook(current.number)?.href,
+        card: weekResources(current.number).find((r) => r.label === "The Principle Card")?.href,
+        list: "/portal/outreach",
+        shared: "/portal/shared",
+      }
+    : {};
+  const meet = tier === "build" || tier === "foundations" ? "the drop-in" : "our next call";
+  const buildFinishLabel = current?.number === 2
+    ? "I\u2019m happy with my niche. Open Session 3"
+    : `Mark Session ${current?.number} complete`;
+
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
       <Header name={profile?.full_name || "Client"} role="client" />
@@ -164,6 +205,30 @@ export default async function PortalPage({
         />
       )}
 
+      {showNextMove && current && (
+        <NextMove
+          session={current.number}
+          moves={moves}
+          ticked={ticked}
+          sessionFinished={sessionFinished}
+          meet={meet}
+          links={moveLinks}
+          finish={
+            tier === "build" ? (
+              <FinishForm action={finishSession} week={current.number} label={buildFinishLabel}>
+                {current.number === 2 && (
+                  <p className="mt-2 text-xs leading-relaxed text-slate">
+                    Not sure yet? Bring it to the weekly drop-in for help.
+                  </p>
+                )}
+              </FinishForm>
+            ) : tier === "foundations" ? (
+              <FinishForm action={finishSession} week={1} label="Mark Session 1 complete" />
+            ) : undefined
+          }
+        />
+      )}
+
       {focused ? (
         <>
           {viewingPast ? (
@@ -191,7 +256,7 @@ export default async function PortalPage({
           {/* Foundations: finishing Session 1 opens nothing, but it starts the
               first-month offer (0016). WORDING: board card m03, 5 Nov 2026. */}
           {profile?.tier === "foundations" && !profile.lapsed_at && !freeFinished && !viewingPast &&
-            current?.number === 1 && (
+            current?.number === 1 && !(showNextMove && finishInCard) && (
               <FinishForm action={finishSession} week={1} label="Mark Session 1 complete" />
             )}
           {freeFinished && offerIsOpen && (
@@ -221,7 +286,7 @@ export default async function PortalPage({
           )}
 
           {profile?.tier === "build" && !viewingPast && current &&
-            (profile.completed_week ?? 0) < current.number && (
+            (profile.completed_week ?? 0) < current.number && !(showNextMove && finishInCard) && (
               <FinishForm
                 action={finishSession}
                 week={current.number}

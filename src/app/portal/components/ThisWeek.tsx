@@ -221,7 +221,8 @@ function StepVideo({
   // The video sits full card-width below the step header (not inset behind the
   // step number) so it's as large as possible — most impactful on a phone.
   return (
-    <section className="psy-card overflow-hidden p-5 sm:p-6">
+    // id="watch": the next-move card's "Watch the video" button jumps here.
+    <section id="watch" className="psy-card scroll-mt-6 overflow-hidden p-5 sm:p-6">
       <div className="flex items-start gap-4 sm:gap-5">
         <StepNum n={n} />
         <div className="min-w-0 flex-1">
