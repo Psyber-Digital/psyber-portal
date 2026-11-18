@@ -83,7 +83,7 @@ export function OutreachView({
       uncategorised: by((c) => c.relevance === "unsure"),
       contacted: by((c) => c.status !== "not_contacted"),
       replied: by((c) =>
-        ["replied", "interested", "offer_made", "converted", "follow_up_required"].includes(c.status),
+        ["replied", "interested", "call_booked", "offer_made", "converted", "follow_up_required"].includes(c.status),
       ),
       offers: by((c) =>
         ["offer_made", "converted"].includes(c.status),

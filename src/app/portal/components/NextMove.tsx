@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Move, MoveOpens } from "@/lib/moves";
+import type { DueMove } from "@/lib/dueMoves";
 import { tickMove, untickMove } from "../moveActions";
 
 // "Your next move": one card at the top of the session, the War Room's shape
@@ -28,7 +29,10 @@ export function NextMove({
   finish,
   meet,
   links,
+  due = [],
 }: {
+  /** Dated cards from the member's own list: follow-ups, calls, today's ten. */
+  due?: DueMove[];
   session: number;
   moves: Move[];
   ticked: Set<string>;
@@ -65,8 +69,51 @@ export function NextMove({
         <Dots moves={moves} isDone={isDone} current={current} />
       </div>
 
+      {due.length > 0 && (
+        <ul className="mt-3 grid gap-2.5" aria-label="Due today">
+          {due.map((d) => (
+            <li
+              key={d.key}
+              className="flex flex-col gap-2.5 rounded-[10px] border border-line bg-[#0c1424] p-3.5 sm:flex-row sm:items-center"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="font-disp text-[15px] font-semibold leading-snug text-off">{d.title}</p>
+                <p className="mt-0.5 text-[13px] leading-relaxed text-sec">{d.why}</p>
+              </div>
+              <div className="flex flex-none flex-wrap items-center gap-2">
+                {(d.href ?? links[d.opens]) && (
+                  <a
+                    href={d.href ?? links[d.opens]}
+                    target={SAME_TAB.includes(d.opens) ? undefined : "_blank"}
+                    rel={SAME_TAB.includes(d.opens) ? undefined : "noopener noreferrer"}
+                    className="psy-btn-ghost !px-3 !py-2 !text-[13px]"
+                  >
+                    {OPEN_LABEL[d.opens]} →
+                  </a>
+                )}
+                {d.tickIds.length > 0 && (
+                  <form action={tickMove}>
+                    {d.tickIds.map((id) => (
+                      <input key={id} type="hidden" name="move" value={id} />
+                    ))}
+                    <button type="submit" className="psy-btn !px-3 !py-2 !text-[13px]">
+                      Done ✓
+                    </button>
+                  </form>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
       {current ? (
         <>
+          {due.length > 0 && (
+            <p className="mt-5 font-disp text-[11px] font-semibold uppercase tracking-[1.5px] text-mut">
+              Next in this session
+            </p>
+          )}
           <h2 id="next-move-title" className="mt-2.5 font-disp text-[21px] font-semibold leading-snug text-off">
             {current.title}
           </h2>
@@ -99,7 +146,9 @@ export function NextMove({
             Every move for Session {session} is done.
           </h2>
           <p className="mt-2 max-w-[64ch] text-[14.5px] leading-relaxed text-sec">
-            Well done. Bring what you made to {meet}.
+            {meet
+              ? `Well done. Bring what you made to ${meet}.`
+              : "Well done. Sessions 2 to 7, and the weekly drop-in, open in Build\u2122."}
           </p>
         </>
       )}

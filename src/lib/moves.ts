@@ -40,6 +40,8 @@ export const MOVES: Record<number, Move[]> = {
   1: [
     { id: "s1-video", title: "Watch the Foundations video", mins: "9 min", opens: "video",
       why: "It walks you through your sheet, block by block." },
+    { id: "s1-card", title: "Read the Principle Card, and note what stands out", mins: "5 min", opens: "card",
+      why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s1-beliefs", title: "Name two beliefs that could slow you down", mins: "10 min", opens: "sheet", where: "block 1",
       why: "Once you've named a belief, it's much easier to move past." },
     { id: "s1-circumstances", title: "Name two circumstances, and your 90-second plan for each", mins: "10 min", opens: "sheet", where: "block 2",
@@ -48,12 +50,14 @@ export const MOVES: Record<number, Move[]> = {
       why: "One outcome, one weekly action, one dated first step. Saying it aloud makes it yours." },
     { id: "s1-list", title: "Start your list", opens: "list",
       why: "Your first clients will almost certainly come from this list. No current therapy clients on it. Former clients go on as connectors only: ask who they know, and never coach them yourself." },
-    { id: "s1-finish", title: "Mark Session 1 complete", opens: "none", finish: true, only: SELF_SERVE,
+    { id: "s1-finish", title: "Finish Session 1", opens: "none", finish: true, only: SELF_SERVE,
       why: "Session 2 opens." },
   ],
   2: [
     { id: "s2-video", title: "Watch the Niche video", mins: "7 min", opens: "video",
       why: "What a niche does for you, and the three stages ahead." },
+    { id: "s2-card", title: "Read the Principle Card, and note what stands out", mins: "5 min", opens: "card",
+      why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s2-generate", title: "Generate every transformation and audience you can think of", mins: "25 min", opens: "sheet", where: "stage 1",
       why: "Write more than feels sensible. Judge none of it yet." },
     { id: "s2-narrow", title: "Narrow it down: pair them, run the lane test, score them", mins: "20 min", opens: "sheet", where: "stage 2",
@@ -64,14 +68,16 @@ export const MOVES: Record<number, Move[]> = {
       why: "Keep adding as people come to mind. Your announcement goes to them in Session 4." },
     // Build: choosing the niche IS finishing Session 2 (Don, r11, 29 Oct).
     { id: "s2-finish", title: "Choose your niche", opens: "none", finish: true, only: ["build"],
-      why: "Pick the one you're happiest with. Not sure? Bring all three to the drop-in, and we choose together." },
-    // One-on-one: board card m03 (pick A, awaiting Don).
-    { id: "s2-niche-call", title: "Bring your top three to our next call", opens: "none", only: ONE_ON_ONE,
-      why: "We choose your niche together, out loud, on the call." },
+      why: "Pick the one you're happiest with. Not sure? Bring all three to the drop-in, and we\u2019ll choose together." },
+    // One-on-one clients choose too, with the call there if unsure (Don, m03 = B, 18 Nov).
+    { id: "s2-choose", title: "Choose your niche", opens: "none", only: ONE_ON_ONE,
+      why: "Pick the one you're happiest with. Not sure? Bring all three to our next call, and we\u2019ll choose together." },
   ],
   3: [
     { id: "s3-video", title: "Watch the Message video", mins: "7 min", opens: "video",
       why: "Your client is the hero and you are the guide." },
+    { id: "s3-card", title: "Read the Principle Card, and note what stands out", mins: "5 min", opens: "card",
+      why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s3-statement", title: "Write your coaching statement, and how it differs from therapy", mins: "15 min", opens: "sheet", where: "section 1",
       why: "The one sentence you use when somebody asks what you do." },
     { id: "s3-true", title: "Write what is true for them, ten lines under each heading", mins: "25 min", opens: "sheet", where: "section 2",
@@ -80,12 +86,14 @@ export const MOVES: Record<number, Move[]> = {
       why: "This is where everything above comes together, in your client's words." },
     { id: "s3-announcement", title: "Draft your announcement and two follow-ups", mins: "10 min", opens: "sheet", where: "section 4",
       why: "Write them while the words are fresh, so when it's time, you just press send." },
-    { id: "s3-finish", title: "Mark Session 3 complete", opens: "none", finish: true, only: ["build"],
+    { id: "s3-finish", title: "Finish Session 3", opens: "none", finish: true, only: ["build"],
       why: "Session 4 opens." },
   ],
   4: [
     { id: "s4-video", title: "Watch the Structure video", mins: "5 min", opens: "video",
       why: "Thirteen steps, from your program's big promise down to each week." },
+    { id: "s4-card", title: "Read the Principle Card, and note what stands out", mins: "5 min", opens: "card",
+      why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s4-sitting1", title: "Sitting 1: the shape, steps 1 to 5", mins: "45 min", opens: "sheet", where: "steps 1–5",
       why: "Your transformation as a question, then your modules." },
     { id: "s4-sitting2", title: "Sitting 2: inside each module, steps 6 to 9", mins: "45 min", opens: "sheet", where: "steps 6–9",
@@ -98,12 +106,14 @@ export const MOVES: Record<number, Move[]> = {
       why: "It has to sound like you." },
     { id: "s4-announce", title: "Send your announcement", opens: "list",
       why: "Today people hear you're coaching. Share it as news, and end with a question anyone can answer." },
-    { id: "s4-finish", title: "Mark Session 4 complete", opens: "none", finish: true, only: ["build"],
+    { id: "s4-finish", title: "Finish Session 4", opens: "none", finish: true, only: ["build"],
       why: "Session 5 opens." },
   ],
   5: [
     { id: "s5-video", title: "Watch the Creation video", mins: "7 min", opens: "video",
       why: "The simplest version of your program that works, built one session at a time." },
+    { id: "s5-card", title: "Read the Principle Card, and note what stands out", mins: "5 min", opens: "card",
+      why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s5-sitting1", title: "Sitting 1: your journey, your first session's slides and your speaking points", mins: "60 min", opens: "sheet", where: "steps 1–3",
       why: "Your first session only. The rest waits until you've delivered it." },
     { id: "s5-out-loud", title: "Run your first session out loud once", mins: "10 min", opens: "sheet", where: "step 3",
@@ -114,12 +124,14 @@ export const MOVES: Record<number, Move[]> = {
       why: "One page they fill in, and one page they keep." },
     { id: "s5-send", title: "Send what you have, or bring it to {meet}", opens: "shared",
       why: "At least 24 hours before {meet}. Whatever you have is enough." },
-    { id: "s5-finish", title: "Mark Session 5 complete", opens: "none", finish: true, only: ["build"],
+    { id: "s5-finish", title: "Finish Session 5", opens: "none", finish: true, only: ["build"],
       why: "Session 6 opens." },
   ],
   6: [
     { id: "s6-video", title: "Watch the Offer and Conversation video", mins: "7 min", opens: "video",
       why: "Your offer and your price, then the discovery call, step by step." },
+    { id: "s6-card", title: "Read the Principle Card, and note what stands out", mins: "5 min", opens: "card",
+      why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s6-offer", title: "Write your offer, and give it a name", mins: "20 min", opens: "sheet", where: "step 1",
       why: "What changes for them, what's included and what isn't, in a name you can say out loud." },
     { id: "s6-price", title: "Set your price", mins: "25 min", opens: "sheet", where: "steps 2–3",
@@ -134,23 +146,25 @@ export const MOVES: Record<number, Move[]> = {
       why: "So the first yes has somewhere to go." },
     { id: "s6-send", title: "Send your sheet and call guide, or bring them to {meet}", opens: "shared",
       why: "At least 24 hours before {meet}." },
-    { id: "s6-finish", title: "Mark Session 6 complete", opens: "none", finish: true, only: ["build"],
+    { id: "s6-finish", title: "Finish Session 6", opens: "none", finish: true, only: ["build"],
       why: "Session 7 opens." },
   ],
   7: [
     { id: "s7-video", title: "Watch the Launch video", mins: "5 min", opens: "video",
       why: "Who you reach next, how a reply becomes a discovery call, and the rhythm that keeps it going." },
+    { id: "s7-card", title: "Read the Principle Card, and note what stands out", mins: "5 min", opens: "card",
+      why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s7-sitting1", title: "Sitting 1: your numbers, your list to 250 names, your connectors", mins: "30 min", opens: "sheet", where: "steps 1–3",
-      why: "Go back to the edges: your phone, every job, every group. No current therapy clients. Therapy colleagues can hear your news, but don't ask them who they know. Never pay for a referral, or accept payment for one." },
+      why: "Go back to the edges: your phone, every job, every group. No current therapy clients. Therapy colleagues can be connectors too, but never ask them for their own therapy clients. Never pay for a referral, or accept payment for one." },
     { id: "s7-sitting2", title: "Sitting 2: your first lines, your reply and your rhythm", mins: "30 min", opens: "sheet", where: "steps 4–6",
-      why: "One line at the top that only that person could get. If a former therapy client says it sounds like them, thank them and ask who they know. Never offer coaching to a therapy client." },
+      why: "One line at the top that only that person could get. If a former therapy client says it sounds like them, thank them and ask who they know. Never offer coaching to a current or former therapy client." },
     { id: "s7-calendar", title: "Put your four outreach days, and the time, in your calendar", mins: "2 min", opens: "sheet", where: "step 6",
       why: "Ten messages a day, four days a week, about twenty minutes each time." },
     { id: "s7-first-ten", title: "Send your first ten", opens: "list",
       why: "Start with the people you're most comfortable with." },
     { id: "s7-send", title: "Send your sheet, or bring your numbers to {meet}", opens: "shared",
       why: "At least 24 hours before {meet}." },
-    { id: "s7-finish", title: "Mark Session 7 complete", opens: "none", finish: true, only: ["build"],
+    { id: "s7-finish", title: "Finish Session 7", opens: "none", finish: true, only: ["build"],
       why: "Your daily rhythm takes over from here." },
   ],
 };
@@ -176,3 +190,15 @@ export function movesFor(session: number, tier: Tier | undefined): Move[] {
 export const ALL_MOVE_IDS = new Set(
   Object.values(MOVES).flatMap((list) => list.map((m) => m.id)),
 );
+
+/** Where a member is: their next move in a session, and its place in the list. */
+export function nextMoveOf(
+  session: number,
+  tier: Tier | undefined,
+  ticked: Set<string>,
+  sessionFinished: boolean,
+): { move: Move | undefined; index: number; total: number } {
+  const moves = movesFor(session, tier);
+  const i = moves.findIndex((m) => (m.finish ? !sessionFinished : !ticked.has(m.id)));
+  return { move: i >= 0 ? moves[i] : undefined, index: i >= 0 ? i + 1 : moves.length, total: moves.length };
+}

@@ -17,10 +17,12 @@ import { touchActivity } from "@/lib/activity";
 import { finishSession } from "./finishActions";
 import { deadlineDay, offerOpen, STRATEGY_CALL_URL } from "@/lib/upsellEmails";
 import { FinishForm } from "./components/FinishForm";
+import { NicheLaneCheck } from "./components/NicheLaneCheck";
 import { ScrollTopOnChange } from "./components/ScrollTopOnChange";
 import { Brand } from "./components/Brand";
 import { NextMove, type MoveLinks } from "./components/NextMove";
 import { movesFor } from "@/lib/moves";
+import { dueMoves, type DueContact } from "@/lib/dueMoves";
 import { weekWorkbook, weekResources } from "@/lib/resources";
 
 export const dynamic = "force-dynamic";
@@ -112,6 +114,15 @@ export default async function PortalPage({
     ? await supabase.from("move_ticks").select("move_id")
     : { data: [] as { move_id: string }[] };
   const ticked = new Set((tickRows ?? []).map((r) => r.move_id));
+  // Dated cards come from the member's own list (owner-only RLS, 0005).
+  const { data: contactRows } = moves.length
+    ? await supabase
+        .from("contacts")
+        .select("id, status, correspondence, first_contact_date, last_contact_date, next_followup_date, created_at")
+    : { data: [] as DueContact[] };
+  const due = current
+    ? dueMoves({ contacts: (contactRows ?? []) as DueContact[], session: current.number, tier, ticked })
+    : [];
   const sessionFinished =
     tier === "build"
       ? (profile?.completed_week ?? 0) >= (current?.number ?? 0)
@@ -137,7 +148,8 @@ export default async function PortalPage({
         shared: "/portal/shared",
       }
     : {};
-  const meet = tier === "build" || tier === "foundations" ? "the drop-in" : "our next call";
+  // Foundations has no drop-in (ADR-0027): an empty meet shows the Build line instead.
+  const meet = tier === "build" ? "the drop-in" : tier === "foundations" ? "" : "our next call";
   const buildFinishLabel = current?.number === 2
     ? "I\u2019m happy with my niche. Open Session 3"
     : `Mark Session ${current?.number} complete`;
@@ -213,15 +225,15 @@ export default async function PortalPage({
           sessionFinished={sessionFinished}
           meet={meet}
           links={moveLinks}
+          due={due}
           finish={
             tier === "build" ? (
-              <FinishForm action={finishSession} week={current.number} label={buildFinishLabel}>
-                {current.number === 2 && (
-                  <p className="mt-2 text-xs leading-relaxed text-slate">
-                    Not sure yet? Bring it to the weekly drop-in for help.
-                  </p>
-                )}
-              </FinishForm>
+              <FinishForm
+                action={finishSession}
+                week={current.number}
+                label={buildFinishLabel}
+                lead={current.number === 2 ? <NicheLaneCheck /> : undefined}
+              />
             ) : tier === "foundations" ? (
               <FinishForm action={finishSession} week={1} label="Mark Session 1 complete" />
             ) : undefined
@@ -295,13 +307,8 @@ export default async function PortalPage({
                     ? "I’m happy with my niche. Open Session 3"
                     : `Mark Session ${current.number} complete`
                 }
-              >
-                {current.number === 2 && (
-                  <p className="mt-2 text-xs leading-relaxed text-slate">
-                    Not sure yet? Bring it to the weekly drop-in for help.
-                  </p>
-                )}
-              </FinishForm>
+                lead={current.number === 2 ? <NicheLaneCheck /> : undefined}
+              />
             )}
         </>
       ) : (

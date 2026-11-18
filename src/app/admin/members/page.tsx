@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Header } from "../../portal/components/Header";
 import { markCallBooked } from "./actions";
+import { nextMoveOf } from "@/lib/moves";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +52,7 @@ export default async function MembersPage() {
   if (me?.role !== "admin") notFound();
 
   const since = new Date(Date.now() - 365 * DAY).toISOString();
-  const [{ data: people }, { data: gates }, { data: subs }, { data: refusals }] = await Promise.all([
+  const [{ data: people }, { data: gates }, { data: subs }, { data: refusals }, { data: ticks }] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, email, full_name, tier, current_week, completed_week, niche_confirmed_at, lapsed_at, last_activity_at, created_at, wants_one_on_one, session1_finished_at, offer_taken_at, call_booked_at, list_full_at")
@@ -63,7 +64,17 @@ export default async function MembersPage() {
       .from("subscriptions")
       .select("user_id, status, billing_interval, current_period_end, cancel_at_period_end, amount_paid_cents"),
     supabase.from("signup_refusals").select("reason, created_at").gte("created_at", since),
+    // Next-move ticks (0017/0018): which move each member is on.
+    supabase.from("move_ticks").select("user_id, move_id, done_at"),
   ]);
+
+  const ticksOf = new Map<string, { ids: Set<string>; last: string | null }>();
+  for (const t of ticks ?? []) {
+    const e = ticksOf.get(t.user_id) ?? { ids: new Set<string>(), last: null };
+    e.ids.add(t.move_id);
+    if (!e.last || t.done_at > e.last) e.last = t.done_at;
+    ticksOf.set(t.user_id, e);
+  }
 
   const gateOf = new Map((gates as Gate[] | null ?? []).map((g) => [g.user_id, g]));
   const subOf = new Map((subs ?? []).map((s) => [s.user_id, s]));
@@ -118,6 +129,15 @@ export default async function MembersPage() {
                     ? new Date(new Date(p.lapsed_at).setMonth(new Date(p.lapsed_at).getMonth() + 1))
                     : null;
                 const live = s && ["active", "trialing", "past_due"].includes(s.status ?? "");
+                const tk = ticksOf.get(p.id);
+                const finished =
+                  p.tier === "build"
+                    ? (p.completed_week ?? 0) >= p.current_week
+                    : Boolean(p.session1_finished_at);
+                const nm = p.tier !== "pending" && p.current_week > 0
+                  ? nextMoveOf(p.current_week, p.tier, tk?.ids ?? new Set(), finished)
+                  : null;
+                const sinceTick = daysSince(tk?.last ?? null);
                 const a = (gate?.answers ?? {}) as Record<string, unknown>;
                 const first = (gate?.first_answers ?? {}) as Record<string, unknown>;
                 return (
@@ -130,6 +150,12 @@ export default async function MembersPage() {
                           Session {p.current_week}
                           {p.completed_week ? ` · ${p.completed_week} done` : ""}
                           {p.niche_confirmed_at ? " · niche set" : ""}
+                        </span>
+                      )}
+                      {nm && (
+                        <span className="text-slate">
+                          {nm.move ? `Next: ${nm.move.title} (${nm.index} of ${nm.total})` : "All moves done"}
+                          {sinceTick !== null ? ` · last tick ${sinceTick === 0 ? "today" : `${sinceTick} days ago`}` : " · no ticks yet"}
                         </span>
                       )}
                       {s?.status && (

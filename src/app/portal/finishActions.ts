@@ -10,6 +10,8 @@ import { sendDueUpsell } from "@/lib/upsellEmails";
 export async function finishSession(formData: FormData) {
   const week = parseInt(String(formData.get("week") ?? ""), 10);
   if (!Number.isInteger(week)) return;
+  // Session 2 opens Session 3 only with the lane question ticked (Don, m08).
+  if (week === 2 && formData.get("lane_ok") !== "yes") return;
 
   const supabase = createClient();
   const { data, error } = await supabase.rpc("finish_session", { p_week: week });

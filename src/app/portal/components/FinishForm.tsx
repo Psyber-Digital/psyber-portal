@@ -19,8 +19,11 @@ export function FinishForm({
   action,
   week,
   label,
+  lead,
   children,
 }: {
+  /** Shown above the button, e.g. a question that must be answered first. */
+  lead?: React.ReactNode;
   action: (formData: FormData) => Promise<void>;
   week: number;
   label: string;
@@ -29,6 +32,7 @@ export function FinishForm({
   return (
     <form action={action} className="mt-6">
       <input type="hidden" name="week" value={week} />
+      {lead && <div className="mb-3">{lead}</div>}
       <FinishButton label={label} />
       {children}
     </form>
