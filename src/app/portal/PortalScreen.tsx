@@ -22,7 +22,6 @@ import { Brand } from "./components/Brand";
 import { NextMove, type MoveLinks } from "./components/NextMove";
 import { Journey, shortTitle } from "./components/Journey";
 import { Milestones } from "./components/Milestones";
-import { MilestoneToast } from "./components/MilestoneToast";
 import { ThisWeekToolkit } from "./components/ThisWeek";
 import { badgesOf, badgeTickId, momentumOf } from "@/lib/milestones";
 import { movesFor } from "@/lib/moves";
@@ -358,10 +357,14 @@ export async function PortalScreen({
             due={due}
             finish={finishNode}
           />
+          {/* Progress sits under the card (Don, board m16, 18 Nov 2026:
+              "gamification keeps them motivated"). Its pop-up comes with it. */}
+          {badges.length > 0 && (
+            <Milestones badges={badges} momentum={momentum} memberKey={user.id.slice(0, 8)} />
+          )}
           <p className="mt-6 text-center text-[13px] text-mut">
-            Your program, The List and your progress are in the menu above.
+            Your program and The List are in the menu above.
           </p>
-          <MilestoneToast earned={badges.filter((b) => b.earned)} memberKey={user.id.slice(0, 8)} />
           <div className="mt-6">{banners}</div>
           {booking}
         </div>
