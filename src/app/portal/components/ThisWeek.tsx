@@ -92,14 +92,14 @@ export function ThisWeekToolkit({
       : files.filter((f) => f.kind === "resource").sort((a, b) => a.sort_order - b.sort_order);
 
   const tabs: ToolkitTab[] = [];
-  if (video) tabs.push({ id: "watch", label: "Video", panel: <StepVideo n={1} guide={guide} video={video} title={week.title} /> });
+  if (video) tabs.push({ id: "watch", label: "Video", panel: <StepVideo n={0} guide={guide} video={video} title={week.title} /> });
   if (workbook || wsFiles.length)
-    tabs.push({ id: "sheet", label: "Working Sheet", panel: <StepWorkbook n={2} guide={guide} workbook={workbook} wsFiles={wsFiles} /> });
+    tabs.push({ id: "sheet", label: "Working Sheet", panel: <StepWorkbook n={0} guide={guide} workbook={workbook} wsFiles={wsFiles} quiet /> });
   if (resources.length || resFiles.length || printResources.length)
     tabs.push({
       id: "resources",
       label: "Principle Card & resources",
-      panel: <StepResources n={3} guide={guide} resources={resources} resFiles={resFiles} printResources={printResources} />,
+      panel: <StepResources n={0} guide={guide} resources={resources} resFiles={resFiles} printResources={printResources} />,
     });
   if (guide?.note) tabs.push({ id: "note", label: "Coach\u2019s note", panel: <FramingNote note={guide.note} budget={guide.budget} /> });
   if (welcome) tabs.push({ id: "welcome", label: "Welcome video", panel: welcome });
@@ -209,6 +209,8 @@ function CompassIcon() {
 //
 // The accent is now spent in one place per week: the button that opens the sheet.
 function StepNum({ n }: { n: number; hero?: boolean }) {
+  // n = 0 inside the toolkit: the move card already numbers the work.
+  if (n === 0) return null;
   return (
     <div className="grid h-[38px] w-[38px] flex-none place-items-center rounded-full border border-line bg-[#0c1424] font-disp text-[15px] font-semibold text-mut">
       {n}
@@ -304,11 +306,14 @@ function StepWorkbook({
   guide,
   workbook,
   wsFiles,
+  quiet,
 }: {
   n: number;
   guide?: WeekGuide;
   workbook?: PortalResource;
   wsFiles: FileRow[];
+  /** In the toolkit the move card owns the orange; this button goes plain. */
+  quiet?: boolean;
 }) {
   const s = guide?.workbookStep;
   return (
@@ -341,13 +346,13 @@ function StepWorkbook({
               href={workbook.href}
               target={workbook.open ? "_blank" : undefined}
               rel={workbook.open ? "noopener noreferrer" : undefined}
-              className="psy-btn-orange group"
+              className={`${quiet ? "psy-btn-ghost" : "psy-btn-orange"} group`}
             >
               {workbook.label} <span className="transition group-hover:translate-x-1">→</span>
             </a>
           )}
           {wsFiles.map((f) => (
-            <a key={f.id} href={`/api/download/${f.id}`} className="psy-btn-orange">
+            <a key={f.id} href={`/api/download/${f.id}`} className={quiet ? "psy-btn-ghost" : "psy-btn-orange"}>
               {f.title}
             </a>
           ))}

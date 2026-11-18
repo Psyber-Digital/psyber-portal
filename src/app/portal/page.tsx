@@ -179,23 +179,11 @@ export default async function PortalPage({
     ? "I\u2019m happy with my niche. Open Session 3"
     : `Mark Session ${current?.number} complete`;
 
-  return (
-    <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
-      <Header name={profile?.full_name || "Client"} role="client" />
-      {profile?.tier === "build" && <ScrollTopOnChange value={profile.completed_week ?? 0} />}
-      <PortalNav
-        badge={uncollected ?? 0}
-        clinic={profile?.tier === "build"}
-        oneOnOne={profile?.tier === "foundations" || profile?.tier === "build"}
-      />
-
-      {/* Straight from Stripe's payment page (billing sends them here). */}
-      {profile?.tier === "build" && searchParams?.joined && (
-        <p className="mb-6 rounded-[9px] border border-blue/30 bg-blue/10 px-4 py-3 text-sm text-sec">
-          Welcome to <Brand name="Build" tm />. Each session you finish opens the next.
-        </p>
-      )}
-
+  // Set-a-password and the Build offer. Above the page as before, but below
+  // the toolkit when the move card is showing, so the card comes first
+  // (clarity pass, board m10, 18 Nov).
+  const banners = (
+    <>
       {!hasPassword && <SetPasswordPrompt />}
 
       {/* Foundations members: the way into Build. WORDING: board card r11,
@@ -227,6 +215,28 @@ export default async function PortalPage({
         </a>
       )}
 
+    </>
+  );
+
+  return (
+    <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
+      <Header name={profile?.full_name || "Client"} role="client" />
+      {profile?.tier === "build" && <ScrollTopOnChange value={profile.completed_week ?? 0} />}
+      <PortalNav
+        badge={uncollected ?? 0}
+        clinic={profile?.tier === "build"}
+        oneOnOne={profile?.tier === "foundations" || profile?.tier === "build"}
+      />
+
+      {/* Straight from Stripe's payment page (billing sends them here). */}
+      {profile?.tier === "build" && searchParams?.joined && (
+        <p className="mb-6 rounded-[9px] border border-blue/30 bg-blue/10 px-4 py-3 text-sm text-sec">
+          Welcome to <Brand name="Build" tm />. Each session you finish opens the next.
+        </p>
+      )}
+
+      {!showNextMove && banners}
+
       {/* Redesign (board r01): the move card is the centre. The welcome video
           and the session intro move into the toolkit below it. */}
       {!showNextMove && <WelcomeVideo currentWeek={currentWeek} />}
@@ -247,7 +257,6 @@ export default async function PortalPage({
 
       {showNextMove && current && (
         <NextMove
-          sessionTitle={shortTitle(current.title)}
           session={current.number}
           moves={moves}
           ticked={ticked}
@@ -270,10 +279,6 @@ export default async function PortalPage({
         />
       )}
 
-      {current && !viewingPast && badges.length > 0 && (
-        <Milestones badges={badges} momentum={momentum} memberKey={user.id.slice(0, 8)} />
-      )}
-
       {showNextMove && current && (
         <>
           <ThisWeekToolkit
@@ -285,6 +290,12 @@ export default async function PortalPage({
           {currentWeek > 1 && <WelcomeVideo currentWeek={currentWeek} />}
         </>
       )}
+
+      {current && !viewingPast && badges.length > 0 && (
+        <Milestones badges={badges} momentum={momentum} memberKey={user.id.slice(0, 8)} />
+      )}
+
+      {showNextMove && <div className="mt-6">{banners}</div>}
 
       {focused ? (
         <>

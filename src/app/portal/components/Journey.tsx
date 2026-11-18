@@ -79,7 +79,7 @@ export function Journey({
         <div className="flex-[3] border-l border-line">How you serve them</div>
         <div className="flex-1 border-l border-line">Launch</div>
       </div>
-      {lockedNote && <p className="mt-2 text-center text-[12px] text-orange">{lockedNote}</p>}
+      {lockedNote && <p className="mt-2 text-center text-[12px] text-mut">{lockedNote}</p>}
     </section>
   );
 }

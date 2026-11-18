@@ -32,45 +32,43 @@ export function Milestones({
   memberKey: string;
 }) {
   const earned = badges.filter((b) => b.earned).length;
+  // Only the next badge to earn says how; the rest show it on hover or tap.
+  const next = badges.find((b) => !b.earned);
   return (
-    <>
-      <section className="psy-card mt-6 p-5 sm:p-6" aria-labelledby="momentum-title">
-        <h2 id="momentum-title" className="font-disp text-[16px] font-semibold">Your momentum</h2>
-        <p className="mt-0.5 text-[13px] text-mut">Every move you finish counts. Badges stay earned.</p>
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          {[
-            [momentum.movesDone, "moves done"],
-            [momentum.weeksInMotion, momentum.weeksInMotion === 1 ? "week in motion" : "weeks in motion"],
-            [momentum.names, "names on your list"],
-          ].map(([n, label]) => (
-            <div key={String(label)} className="rounded-[14px] border border-line bg-ink px-3.5 py-3">
-              <b className="block font-disp text-[24px] font-bold leading-tight text-off sm:text-[26px]">{n}</b>
-              <span className="text-[12px] leading-tight text-mut">{label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="psy-card mt-4 p-5 sm:p-6" aria-labelledby="milestones-title">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <h2 id="milestones-title" className="font-disp text-[16px] font-semibold">Milestones</h2>
-          <span className="text-[12.5px] text-mut">{earned} of {badges.length}</span>
-        </div>
-        <p className="mt-0.5 text-[13px] text-mut">Earned by doing the work, never by logging in.</p>
-        <ul className="mt-4 grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-5">
-          {badges.map((b) => (
-            <li key={b.key} className="text-center">
-              <Medal badge={b} />
-              <b className={`mt-2 block font-disp text-[12.5px] font-semibold leading-tight ${b.earned ? "text-off" : "text-mut"}`}>
-                {b.name}
-              </b>
-              <small className="mt-0.5 block text-[11px] leading-snug text-mut">{b.how}</small>
-            </li>
-          ))}
-        </ul>
-      </section>
-
+    <section className="psy-card mt-6 p-5 sm:p-6" aria-labelledby="progress-title">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h2 id="progress-title" className="font-disp text-[16px] font-semibold">Your progress</h2>
+        <span className="text-[12.5px] text-mut">{earned} of {badges.length} milestones</span>
+      </div>
+      <div className="mt-4 grid grid-cols-3 gap-3">
+        {[
+          [momentum.movesDone, momentum.movesDone === 1 ? "move done" : "moves done"],
+          [momentum.weeksInMotion, momentum.weeksInMotion === 1 ? "active week" : "active weeks"],
+          [momentum.names, "names on your list"],
+        ].map(([n, label]) => (
+          <div key={String(label)} className="rounded-[14px] border border-line bg-ink px-3.5 py-3">
+            <b className="block font-disp text-[24px] font-bold leading-tight text-off">{n}</b>
+            <span className="text-[12px] leading-tight text-mut">{label}</span>
+          </div>
+        ))}
+      </div>
+      {next && (
+        <p className="mt-4 text-[13px] text-sec">
+          Next milestone: <b className="font-semibold text-off">{next.name}</b>. {next.how}.
+        </p>
+      )}
+      <ul className="mt-4 grid grid-cols-4 gap-x-2 gap-y-4 sm:grid-cols-7">
+        {badges.map((b) => (
+          <li key={b.key} className="text-center" title={`${b.name}: ${b.how}`}>
+            <Medal badge={b} size={48} />
+            <span className={`mt-1.5 block font-disp text-[11.5px] font-semibold leading-tight ${b.earned ? "text-off" : "text-mut"}`}>
+              {b.name}
+            </span>
+            <span className="sr-only">{b.earned ? "Earned." : `Not yet. ${b.how}.`}</span>
+          </li>
+        ))}
+      </ul>
       <MilestoneToast earned={badges.filter((b) => b.earned)} memberKey={memberKey} />
-    </>
+    </section>
   );
 }

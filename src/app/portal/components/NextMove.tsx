@@ -31,7 +31,18 @@ function Label({ children }: { children: ReactNode }) {
   );
 }
 
-function OpenLink({ kind, href, small }: { kind: Exclude<MoveOpens, "none">; href?: string; small?: boolean }) {
+function OpenLink({
+  kind,
+  href,
+  small,
+  where,
+}: {
+  kind: Exclude<MoveOpens, "none">;
+  href?: string;
+  small?: boolean;
+  /** e.g. "block 1": shown on the button, so the card needs no extra line. */
+  where?: string;
+}) {
   if (!href) return null;
   const same = SAME_TAB.includes(kind);
   return (
@@ -41,7 +52,8 @@ function OpenLink({ kind, href, small }: { kind: Exclude<MoveOpens, "none">; hre
       rel={same ? undefined : "noopener noreferrer"}
       className={`psy-btn-ghost ${small ? "!px-3 !py-2 !text-[13px]" : "!rounded-xl !px-5 !py-3 !text-[14.5px]"}`}
     >
-      {OPEN_LABEL[kind]} →
+      {OPEN_LABEL[kind]}
+      {where ? `, ${where}` : ""} →
     </a>
   );
 }
@@ -73,7 +85,6 @@ function Ring({ done, total }: { done: number; total: number }) {
 
 export function NextMove({
   session,
-  sessionTitle,
   moves,
   ticked,
   sessionFinished,
@@ -83,8 +94,6 @@ export function NextMove({
   due = [],
 }: {
   session: number;
-  /** Short name of the session, e.g. "Niche". */
-  sessionTitle: string;
   moves: Move[];
   ticked: Set<string>;
   /** The session's own "complete" is already recorded (Build / Foundations). */
@@ -150,9 +159,6 @@ export function NextMove({
           <Ring done={doneCount} total={moves.length} />
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-orange/[0.12] px-2.5 py-1 font-disp text-[11px] font-semibold uppercase tracking-[1.2px] text-orange">
-              Session {session} · {sessionTitle}
-            </span>
             {current?.mins && (
               <span className="rounded-full bg-blue/[0.12] px-2.5 py-1 font-disp text-[11px] font-semibold uppercase tracking-[1.2px] text-[#69b4ff]">
                 {current.mins}
@@ -166,16 +172,15 @@ export function NextMove({
                 {current.title}
               </h2>
               <p className="mt-2 max-w-[56ch] text-[15px] leading-relaxed text-sec sm:text-[15.5px]">{current.why}</p>
-              {current.where && <p className="mt-2 text-[12.5px] text-mut">Working Sheet, {current.where}</p>}
 
               {current.finish ? (
                 finish
               ) : (
                 <div className="mt-5 flex flex-wrap items-center gap-2.5">
-                  {current.opens !== "none" && <OpenLink kind={current.opens} href={links[current.opens]} />}
+                  {current.opens !== "none" && <OpenLink kind={current.opens} href={links[current.opens]} where={current.where} />}
                   <form action={tickMove}>
                     <input type="hidden" name="move" value={current.id} />
-                    <CelebrateButton className="psy-btn !rounded-xl !px-5 !py-3 !text-[14.5px]" />
+                    <CelebrateButton className="psy-btn-orange !rounded-xl !px-6 !py-3 !text-[15px]" />
                   </form>
                 </div>
               )}
@@ -195,19 +200,18 @@ export function NextMove({
         </section>
       </div>
 
-      {upNext && (
-        <p className="mx-1.5 mt-1 text-[13px] text-mut">
-          Up next: <b className="font-semibold text-sec">{upNext.title}</b>
-        </p>
-      )}
-
-      <details className="group mx-1.5 mt-2">
-        <summary className="cursor-pointer list-none text-[12.5px] text-mut marker:hidden">
+      <details className="group mx-1.5 mt-1">
+        <summary className="cursor-pointer list-none text-[13px] text-mut marker:hidden">
+          {upNext && (
+            <>
+              Up next: <b className="font-semibold text-sec">{upNext.title}</b>
+              <span className="mx-1.5">·</span>
+            </>
+          )}
           <span className="underline decoration-dotted underline-offset-2">
-            <span className="group-open:hidden">All {moves.length} moves this session</span>
+            <span className="group-open:hidden">See all {moves.length}</span>
             <span className="hidden group-open:inline">Hide the list</span>
           </span>
-          <span className="ml-2">· {doneCount} done</span>
         </summary>
         <ol className="mt-3 grid gap-1.5">
           {moves.map((m, i) => (
