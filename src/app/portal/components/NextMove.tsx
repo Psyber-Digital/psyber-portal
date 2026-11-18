@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import type { Move, MoveOpens } from "@/lib/moves";
 import type { DueMove } from "@/lib/dueMoves";
-import { tickMove, untickMove } from "../moveActions";
+import { tickMove, untickMove, parkMove } from "../moveActions";
 import { CelebrateButton } from "./CelebrateButton";
 
 // "Your next move": the centre of the portal (Don, board r01, 18 Nov 2026:
@@ -58,33 +58,12 @@ function OpenLink({
   );
 }
 
-function Ring({ done, total }: { done: number; total: number }) {
-  const c = 2 * Math.PI * 25;
-  return (
-    <div className="absolute right-5 top-5 h-12 w-12 sm:right-6 sm:top-6 sm:h-14 sm:w-14" aria-hidden="true">
-      <svg viewBox="0 0 58 58" className="h-full w-full -rotate-90">
-        <defs>
-          <linearGradient id="psy-ring" x1="0" x2="1">
-            <stop offset="0" stopColor="#FF8D1E" />
-            <stop offset="1" stopColor="#1E90FF" />
-          </linearGradient>
-        </defs>
-        <circle cx="29" cy="29" r="25" fill="none" stroke="#26365a" strokeWidth="5" />
-        <circle
-          cx="29" cy="29" r="25" fill="none" stroke="url(#psy-ring)" strokeWidth="5" strokeLinecap="round"
-          strokeDasharray={c} strokeDashoffset={c - (c * done) / Math.max(total, 1)}
-          className="transition-[stroke-dashoffset] duration-700"
-        />
-      </svg>
-      <span className="absolute inset-0 grid place-items-center font-disp text-[12px] font-semibold text-off sm:text-[13px]">
-        {done}/{total}
-      </span>
-    </div>
-  );
-}
-
 export function NextMove({
   session,
+  sessionName,
+  totalSessions,
+  media,
+  parked = new Set(),
   moves,
   ticked,
   sessionFinished,
@@ -94,6 +73,13 @@ export function NextMove({
   due = [],
 }: {
   session: number;
+  /** e.g. "Niche". */
+  sessionName: string;
+  totalSessions: number;
+  /** Shown inside the card for a video move: the session's video itself. */
+  media?: ReactNode;
+  /** Moves the member pressed "Not now" on. They come back after the rest. */
+  parked?: Set<string>;
   moves: Move[];
   ticked: Set<string>;
   /** The session's own "complete" is already recorded (Build / Foundations). */
@@ -110,15 +96,35 @@ export function NextMove({
 
   const isDone = (m: Move) => (m.finish ? sessionFinished : ticked.has(m.id));
   const doneCount = moves.filter(isDone).length;
-  const current = moves.find((m) => !isDone(m));
+  // "Not now" parks a move: the next unparked one comes first, and parked
+  // ones come back once everything else is done (the War Room's park).
+  const current = moves.find((m) => !isDone(m) && !parked.has(m.id)) ?? moves.find((m) => !isDone(m));
   const index = current ? moves.indexOf(current) : moves.length;
   const upNext = current ? moves.slice(index + 1).find((m) => !isDone(m)) : undefined;
 
   return (
     <>
+      {/* Where you are: the session, and how far through it. */}
+      <div className="mx-0.5 mt-5">
+        <div className="flex items-baseline justify-between gap-3 text-[13px] text-mut">
+          <span>
+            Session {session} of {totalSessions} · <b className="font-semibold text-sec">{sessionName}</b>
+          </span>
+          <span>
+            {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
+          </span>
+        </div>
+        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden="true">
+          <i
+            className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
+            style={{ width: `${Math.round((doneCount / Math.max(moves.length, 1)) * 100)}%` }}
+          />
+        </div>
+      </div>
+
       {due.length > 0 && (
         <>
-          <Label>Today</Label>
+          <Label>Due today</Label>
           <ul className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2" aria-label="Due today">
             {due.map((d) => (
               <li
@@ -144,8 +150,7 @@ export function NextMove({
         </>
       )}
 
-      <Label>Your next move</Label>
-      <div className="relative pb-5">
+      <div className="relative mt-5 pb-5">
         {/* The deck: two cards waiting behind this one. */}
         <div className="absolute inset-x-11 bottom-0 h-16 rounded-[22px] border border-line bg-panel2 opacity-40" aria-hidden="true" />
         <div className="absolute inset-x-5 bottom-2.5 h-16 rounded-[22px] border border-line bg-panel2 opacity-75" aria-hidden="true" />
@@ -153,47 +158,54 @@ export function NextMove({
         <section
           key={current?.id ?? "all-done"}
           aria-labelledby="next-move-title"
-          className="psy-deck-card relative z-10 overflow-hidden rounded-[22px] border border-[#33497a] bg-[linear-gradient(160deg,#1a2744_0%,#121B2E_60%)] p-5 pr-20 shadow-card sm:p-7 sm:pr-24"
+          className="psy-deck-card relative z-10 overflow-hidden rounded-[22px] border border-[#33497a] bg-[linear-gradient(160deg,#1a2744_0%,#121B2E_60%)] p-5 shadow-card sm:p-8"
         >
           <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#FF8D1E,#ffb36b_50%,#1E90FF)]" aria-hidden="true" />
-          <Ring done={doneCount} total={moves.length} />
-
-          <div className="flex flex-wrap items-center gap-2">
-            {current?.mins && (
-              <span className="rounded-full bg-blue/[0.12] px-2.5 py-1 font-disp text-[11px] font-semibold uppercase tracking-[1.2px] text-[#69b4ff]">
-                {current.mins}
-              </span>
-            )}
-          </div>
 
           {current ? (
             <>
-              <h2 id="next-move-title" className="mt-4 font-disp text-[21px] font-semibold leading-snug text-off sm:text-[25px]">
+              <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-mut">
+                Your next move{current.mins ? ` · ${current.mins}` : ""}
+              </div>
+              <h2 id="next-move-title" className="mt-2.5 font-disp text-[22px] font-semibold leading-snug text-off sm:text-[28px]">
                 {current.title}
               </h2>
-              <p className="mt-2 max-w-[56ch] text-[15px] leading-relaxed text-sec sm:text-[15.5px]">{current.why}</p>
+              <p className="mt-2.5 max-w-[58ch] text-[15px] leading-relaxed text-sec sm:text-[16px]">{current.why}</p>
 
               {current.finish ? (
                 finish
               ) : (
-                <div className="mt-5 flex flex-wrap items-center gap-2.5">
-                  {current.opens !== "none" && <OpenLink kind={current.opens} href={links[current.opens]} where={current.where} />}
-                  <form action={tickMove}>
+                <>
+                  {current.opens === "video" && media ? (
+                    <div className="mt-5">{media}</div>
+                  ) : current.opens !== "none" && current.opens !== "video" ? (
+                    <div className="mt-5">
+                      <OpenLink kind={current.opens} href={links[current.opens]} where={current.where} />
+                    </div>
+                  ) : null}
+                  <form action={tickMove} className="mt-4">
                     <input type="hidden" name="move" value={current.id} />
-                    <CelebrateButton className="psy-btn-orange !rounded-xl !px-6 !py-3 !text-[15px]" />
+                    <CelebrateButton className="psy-btn-orange w-full !rounded-xl !py-3.5 !text-[16px] sm:w-auto sm:!px-10" />
                   </form>
-                </div>
+                  <form action={parkMove} className="mt-3 text-center sm:text-left">
+                    <input type="hidden" name="move" value={current.id} />
+                    <input type="hidden" name="session" value={session} />
+                    <button type="submit" className="text-[13px] text-mut underline decoration-dotted underline-offset-2 hover:text-off">
+                      Not now
+                    </button>
+                  </form>
+                </>
               )}
             </>
           ) : (
             <>
-              <h2 id="next-move-title" className="mt-4 font-disp text-[21px] font-semibold leading-snug text-off sm:text-[25px]">
+              <h2 id="next-move-title" className="font-disp text-[22px] font-semibold leading-snug text-off sm:text-[28px]">
                 Every move for Session {session} is done.
               </h2>
-              <p className="mt-2 max-w-[56ch] text-[15px] leading-relaxed text-sec">
+              <p className="mt-2.5 max-w-[56ch] text-[15px] leading-relaxed text-sec">
                 {meet
                   ? `Well done. Bring what you made to ${meet}.`
-                  : "Well done. Sessions 2 to 7, and the weekly drop-in, open in Build™."}
+                  : "Well done. Sessions 2 to 7, and the weekly drop-in, open in Build\u2122."}
               </p>
             </>
           )}

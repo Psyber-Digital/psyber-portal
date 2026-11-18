@@ -17,7 +17,10 @@ export function Journey({
   selected,
   finishedThrough,
   lockedNote,
+  linkBase = "/portal",
 }: {
+  /** Where a session link goes: the Program page in structure A. */
+  linkBase?: string;
   weeks: WeekOutline[];
   currentWeek: number;
   selected?: number;
@@ -57,7 +60,7 @@ export function Journey({
                 />
               )}
               {unlocked ? (
-                <Link href={w.number === currentWeek ? "/portal" : `/portal?week=${w.number}`} aria-label={`Open Session ${w.number}`}>
+                <Link href={w.number === currentWeek ? linkBase : `${linkBase}?week=${w.number}`} aria-label={`Open Session ${w.number}`}>
                   {dot}
                 </Link>
               ) : (

@@ -6,10 +6,14 @@ import { usePathname } from "next/navigation";
 // The client's top-level navigation. Client-side only because it highlights the
 // active section from the current path. Never rendered for the admin — the admin
 // dashboard has its own tab strip.
+// Structure A (board m10, 18 Nov 2026): "Today" is the move card alone; the
+// rest of the program lives in these pages.
 const TABS = [
-  { href: "/portal", label: "This week" },
-  { href: "/portal/shared", label: "Shared Files" },
+  { href: "/portal", label: "Today" },
+  { href: "/portal/program", label: "Program" },
   { href: "/portal/outreach", label: "The List" },
+  { href: "/portal/progress", label: "Progress" },
+  { href: "/portal/shared", label: "Shared Files" },
 ];
 
 // The Clinic tab shows for Build members only (Offer Ladder stage 5).

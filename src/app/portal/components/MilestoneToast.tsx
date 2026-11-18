@@ -29,37 +29,36 @@ export function MilestoneToast({ earned, memberKey }: { earned: Badge[]; memberK
     }
     if (fresh.length === 0) return;
     setBadge(fresh[fresh.length - 1]);
-    burstAt(window.innerWidth / 2, window.innerHeight - 90);
-    const t = window.setTimeout(() => setBadge(null), 4200);
+    burstAt(window.innerWidth / 2, window.innerHeight / 2);
+    const t = window.setTimeout(() => setBadge(null), 6000);
     return () => window.clearTimeout(t);
   }, [earned, memberKey]);
 
+  if (!badge) return <span role="status" aria-live="polite" className="sr-only" />;
   return (
     <div
       role="status"
       aria-live="polite"
-      className={`fixed bottom-6 left-1/2 z-50 flex max-w-[calc(100%-32px)] -translate-x-1/2 items-center gap-3 rounded-2xl border border-[#3b5a92] bg-[#0f1a2e] py-3 pl-3 pr-5 shadow-card transition-all duration-500 ${
-        badge ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-8 opacity-0"
-      }`}
+      className="fixed inset-0 z-50 grid place-items-center bg-[#050a14]/70 p-6 backdrop-blur-sm"
+      onClick={() => setBadge(null)}
     >
-      {badge && (
-        <>
-          <span
-            className={`grid h-11 w-11 flex-none place-items-center rounded-full ${badge.tone === "blue" ? "psy-medal-blue" : "psy-medal-orange"}`}
-          >
-            <BadgeGlyph
-              icon={badge.icon}
-              className={`h-5 w-5 ${badge.tone === "blue" ? "stroke-[#04122a]" : "stroke-[#2a1400]"}`}
-            />
-          </span>
-          <span>
-            <span className="block font-disp text-[11px] font-semibold uppercase tracking-[1.4px] text-orange">
-              Milestone earned
-            </span>
-            <span className="block font-disp text-[15px] font-semibold text-off">{badge.name}</span>
-          </span>
-        </>
-      )}
+      <div className="psy-deck-card w-full max-w-[340px] rounded-[22px] border border-[#3b5a92] bg-[linear-gradient(160deg,#1a2744,#121B2E)] px-6 py-8 text-center shadow-card">
+        <span
+          className={`psy-medal-shine relative mx-auto grid h-24 w-24 place-items-center rounded-full ${badge.tone === "blue" ? "psy-medal-blue" : "psy-medal-orange"}`}
+        >
+          <BadgeGlyph
+            icon={badge.icon}
+            className={`h-10 w-10 ${badge.tone === "blue" ? "stroke-[#04122a]" : "stroke-[#2a1400]"}`}
+          />
+        </span>
+        <span className="mt-5 block font-disp text-[12px] font-semibold uppercase tracking-[1.6px] text-orange">
+          Milestone earned
+        </span>
+        <span className="mt-1 block font-disp text-[22px] font-semibold text-off">{badge.name}</span>
+        <button type="button" className="psy-btn mt-6 w-full" onClick={() => setBadge(null)}>
+          Keep going
+        </button>
+      </div>
     </div>
   );
 }

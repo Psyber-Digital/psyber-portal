@@ -1,8 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
-import { ALL_MOVE_IDS } from "@/lib/moves";
+import { ALL_MOVE_IDS, PARK_COOKIE } from "@/lib/moves";
 import { DUE_TICK_PATTERN } from "@/lib/dueMoves";
 
 // "Your next move": the member marks a move done, or takes the tick back.
@@ -51,5 +52,19 @@ export async function untickMove(formData: FormData) {
     .eq("user_id", auth.user.id)
     .eq("move_id", move);
   if (error) console.error("untickMove failed:", error.message);
+  revalidatePath("/portal");
+}
+
+// "Not now": park the move for this browser. The card shows the next one, and
+// parked moves come back once the rest of the session is done. A per-browser
+// convenience, like the War Room's park; nothing is stored in the database.
+
+export async function parkMove(formData: FormData) {
+  const move = moveFrom(formData);
+  if (!move) return;
+  const jar = cookies();
+  const current = (jar.get(PARK_COOKIE)?.value ?? "").split(",").filter((id) => ALL_MOVE_IDS.has(id));
+  const next = [...current.filter((id) => id !== move), move].slice(-40);
+  jar.set(PARK_COOKIE, next.join(","), { path: "/portal", maxAge: 60 * 60 * 24 * 60, sameSite: "lax", httpOnly: true });
   revalidatePath("/portal");
 }

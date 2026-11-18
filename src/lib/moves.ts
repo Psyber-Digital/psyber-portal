@@ -202,3 +202,6 @@ export function nextMoveOf(
   const i = moves.findIndex((m) => (m.finish ? !sessionFinished : !ticked.has(m.id)));
   return { move: i >= 0 ? moves[i] : undefined, index: i >= 0 ? i + 1 : moves.length, total: moves.length };
 }
+
+/** Cookie holding the moves a member pressed "Not now" on (per browser). */
+export const PARK_COOKIE = "psy-parked";
