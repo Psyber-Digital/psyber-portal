@@ -1,8 +1,7 @@
-import { PortalScreen } from "../PortalScreen";
+import { redirect } from "next/navigation";
 
-// The Progress page: momentum and milestones (structure A, board m10).
-export const dynamic = "force-dynamic";
-
+// Progress lives on Today, under the move card (Don, board m16, 18 Nov 2026:
+// "Doesn't need to be in the Progress page too"). Old links land there.
 export default function ProgressPage() {
-  return <PortalScreen view="progress" />;
+  redirect("/portal");
 }

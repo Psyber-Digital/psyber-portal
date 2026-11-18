@@ -34,11 +34,11 @@ import { VimeoEmbed } from "./components/VimeoEmbed";
 
 const BOOK_ID = "book";
 
-// One page, three views (structure A, board m10, 18 Nov 2026): "today" is
-// the move card and nothing else; "program" holds the journey and every
-// session's materials; "progress" holds momentum and milestones. The program
-// and progress routes render this same component, so the facts load once.
-export type PortalView = "today" | "program" | "progress";
+// One page, two views (structure A, board m10, 18 Nov 2026): "today" is the
+// move card with progress under it (m16); "program" holds the journey and
+// every session's materials. The program route renders this same component,
+// so the facts load once.
+export type PortalView = "today" | "program";
 
 export async function PortalScreen({
   searchParams,
@@ -388,15 +388,6 @@ export async function PortalScreen({
         </>
       )}
 
-      {view === "progress" && (
-        <>
-          {badges.length > 0 ? (
-            <Milestones badges={badges} momentum={momentum} memberKey={user.id.slice(0, 8)} />
-          ) : (
-            <div className="psy-card mt-6 p-10 text-center text-sm text-mut">Your progress shows here once your first session opens.</div>
-          )}
-        </>
-      )}
     </div>
   );
 }
