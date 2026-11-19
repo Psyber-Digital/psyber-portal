@@ -107,7 +107,7 @@ export function NextMove({
   /** Back after a week or more away. */
   welcomeBack?: boolean;
   /** The contact-list strip: names now, the target, and names added this week. */
-  list?: { names: number; target: number; thisWeek: number };
+  list?: { names: number; target: number; thisWeek: number; earning: boolean };
 }) {
   if (moves.length === 0) return null;
 
@@ -215,7 +215,9 @@ export function NextMove({
                 <i className="block h-full bg-blue" style={{ width: `${Math.min(100, Math.round((list.names / Math.max(list.target, 1)) * 100))}%` }} />
               </span>
             </span>
-            <span className="whitespace-nowrap font-disp text-[12px] font-semibold text-[#7fc0ff]">+10 a name</span>
+            {list.earning && (
+              <span className="whitespace-nowrap font-disp text-[12px] font-semibold text-[#7fc0ff]">+10 a name</span>
+            )}
           </a>
         )}
       </div>

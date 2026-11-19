@@ -64,8 +64,10 @@ export default async function MembersPage() {
       .from("subscriptions")
       .select("user_id, status, billing_interval, current_period_end, cancel_at_period_end, amount_paid_cents"),
     supabase.from("signup_refusals").select("reason, created_at").gte("created_at", since),
-    // Next-move ticks (0017/0018): which move each member is on.
-    supabase.from("move_ticks").select("user_id, move_id, done_at"),
+    // Next-move ticks (0017/0018): which move each member is on. Kept points
+    // (s1-p-, board m18) are left out: they can run to hundreds per member and
+    // would push real ticks past the API's row limit, and they aren't moves.
+    supabase.from("move_ticks").select("user_id, move_id, done_at").not("move_id", "like", "s1-p-%"),
   ]);
 
   const ticksOf = new Map<string, { ids: Set<string>; last: string | null }>();

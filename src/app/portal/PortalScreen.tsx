@@ -130,8 +130,27 @@ export async function PortalScreen({
   const tier = profile?.tier;
   const moves = current ? movesFor(current.number, tier) : [];
   const { data: tickRows } = current
-    ? await supabase.from("move_ticks").select("move_id, done_at")
+    ? await supabase.from("move_ticks").select("move_id, done_at").not("move_id", "like", "s1-p-%")
     : { data: [] as { move_id: string; done_at: string }[] };
+  // Kept points (s1-p-) are read separately, a page at a time, so a member
+  // with hundreds of them never pushes real ticks past the API's row limit.
+  const pointRows: { move_id: string; done_at: string }[] = [];
+  if (current) {
+    for (let from = 0; from < 20000; from += 1000) {
+      const { data: page, error: pageErr } = await supabase
+        .from("move_ticks")
+        .select("move_id, done_at")
+        .like("move_id", "s1-p-%")
+        .order("move_id")
+        .range(from, from + 999);
+      if (pageErr) {
+        console.error("read points failed:", pageErr.message);
+        break;
+      }
+      pointRows.push(...(page ?? []));
+      if (!page || page.length < 1000) break;
+    }
+  }
   const ticked = new Set((tickRows ?? []).map((r) => r.move_id));
   // Dated cards come from the member's own list (owner-only RLS, 0005).
   const { data: contactRows } = current
@@ -190,9 +209,10 @@ export async function PortalScreen({
     if (keepErr) console.error("keep badges failed:", keepErr.message);
   }
   // Points (board m18, 19 Nov 2026): each one is kept as a tick the first time
-  // Today sees it earned, under the member's own login, so they only go up.
+  // Today or Program sees it earned, under the member's own login, so they only
+  // go up. Unticking a move does take that move's own points back.
   const nameTarget = tier === "foundations" ? 50 : 250;
-  const newPointTicks = current ? pointTicksToKeep(contactsList, tickRows ?? [], nameTarget) : [];
+  const newPointTicks = current ? pointTicksToKeep(contactsList, [...(tickRows ?? []), ...pointRows], nameTarget) : [];
   let keptPointTicks: string[] = [];
   if (newPointTicks.length && user) {
     const { error: ptsErr } = await supabase
@@ -204,7 +224,7 @@ export async function PortalScreen({
     if (ptsErr) console.error("keep points failed:", ptsErr.message);
     else keptPointTicks = newPointTicks;
   }
-  const points = pointsTotal([...(tickRows ?? []), ...keptPointTicks.map((move_id) => ({ move_id }))]);
+  const points = pointsTotal([...(tickRows ?? []), ...pointRows, ...keptPointTicks.map((move_id) => ({ move_id }))]);
 
   // The encouragement line: the move ticked in the last three minutes.
   const recent = (tickRows ?? [])
@@ -391,7 +411,13 @@ export async function PortalScreen({
             points={points}
             justDone={justDone}
             welcomeBack={welcomeBack}
-            list={{ names: contactsList.length, target: nameTarget, thisWeek: namesThisWeek(contactsList) }}
+            list={{
+              names: contactsList.length,
+              target: nameTarget,
+              thisWeek: namesThisWeek(contactsList),
+              // Name points stop at the target, so the tag goes too.
+              earning: pointRows.filter((r) => r.move_id.startsWith("s1-p-n-")).length + keptPointTicks.filter((id) => id.startsWith("s1-p-n-")).length < nameTarget,
+            }}
           />
           {/* Progress sits under the card (Don, board m16, 18 Nov 2026:
               "gamification keeps them motivated"). Its pop-up comes with it. */}

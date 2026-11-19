@@ -61,9 +61,15 @@ export function ChapterFinish({
     >
       <div className="psy-deck-card w-full max-w-[360px] rounded-[22px] border border-[#3b5a92] bg-[linear-gradient(160deg,#1a2744,#121B2E)] px-6 py-7 text-center shadow-card">
         <span className="mx-auto grid h-[86px] w-[86px] place-items-center rounded-[24px] bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] font-disp text-[20px] font-bold leading-tight text-[#241100] shadow-[0_10px_30px_rgba(255,141,30,.4)]">
-          Level
-          <br />
-          {Math.min(info.number + 1, 7)}
+          {info.next ? (
+            <>
+              Level
+              <br />
+              {info.next.number}
+            </>
+          ) : (
+            "🏁"
+          )}
         </span>
         <h3 id="chapter-finish-title" className="mt-4 font-disp text-[22px] font-semibold text-off">
           Chapter {info.number} complete
