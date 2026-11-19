@@ -157,7 +157,7 @@ export async function PortalScreen({
   const { data: contactRows } = current
     ? await supabase
         .from("contacts")
-        .select("id, status, correspondence, first_contact_date, last_contact_date, next_followup_date, created_at")
+        .select("id, name, status, correspondence, first_contact_date, last_contact_date, next_followup_date, created_at")
     : { data: [] as DueContact[] };
   const due = current
     ? dueMoves({ contacts: (contactRows ?? []) as DueContact[], session: current.number, tier, ticked })

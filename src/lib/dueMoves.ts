@@ -19,6 +19,8 @@ export type DueContact = {
   last_contact_date: string | null;
   next_followup_date: string | null;
   created_at: string;
+  /** Shown on the one card that must name the person (never my therapy client). */
+  name?: string;
 };
 
 export type DueMove = {
@@ -139,16 +141,19 @@ export function dueMoves({
   // And each person with a call booked was never the member's therapy client
   // (Don, board m20 "4. Yes", 19 Nov 2026; lane check). A discovery call earns
   // its points only once this and the note are both ticked.
-  const unconfirmed = contacts.filter((c) => c.status === "call_booked" && !ticked.has(`s6-ok-${short(c.id)}`));
-  if (unconfirmed.length)
+  // One card per person, by name, so one tap never vouches for someone else.
+  // Asked from the call onwards, including anyone moved straight to an offer
+  // or a sale on The List (lane check, 19 Nov).
+  const talking = contacts.filter(
+    (c) => ["call_booked", "offer_made", "converted"].includes(c.status) && !ticked.has(`s6-ok-${short(c.id)}`),
+  );
+  for (const c of talking)
     out.push({
-      key: "ok",
-      title: unconfirmed.length === 1
-        ? "Confirm the person with a call booked has never been your therapy client"
-        : `Confirm the ${unconfirmed.length} people with a call booked have never been your therapy clients`,
-      why: "Never offer coaching to a current or former therapy client. If one is, give your referral answer instead of the call.",
+      key: `ok-${c.id}`,
+      title: `Confirm ${c.name?.trim() || "this person"} has never been your therapy client`,
+      why: "Never offer coaching to a current or former therapy client. If they have been, cancel the call kindly and don't offer coaching. You can still thank them and ask who they know.",
       opens: "list",
-      tickIds: unconfirmed.map((c) => `s6-ok-${short(c.id)}`),
+      tickIds: [`s6-ok-${short(c.id)}`],
     });
 
   // An offer is made and they're still deciding.

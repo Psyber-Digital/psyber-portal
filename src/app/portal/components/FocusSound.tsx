@@ -108,9 +108,8 @@ export function FocusSound() {
       {info && (
         <div role="note" className="absolute left-0 top-10 z-20 max-w-[320px] rounded-[14px] border border-line bg-panel p-4 text-[13px] leading-relaxed text-sec shadow-card">
           <b className="block font-disp text-[13.5px] font-semibold text-off">Focus sound</b>
-          A soft, steady background sound for when you sit down to do a move. Some people find a steady sound
-          helps them settle into one task and stay with it. Turn it on as you start, and off when you finish.
-          It plays only on this device, and only while this page is open.
+          A soft, steady sound to work to, like distant rain. Turn it on when you sit down to a move, and off when
+          you finish. It plays only on this device, while this page is open.
         </div>
       )}
     </div>

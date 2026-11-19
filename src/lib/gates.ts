@@ -13,7 +13,7 @@ export const NAMES_MIN: Record<number, number> = { 1: 10, 2: 25, 3: 50, 4: 100, 
 export type Gate = { ok: boolean; movesLeft: Move[]; namesNeeded: number; namesMin: number };
 
 export function sessionGate(session: number, moves: Move[], ticked: Set<string>, names: number, cap?: number): Gate {
-  const movesLeft = moves.filter((m) => !m.finish && !ticked.has(m.id));
+  const movesLeft = moves.filter((m) => !m.finish && !m.optional && !ticked.has(m.id));
   // The free list holds 50 names, so its minimum can never be above that.
   const namesMin = Math.min(NAMES_MIN[session] ?? 0, cap ?? Infinity);
   const namesNeeded = Math.max(0, namesMin - names);

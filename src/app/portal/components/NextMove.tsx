@@ -324,19 +324,26 @@ export function NextMove({
                 ) : (
                   <div className="mt-5 rounded-xl bg-[#0B1220] p-4 text-[14px] leading-relaxed text-sec">
                     <b className="block font-disp text-[14.5px] font-semibold text-off">
-                      Before Session {session + 1} opens
+                      Before you finish Session {session}
                     </b>
                     <ul className="mt-2 grid gap-1.5">
                       {gate!.movesLeft.length > 0 && (
                         <li>
-                          Finish {gate!.movesLeft.length === 1 ? "this move" : `these ${gate!.movesLeft.length} moves`}:{" "}
-                          {gate!.movesLeft.map((m) => m.title).join("; ")}.
+                          Finish {gate!.movesLeft.length === 1 ? "this move" : `these ${gate!.movesLeft.length} moves`} first:
+                          <ul className="mt-1 grid list-disc gap-1 pl-5">
+                            {gate!.movesLeft.map((m) => (
+                              <li key={m.id}>
+                                <a href={`/portal?move=${m.id}#card`} className="hover:underline">{m.title}</a>
+                              </li>
+                            ))}
+                          </ul>
                         </li>
                       )}
                       {gate!.namesNeeded > 0 && (
                         <li>
-                          Add {gate!.namesNeeded} more {gate!.namesNeeded === 1 ? "name" : "names"} to your list. This
-                          session needs {gate!.namesMin}.{" "}
+                          Add {gate!.namesNeeded} more {gate!.namesNeeded === 1 ? "name" : "names"} to your list. You need{" "}
+                          {gate!.namesMin} in total to finish this session. Anyone you know outside your therapy work
+                          counts. Never your current therapy clients.{" "}
                           <a href={links.list} className="text-blue underline">Open The List →</a>
                         </li>
                       )}
