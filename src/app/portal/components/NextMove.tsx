@@ -155,8 +155,11 @@ export function NextMove({
 
       {/* The chapter: where the hero is, and the villain in the way. */}
       <div className="mx-0.5 mt-5">
-        <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.4px] text-mut">
-          Your story · You are the hero
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="font-disp text-[11px] font-semibold uppercase tracking-[1.4px] text-mut">
+            Your story · You are the hero
+          </span>
+          <FocusSound />
         </div>
         <div className="mt-1 font-disp text-[11.5px] font-semibold uppercase tracking-[1.6px] text-orange">
           Chapter {session} of {totalSessions} · {chapter?.recorded ?? sessionName}
@@ -282,8 +285,6 @@ export function NextMove({
           {current ? <>Here&rsquo;s your next move.</> : null}
         </p>
       )}
-
-      <FocusSound />
 
       <div id="card" className="relative mt-4 scroll-mt-4 pb-5">
         {/* The deck: two cards waiting behind this one. */}

@@ -85,13 +85,13 @@ export function FocusSound() {
   };
 
   return (
-    <div className="relative mx-0.5 mt-4 flex items-center gap-2">
+    <div className="relative flex items-center gap-2">
       <button
         type="button"
         onClick={toggle}
         aria-pressed={on}
         className={`rounded-full border px-3.5 py-1.5 font-disp text-[12.5px] font-semibold ${
-          on ? "border-blue bg-blue/15 text-blue" : "border-line text-sec hover:text-off"
+          on ? "border-blue bg-blue/15 text-blue" : "border-orange/60 bg-orange/10 text-orange hover:bg-orange/20"
         }`}
       >
         {on ? "♪ Focus sound on" : "♪ Focus sound"}
@@ -106,7 +106,7 @@ export function FocusSound() {
         i
       </button>
       {info && (
-        <div role="note" className="absolute left-0 top-10 z-20 max-w-[320px] rounded-[14px] border border-line bg-panel p-4 text-[13px] leading-relaxed text-sec shadow-card">
+        <div role="note" className="absolute right-0 top-10 z-20 max-w-[320px] rounded-[14px] border border-line bg-panel p-4 text-[13px] leading-relaxed text-sec shadow-card">
           <b className="block font-disp text-[13.5px] font-semibold text-off">Focus sound</b>
           A soft, steady sound to work to, like distant rain. Turn it on when you sit down to a move, and off when
           you finish. It plays only on this device, while this page is open.
