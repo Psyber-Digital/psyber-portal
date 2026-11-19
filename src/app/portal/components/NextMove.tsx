@@ -5,6 +5,8 @@ import { tickMove, untickMove, parkMove } from "../moveActions";
 import { CelebrateButton } from "./CelebrateButton";
 import type { Chapter } from "@/lib/story";
 import { movePoints } from "@/lib/points";
+import type { Gate } from "@/lib/gates";
+import { FocusSound } from "./FocusSound";
 
 // "Your next move": the centre of the portal (Don, board r01, 18 Nov 2026:
 // "make the cards more centre... aesthetically pleasing... fun"). Today's dated
@@ -38,7 +40,9 @@ function OpenLink({
   href,
   small,
   where,
+  onOrange,
 }: {
+  onOrange?: boolean;
   kind: Exclude<MoveOpens, "none">;
   href?: string;
   small?: boolean;
@@ -52,7 +56,11 @@ function OpenLink({
       href={href}
       target={same ? undefined : "_blank"}
       rel={same ? undefined : "noopener noreferrer"}
-      className={`psy-btn-ghost ${small ? "!px-3 !py-2 !text-[13px]" : "!rounded-xl !px-5 !py-3 !text-[14.5px]"}`}
+      className={
+        onOrange
+          ? "inline-block rounded-xl border border-[#1a0d00]/30 bg-white/30 px-5 py-3 font-disp text-[14.5px] font-semibold text-[#1a0d00] hover:bg-white/45"
+          : `psy-btn-ghost ${small ? "!px-3 !py-2 !text-[13px]" : "!rounded-xl !px-5 !py-3 !text-[14.5px]"}`
+      }
     >
       {OPEN_LABEL[kind]}
       {where ? `, ${where}` : ""} →
@@ -78,6 +86,8 @@ export function NextMove({
   justDone,
   welcomeBack = false,
   list,
+  gate,
+  viewId,
 }: {
   session: number;
   /** e.g. "Niche". */
@@ -108,6 +118,10 @@ export function NextMove({
   welcomeBack?: boolean;
   /** The contact-list strip: names now, the target, and names added this week. */
   list?: { names: number; target: number; thisWeek: number; earning: boolean };
+  /** Every move done and the list at its minimum, before the session can finish (m19). */
+  gate?: Gate;
+  /** A card the member stepped back to (?move=id). */
+  viewId?: string;
 }) {
   if (moves.length === 0) return null;
 
@@ -115,9 +129,21 @@ export function NextMove({
   const doneCount = moves.filter(isDone).length;
   // "Not now" parks a move: the next unparked one comes first, and parked
   // ones come back once everything else is done (the War Room's park).
-  const current = moves.find((m) => !isDone(m) && !parked.has(m.id)) ?? moves.find((m) => !isDone(m));
+  // The finish comes last: every other move first, parked ones included (m19).
+  const current =
+    moves.find((m) => !isDone(m) && !m.finish && !parked.has(m.id)) ??
+    moves.find((m) => !isDone(m) && !m.finish) ??
+    moves.find((m) => !isDone(m));
   const index = current ? moves.indexOf(current) : moves.length;
   const upNext = current ? moves.slice(index + 1).find((m) => !isDone(m)) : undefined;
+  // Going back (m19): any earlier card can be opened again, and stepped through.
+  const viewed = viewId ? moves.find((m) => m.id === viewId) : undefined;
+  const shown = viewed && viewed !== current ? viewed : current;
+  const shownIndex = shown ? moves.indexOf(shown) : moves.length;
+  const looking = Boolean(shown && shown !== current);
+  const prev = shownIndex > 0 ? moves[Math.min(shownIndex, moves.length) - 1] : undefined;
+  const fwd = looking && shownIndex + 1 < moves.length && moves[shownIndex + 1] !== current ? moves[shownIndex + 1] : undefined;
+  const gateOk = !gate || gate.ok;
 
   return (
     <>
@@ -257,76 +283,142 @@ export function NextMove({
         </p>
       )}
 
-      <div className="relative mt-5 pb-5">
+      <FocusSound />
+
+      <div id="card" className="relative mt-4 scroll-mt-4 pb-5">
         {/* The deck: two cards waiting behind this one. */}
         <div className="absolute inset-x-11 bottom-0 h-16 rounded-[22px] border border-line bg-panel2 opacity-40" aria-hidden="true" />
         <div className="absolute inset-x-5 bottom-2.5 h-16 rounded-[22px] border border-line bg-panel2 opacity-75" aria-hidden="true" />
 
         <section
-          key={current?.id ?? "all-done"}
+          key={shown?.id ?? "all-done"}
           aria-labelledby="next-move-title"
-          className="psy-deck-card relative z-10 overflow-hidden rounded-[22px] border border-[#33497a] bg-[linear-gradient(160deg,#1a2744_0%,#121B2E_60%)] p-5 shadow-card sm:p-8"
+          className="psy-deck-card relative z-10 overflow-hidden rounded-[22px] border border-[#ffb36b] bg-[linear-gradient(160deg,#FFA54A_0%,#FF8D1E_45%,#E8780F_100%)] p-5 text-[#1a0d00] shadow-card sm:p-8"
         >
-          <span className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#FF8D1E,#ffb36b_50%,#1E90FF)]" aria-hidden="true" />
-
-          {current ? (
+          {shown ? (
             <>
-              <div className="flex items-baseline justify-between gap-3 font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-mut">
-                <span>Move {index + 1} of {moves.length}{current.mins ? ` · ${current.mins}` : ""}</span>
-                {movePoints(current) > 0 && <em className="not-italic text-orange">+{movePoints(current)} points</em>}
+              <div className="flex items-baseline justify-between gap-3 font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-[#4a2600]">
+                <span>
+                  {looking ? "Looking back · " : ""}Move {shownIndex + 1} of {moves.length}
+                  {shown.mins ? ` · ${shown.mins}` : ""}
+                </span>
+                {movePoints(shown) > 0 && <em className="not-italic">+{movePoints(shown)} points</em>}
               </div>
-              <h2 id="next-move-title" className="mt-2.5 font-disp text-[22px] font-semibold leading-snug text-off sm:text-[28px]">
-                {current.q}
+              <h2 id="next-move-title" className="mt-2.5 font-disp text-[22px] font-semibold leading-snug sm:text-[28px]">
+                {shown.q}
               </h2>
-              <p className="mt-2.5 max-w-[58ch] text-[15px] leading-relaxed text-off sm:text-[16px]">
-                <b className="font-semibold">{current.title}</b>
+              <p className="mt-2.5 max-w-[58ch] text-[15px] leading-relaxed sm:text-[16px]">
+                <b className="font-semibold">{shown.title}</b>
               </p>
-              <p className="mt-1.5 max-w-[58ch] text-[14.5px] leading-relaxed text-sec">{current.why}</p>
+              <p className="mt-1.5 max-w-[58ch] text-[14.5px] leading-relaxed text-[#2e1700]">{shown.why}</p>
 
-              {current.finish ? (
-                finish
+              {shown.finish ? (
+                isDone(shown) ? (
+                  <div className="mt-4">
+                    <span className="inline-block rounded-xl bg-[#0B1220] px-5 py-3 font-disp text-[15px] font-semibold text-[#9be7b0]">
+                      Session {session} finished ✓
+                    </span>
+                  </div>
+                ) : gateOk ? (
+                  <div className="mt-5 rounded-xl bg-[#0B1220] p-4 text-off">{finish}</div>
+                ) : (
+                  <div className="mt-5 rounded-xl bg-[#0B1220] p-4 text-[14px] leading-relaxed text-sec">
+                    <b className="block font-disp text-[14.5px] font-semibold text-off">
+                      Before Session {session + 1} opens
+                    </b>
+                    <ul className="mt-2 grid gap-1.5">
+                      {gate!.movesLeft.length > 0 && (
+                        <li>
+                          Finish {gate!.movesLeft.length === 1 ? "this move" : `these ${gate!.movesLeft.length} moves`}:{" "}
+                          {gate!.movesLeft.map((m) => m.title).join("; ")}.
+                        </li>
+                      )}
+                      {gate!.namesNeeded > 0 && (
+                        <li>
+                          Add {gate!.namesNeeded} more {gate!.namesNeeded === 1 ? "name" : "names"} to your list. This
+                          session needs {gate!.namesMin}.{" "}
+                          <a href={links.list} className="text-blue underline">Open The List →</a>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )
               ) : (
                 <>
-                  {current.opens === "video" && media ? (
+                  {shown.opens === "video" && media ? (
                     <div className="mt-5">{media}</div>
-                  ) : current.opens !== "none" && current.opens !== "video" ? (
+                  ) : shown.opens !== "none" && shown.opens !== "video" ? (
                     <div className="mt-5">
-                      <OpenLink kind={current.opens} href={links[current.opens]} where={current.where} />
+                      <OpenLink kind={shown.opens} href={links[shown.opens]} where={shown.where} onOrange />
                     </div>
                   ) : null}
-                  <form action={tickMove} className="mt-4">
-                    <input type="hidden" name="move" value={current.id} />
-                    <CelebrateButton className="psy-btn-orange w-full !rounded-xl !py-3.5 !text-[16px] sm:w-auto sm:!px-10" />
-                  </form>
-                  <form action={parkMove} className="mt-3 text-center sm:text-left">
-                    <input type="hidden" name="move" value={current.id} />
-                    <input type="hidden" name="session" value={session} />
-                    <button type="submit" className="text-[13px] text-mut underline decoration-dotted underline-offset-2 hover:text-off">
-                      Not now
-                    </button>
-                  </form>
+                  {isDone(shown) ? (
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <span className="rounded-xl bg-[#0B1220] px-5 py-3 font-disp text-[15px] font-semibold text-[#9be7b0]">Done ✓</span>
+                      <form action={untickMove}>
+                        <input type="hidden" name="move" value={shown.id} />
+                        <button type="submit" className="text-[13px] underline decoration-dotted underline-offset-2">
+                          Undo
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <>
+                      <form action={tickMove} className="mt-4">
+                        <input type="hidden" name="move" value={shown.id} />
+                        <CelebrateButton className="w-full rounded-xl bg-[#0B1220] py-3.5 font-disp text-[16px] font-semibold text-white hover:bg-[#16213a] sm:w-auto sm:px-10" />
+                      </form>
+                      {!looking && (
+                        <form action={parkMove} className="mt-3 text-center sm:text-left">
+                          <input type="hidden" name="move" value={shown.id} />
+                          <input type="hidden" name="session" value={session} />
+                          <button type="submit" className="text-[13px] underline decoration-dotted underline-offset-2">
+                            Not now
+                          </button>
+                        </form>
+                      )}
+                    </>
+                  )}
                 </>
               )}
+
+              {/* Step back through earlier cards (m19). */}
+              <nav className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[#1a0d00]/20 pt-4 text-[13px] font-semibold" aria-label="Cards">
+                {prev ? (
+                  <a href={`/portal?move=${prev.id}#card`} className="hover:underline">← Previous card</a>
+                ) : (
+                  <span />
+                )}
+                {looking && (
+                  <span className="flex gap-4">
+                    {fwd && <a href={`/portal?move=${fwd.id}#card`} className="hover:underline">Next card →</a>}
+                    <a href="/portal#card" className="hover:underline">Back to your next move →</a>
+                  </span>
+                )}
+              </nav>
             </>
           ) : (
             <>
-              <h2 id="next-move-title" className="font-disp text-[22px] font-semibold leading-snug text-off sm:text-[28px]">
+              <h2 id="next-move-title" className="font-disp text-[22px] font-semibold leading-snug sm:text-[28px]">
                 Every move for Session {session} is done.
               </h2>
-              <p className="mt-2.5 max-w-[56ch] text-[15px] leading-relaxed text-sec">
+              <p className="mt-2.5 max-w-[56ch] text-[15px] leading-relaxed text-[#2e1700]">
                 {meet
                   ? `Well done. Bring what you made to ${meet}.`
                   : "Well done. Sessions 2 to 7, and the weekly drop-in, open in Build\u2122."}
               </p>
+              {prev && (
+                <a href={`/portal?move=${prev.id}#card`} className="mt-4 inline-block text-[13px] font-semibold hover:underline">← Previous card</a>
+              )}
             </>
           )}
         </section>
       </div>
 
-      {current?.guide && (
+      {shown?.guide && (
         <div className="mx-0.5 mb-4 rounded-[14px] border border-line bg-panel px-4 py-3 text-[13.5px] leading-relaxed text-sec">
           <b className="mb-0.5 block font-disp text-[11px] font-semibold uppercase tracking-[1.4px] text-mut">Your guide · Asher</b>
-          {current.guide}
+          {shown.guide}
         </div>
       )}
 
@@ -355,7 +447,7 @@ export function NextMove({
                 {isDone(m) ? "✓" : i + 1}
               </span>
               <span className={`min-w-0 flex-1 ${isDone(m) ? "text-mut" : "text-sec"}`}>{m.title}</span>
-              {m.finish && !isDone(m) && finish && m !== current && (
+              {m.finish && !isDone(m) && finish && m !== current && gateOk && (
                 <details className="text-right">
                   <summary className="cursor-pointer list-none text-[12px] text-mut underline decoration-dotted underline-offset-2 marker:hidden hover:text-off">
                     Mark done

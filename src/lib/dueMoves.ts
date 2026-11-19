@@ -58,7 +58,7 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 
 /** Ids the dated cards may tick. Checked before a tick is saved. */
 export const DUE_TICK_PATTERN =
-  /^s[1-7]-(names-\d{4}w\d{2}|ten-\d{8}|note-[0-9a-f]{12}|won-[0-9a-f]{12}|price-\d{1,2})$/;
+  /^s[1-7]-(names-\d{4}w\d{2}|ten-\d{8}|note-[0-9a-f]{12}|ok-[0-9a-f]{12}|won-[0-9a-f]{12}|price-\d{1,2})$/;
 
 export function dueMoves({
   contacts,
@@ -134,6 +134,21 @@ export function dueMoves({
       why: "Send it before each discovery call. It’s at the top of your call guide.",
       opens: "list",
       tickIds: booked.map((c) => `s6-note-${short(c.id)}`),
+    });
+
+  // And each person with a call booked was never the member's therapy client
+  // (Don, board m20 "4. Yes", 19 Nov 2026; lane check). A discovery call earns
+  // its points only once this and the note are both ticked.
+  const unconfirmed = contacts.filter((c) => c.status === "call_booked" && !ticked.has(`s6-ok-${short(c.id)}`));
+  if (unconfirmed.length)
+    out.push({
+      key: "ok",
+      title: unconfirmed.length === 1
+        ? "Confirm the person with a call booked has never been your therapy client"
+        : `Confirm the ${unconfirmed.length} people with a call booked have never been your therapy clients`,
+      why: "Never offer coaching to a current or former therapy client. If one is, give your referral answer instead of the call.",
+      opens: "list",
+      tickIds: unconfirmed.map((c) => `s6-ok-${short(c.id)}`),
     });
 
   // An offer is made and they're still deciding.

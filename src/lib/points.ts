@@ -17,7 +17,7 @@ export const POINTS = { video: 5, sheet: 20, name: 10, message: 15, tenDay: 25, 
 export const POINT_TICK = /^s1-p-/;
 const MESSAGES_PER_DAY = 10;
 const TEN_DAYS_PER_WEEK = 4;
-const CALL_POINTS_ON = false;
+const CALL_POINTS_ON = true;
 
 const short = (id: string) => id.replace(/-/g, "").slice(0, 12);
 
@@ -69,7 +69,7 @@ const easternDay = (iso: string) => easternToday(new Date(iso));
  * Ten-a-day: a day on which ten names show it as their last contact, at most
  * four per week. It is counted when Today sees it, so a day can be missed
  * (a later follow-up moves a name's date on), but never counted twice.
- * Calls: once the coaching-not-therapy note for that call is ticked (ADR-0029).
+ * Calls: once the coaching-not-therapy note (ADR-0029) and "never my therapy client" are both ticked for that person.
  */
 export function pointTicksToKeep(
   contacts: DueContact[],
@@ -132,14 +132,13 @@ export function pointTicksToKeep(
     keptDays.push(ymd);
   }
 
-  // Calls: held back (lane check, 19 Nov). The note tick alone doesn't confirm
-  // the person was never the member's therapy client, and the biggest reward
-  // must not pay for a dual relationship. Switched on only once that second
-  // tick exists, at Don's say-so.
+  // Calls: only once the member has ticked both the coaching-not-therapy note
+  // and "never my therapy client" for that person (lane check; Don, m20 "4.
+  // Yes", 19 Nov). The biggest reward must not pay for a dual relationship.
   if (CALL_POINTS_ON) {
     for (const c of contacts) {
       const s = short(c.id);
-      if (CALL.has(c.status) && have.has(`s6-note-${s}`)) add(`s1-p-c-${s}`);
+      if (CALL.has(c.status) && have.has(`s6-note-${s}`) && have.has(`s6-ok-${s}`)) add(`s1-p-c-${s}`);
     }
   }
 

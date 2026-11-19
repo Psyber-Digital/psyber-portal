@@ -34,6 +34,7 @@ import { VimeoEmbed } from "./components/VimeoEmbed";
 import { ChapterFinish } from "./components/ChapterFinish";
 import { CHAPTERS } from "@/lib/story";
 import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal } from "@/lib/points";
+import { sessionGate } from "@/lib/gates";
 
 const BOOK_ID = "book";
 
@@ -47,7 +48,7 @@ export async function PortalScreen({
   searchParams,
   view = "today",
 }: {
-  searchParams?: { week?: string; joined?: string };
+  searchParams?: { week?: string; joined?: string; move?: string };
   view?: PortalView;
 }) {
   const supabase = createClient();
@@ -411,6 +412,8 @@ export async function PortalScreen({
             points={points}
             justDone={justDone}
             welcomeBack={welcomeBack}
+            gate={sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined)}
+            viewId={searchParams?.move}
             list={{
               names: contactsList.length,
               target: nameTarget,
