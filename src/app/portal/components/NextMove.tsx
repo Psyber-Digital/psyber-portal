@@ -3,6 +3,8 @@ import type { Move, MoveOpens } from "@/lib/moves";
 import type { DueMove } from "@/lib/dueMoves";
 import { tickMove, untickMove, parkMove } from "../moveActions";
 import { CelebrateButton } from "./CelebrateButton";
+import type { Chapter } from "@/lib/story";
+import { movePoints } from "@/lib/points";
 
 // "Your next move": the centre of the portal (Don, board r01, 18 Nov 2026:
 // "make the cards more centre... aesthetically pleasing... fun"). Today's dated
@@ -71,6 +73,11 @@ export function NextMove({
   meet,
   links,
   due = [],
+  chapter,
+  points = 0,
+  justDone,
+  welcomeBack = false,
+  list,
 }: {
   session: number;
   /** e.g. "Niche". */
@@ -91,6 +98,16 @@ export function NextMove({
   links: MoveLinks;
   /** Dated cards from the member's own list: follow-ups, calls, today's ten. */
   due?: DueMove[];
+  /** The session as a chapter of the member's story (board m18, 19 Nov 2026). */
+  chapter?: Chapter;
+  /** Points kept so far. They only go up. */
+  points?: number;
+  /** The move just ticked, for the encouragement line. */
+  justDone?: { title: string; points: number } | null;
+  /** Back after a week or more away. */
+  welcomeBack?: boolean;
+  /** The contact-list strip: names now, the target, and names added this week. */
+  list?: { names: number; target: number; thisWeek: number };
 }) {
   if (moves.length === 0) return null;
 
@@ -104,22 +121,103 @@ export function NextMove({
 
   return (
     <>
-      {/* Where you are: the session, and how far through it. */}
+      {welcomeBack && (
+        <p className="mx-0.5 mt-5 text-[14px] text-sec">
+          Welcome back. You&rsquo;re on Chapter {session}{chapter ? `, ${chapter.title}` : ""}. Here&rsquo;s your next move.
+        </p>
+      )}
+
+      {/* The chapter: where the hero is, and the villain in the way. */}
       <div className="mx-0.5 mt-5">
-        <div className="flex items-baseline justify-between gap-3 text-[13px] text-mut">
-          <span>
-            Session {session} of {totalSessions} · <b className="font-semibold text-sec">{sessionName}</b>
-          </span>
-          <span>
-            {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
-          </span>
+        <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.4px] text-mut">
+          Your story · You are the hero
         </div>
-        <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line" aria-hidden="true">
-          <i
-            className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
-            style={{ width: `${Math.round((doneCount / Math.max(moves.length, 1)) * 100)}%` }}
-          />
+        <div className="mt-1 font-disp text-[11.5px] font-semibold uppercase tracking-[1.6px] text-orange">
+          Chapter {session} of {totalSessions} · {chapter?.recorded ?? sessionName}
         </div>
+        {chapter && (
+          <>
+            <h2 className="mt-0.5 font-disp text-[22px] font-semibold leading-tight text-off sm:text-[24px]">{chapter.title}</h2>
+            <p className="mt-1 text-[14px] leading-relaxed text-sec">{chapter.recap}</p>
+            <p className="mt-2 text-[13.5px] leading-relaxed text-mut">
+              The question: <span className="text-sec">{chapter.question}</span>
+            </p>
+            <div className="relative mt-4 rounded-[14px] border border-[#5b2a3d] bg-[linear-gradient(135deg,#2a1420,#1b1424)] py-3 pl-[50px] pr-4">
+              <span
+                className="absolute left-3.5 top-3 grid h-[26px] w-[26px] place-items-center rounded-lg bg-[#ff5d73] text-[15px] text-[#2a0b12]"
+                aria-hidden="true"
+              >
+                ⚔
+              </span>
+              <span className="block font-disp text-[10.5px] font-semibold uppercase tracking-[1.4px] text-[#ff8fa0]">
+                The villain this chapter
+              </span>
+              <b className="mt-px block font-disp text-[15px] font-semibold text-off">{chapter.villain}</b>
+              <i className="mt-0.5 block text-[13px] text-sec">&ldquo;{chapter.says}&rdquo;</i>
+              <span className="mt-1.5 block text-[13px] text-[#9be7b0]">How you beat it: {chapter.beat}</span>
+            </div>
+          </>
+        )}
+
+        {/* The road: seven chapters, from you to your first paying coaching client. */}
+        <div className="mt-5 flex items-center" aria-hidden="true">
+          {Array.from({ length: totalSessions }, (_, i) => i + 1).map((n) => (
+            <span key={n} className="flex flex-1 items-center last:flex-none">
+              <span
+                className={`grid h-4 w-4 flex-none place-items-center rounded-full border-2 ${
+                  n < session ? "border-blue bg-blue" : n === session ? "border-orange bg-orange/25 shadow-[0_0_0_4px_rgba(255,141,30,.18)]" : "border-[#34466e]"
+                }`}
+              />
+              <span className={`mx-1 h-0.5 flex-1 ${n < session ? "bg-blue" : "border-t-2 border-dashed border-[#34466e]"}`} />
+            </span>
+          ))}
+          <span className="ml-1 text-[15px]">🏁</span>
+        </div>
+        <div className="mt-1.5 flex justify-between text-[10.5px] text-mut">
+          <span>You</span>
+          <span>First paying coaching client</span>
+        </div>
+
+        {/* Level = chapter. The bar is how far through this chapter. */}
+        <div className="mt-4 flex items-center gap-3 rounded-[14px] border border-line bg-panel px-3.5 py-3">
+          <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] font-disp text-[18px] font-bold text-[#241100]">
+            {session}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-baseline justify-between gap-2 text-[13px]">
+              <b className="font-disp font-semibold text-off">Level {session}</b>
+              <span className="text-mut">
+                {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
+              </span>
+            </div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+              <i
+                className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
+                style={{ width: `${Math.round((doneCount / Math.max(moves.length, 1)) * 100)}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {list && (
+          <a
+            href="/portal/outreach"
+            className="mt-3 flex items-center gap-3 rounded-[14px] border border-line border-l-[3px] border-l-blue bg-panel px-3.5 py-3 hover:border-[#3b5a92]"
+          >
+            <span className="min-w-0 flex-1">
+              <b className="block font-disp text-[13.5px] font-semibold text-off">
+                Your contact list: {list.names} of {list.target}
+              </b>
+              <span className="text-[12.5px] text-sec">
+                {list.thisWeek > 0 ? `+${list.thisWeek} this week. ` : ""}Anyone you know counts. Not your current therapy clients. Former clients: connectors only.
+              </span>
+              <span className="mt-2 block h-1 overflow-hidden rounded-full bg-line">
+                <i className="block h-full bg-blue" style={{ width: `${Math.min(100, Math.round((list.names / Math.max(list.target, 1)) * 100))}%` }} />
+              </span>
+            </span>
+            <span className="whitespace-nowrap font-disp text-[12px] font-semibold text-[#7fc0ff]">+10 a name</span>
+          </a>
+        )}
       </div>
 
       {due.length > 0 && (
@@ -150,6 +248,13 @@ export function NextMove({
         </>
       )}
 
+      {justDone && (
+        <p className="mx-0.5 mt-5 rounded-xl border border-[#2f6b45] bg-[#13281c] px-4 py-3 text-[14px] text-[#c8f3d5]" role="status">
+          <b className="font-semibold text-[#9be7b0]">Done{justDone.points > 0 ? `. +${justDone.points} points` : ""}.</b>{" "}
+          {current ? <>Here&rsquo;s your next move.</> : null}
+        </p>
+      )}
+
       <div className="relative mt-5 pb-5">
         {/* The deck: two cards waiting behind this one. */}
         <div className="absolute inset-x-11 bottom-0 h-16 rounded-[22px] border border-line bg-panel2 opacity-40" aria-hidden="true" />
@@ -164,13 +269,17 @@ export function NextMove({
 
           {current ? (
             <>
-              <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-mut">
-                Your next move{current.mins ? ` · ${current.mins}` : ""}
+              <div className="flex items-baseline justify-between gap-3 font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-mut">
+                <span>Move {index + 1} of {moves.length}{current.mins ? ` · ${current.mins}` : ""}</span>
+                {movePoints(current) > 0 && <em className="not-italic text-orange">+{movePoints(current)} points</em>}
               </div>
               <h2 id="next-move-title" className="mt-2.5 font-disp text-[22px] font-semibold leading-snug text-off sm:text-[28px]">
-                {current.title}
+                {current.q}
               </h2>
-              <p className="mt-2.5 max-w-[58ch] text-[15px] leading-relaxed text-sec sm:text-[16px]">{current.why}</p>
+              <p className="mt-2.5 max-w-[58ch] text-[15px] leading-relaxed text-off sm:text-[16px]">
+                <b className="font-semibold">{current.title}</b>
+              </p>
+              <p className="mt-1.5 max-w-[58ch] text-[14.5px] leading-relaxed text-sec">{current.why}</p>
 
               {current.finish ? (
                 finish
@@ -211,6 +320,13 @@ export function NextMove({
           )}
         </section>
       </div>
+
+      {current?.guide && (
+        <div className="mx-0.5 mb-4 rounded-[14px] border border-line bg-panel px-4 py-3 text-[13.5px] leading-relaxed text-sec">
+          <b className="mb-0.5 block font-disp text-[11px] font-semibold uppercase tracking-[1.4px] text-mut">Your guide · Asher</b>
+          {current.guide}
+        </div>
+      )}
 
       <details className="group mx-1.5 mt-1">
         <summary className="cursor-pointer list-none text-[13px] text-mut marker:hidden">

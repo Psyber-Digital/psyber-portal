@@ -31,6 +31,9 @@ import { cookies } from "next/headers";
 import { PARK_COOKIE } from "@/lib/moves";
 import { weekVideo } from "@/lib/videos";
 import { VimeoEmbed } from "./components/VimeoEmbed";
+import { ChapterFinish } from "./components/ChapterFinish";
+import { CHAPTERS } from "@/lib/story";
+import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal } from "@/lib/points";
 
 const BOOK_ID = "book";
 
@@ -186,6 +189,34 @@ export async function PortalScreen({
       });
     if (keepErr) console.error("keep badges failed:", keepErr.message);
   }
+  // Points (board m18, 19 Nov 2026): each one is kept as a tick the first time
+  // Today sees it earned, under the member's own login, so they only go up.
+  const nameTarget = tier === "foundations" ? 50 : 250;
+  const newPointTicks = current ? pointTicksToKeep(contactsList, tickRows ?? [], nameTarget) : [];
+  let keptPointTicks: string[] = [];
+  if (newPointTicks.length && user) {
+    const { error: ptsErr } = await supabase
+      .from("move_ticks")
+      .upsert(newPointTicks.map((move_id) => ({ user_id: user.id, move_id })), {
+        onConflict: "user_id,move_id",
+        ignoreDuplicates: true,
+      });
+    if (ptsErr) console.error("keep points failed:", ptsErr.message);
+    else keptPointTicks = newPointTicks;
+  }
+  const points = pointsTotal([...(tickRows ?? []), ...keptPointTicks.map((move_id) => ({ move_id }))]);
+
+  // The encouragement line: the move ticked in the last three minutes.
+  const recent = (tickRows ?? [])
+    .filter((t) => moves.some((m) => m.id === t.move_id) && Date.now() - new Date(t.done_at).getTime() < 3 * 60 * 1000)
+    .sort((a, b) => b.done_at.localeCompare(a.done_at))[0];
+  const recentMove = recent ? moves.find((m) => m.id === recent.move_id) : undefined;
+  const justDone = recentMove ? { title: recentMove.title, points: movePoints(recentMove) } : null;
+
+  // Back after a week or more. last_activity_at is read before this visit stamps it.
+  const lastSeen = profile?.last_activity_at ? new Date(profile.last_activity_at).getTime() : null;
+  const welcomeBack = lastSeen !== null && Date.now() - lastSeen > 7 * 24 * 60 * 60 * 1000;
+
   const finishedThrough =
     tier === "build" ? profile?.completed_week ?? 0
     : tier === "foundations" ? (freeFinished ? 1 : 0)
@@ -356,11 +387,39 @@ export async function PortalScreen({
             links={{ ...moveLinks, video: "/portal/program#watch" }}
             due={due}
             finish={finishNode}
+            chapter={CHAPTERS[current.number]}
+            points={points}
+            justDone={justDone}
+            welcomeBack={welcomeBack}
+            list={{ names: contactsList.length, target: nameTarget, thisWeek: namesThisWeek(contactsList) }}
           />
           {/* Progress sits under the card (Don, board m16, 18 Nov 2026:
               "gamification keeps them motivated"). Its pop-up comes with it. */}
           {badges.length > 0 && (
             <Milestones badges={badges} momentum={momentum} memberKey={user.id.slice(0, 8)} />
+          )}
+          {/* The level-up. Never for Foundations: their Session 1 finish starts the $99 offer. */}
+          {finishedThrough >= 1 && CHAPTERS[finishedThrough] && (
+            <ChapterFinish
+              finishedThrough={finishedThrough}
+              enabled={tier !== "foundations"}
+              memberKey={user.id.slice(0, 8)}
+              names={contactsList.length}
+              points={points}
+              info={{
+                number: finishedThrough,
+                villain: CHAPTERS[finishedThrough].villain,
+                done: CHAPTERS[finishedThrough].done,
+                moves: movesFor(finishedThrough, tier).length,
+                next: CHAPTERS[finishedThrough + 1]
+                  ? {
+                      number: finishedThrough + 1,
+                      title: CHAPTERS[finishedThrough + 1].title,
+                      villain: CHAPTERS[finishedThrough + 1].villain,
+                    }
+                  : undefined,
+              }}
+            />
           )}
           <p className="mt-6 text-center text-[13px] text-mut">
             Your program and The List are in the menu above.

@@ -40,9 +40,10 @@ export function momentumOf(ticks: { move_id: string; done_at: string }[], listSi
     // Session moves only; the dated cards' dismissals are not "moves done".
     movesDone: ticks.filter((t) => ALL_MOVE_IDS.has(t.move_id)).length,
     // A week counts when a move was finished in it. "Not an outreach day"
-    // dismissals of today's ten are not moves, so they don't count.
+    // dismissals of today's ten are not moves, so they don't count. Nor are
+    // kept badges or kept points (s1-p-), which are saved when Today is viewed.
     weeksInMotion: new Set(
-      ticks.filter((t) => !/^s\d-ten-|^s\d-badge-/.test(t.move_id)).map((t) => isoWeekKey(t.done_at)),
+      ticks.filter((t) => !/^s\d-ten-|^s\d-badge-|^s1-p-/.test(t.move_id)).map((t) => isoWeekKey(t.done_at)),
     ).size,
     names: listSize,
   };
