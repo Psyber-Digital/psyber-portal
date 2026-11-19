@@ -87,6 +87,7 @@ export function NextMove({
   welcomeBack = false,
   list,
   gate,
+  namesMin = 0,
   viewId,
 }: {
   session: number;
@@ -120,6 +121,8 @@ export function NextMove({
   list?: { names: number; target: number; thisWeek: number; earning: boolean };
   /** Every move done and the list at its minimum, before the session can finish (m19). */
   gate?: Gate;
+  /** Names needed to finish this session, shown on the list strip from the start. */
+  namesMin?: number;
   /** A card the member stepped back to (?move=id). */
   viewId?: string;
 }) {
@@ -162,7 +165,7 @@ export function NextMove({
           <FocusSound />
         </div>
         <div className="mt-1 font-disp text-[11.5px] font-semibold uppercase tracking-[1.6px] text-orange">
-          Chapter {session} of {totalSessions} · {chapter?.recorded ?? sessionName}
+          Chapter {session} of {totalSessions} · Session {session}: {chapter?.recorded ?? sessionName}
         </div>
         {chapter && (
           <>
@@ -171,113 +174,9 @@ export function NextMove({
             <p className="mt-2 text-[13.5px] leading-relaxed text-mut">
               The question: <span className="text-sec">{chapter.question}</span>
             </p>
-            <div className="relative mt-4 rounded-[14px] border border-[#5b2a3d] bg-[linear-gradient(135deg,#2a1420,#1b1424)] py-3 pl-[50px] pr-4">
-              <span
-                className="absolute left-3.5 top-3 grid h-[26px] w-[26px] place-items-center rounded-lg bg-[#ff5d73] text-[15px] text-[#2a0b12]"
-                aria-hidden="true"
-              >
-                ⚔
-              </span>
-              <span className="block font-disp text-[10.5px] font-semibold uppercase tracking-[1.4px] text-[#ff8fa0]">
-                The villain this chapter
-              </span>
-              <b className="mt-px block font-disp text-[15px] font-semibold text-off">{chapter.villain}</b>
-              <i className="mt-0.5 block text-[13px] text-sec">&ldquo;{chapter.says}&rdquo;</i>
-              <span className="mt-1.5 block text-[13px] text-[#9be7b0]">How you beat it: {chapter.beat}</span>
-            </div>
           </>
         )}
-
-        {/* The road: seven chapters, from you to your first paying coaching client. */}
-        <div className="mt-5 flex items-center" aria-hidden="true">
-          {Array.from({ length: totalSessions }, (_, i) => i + 1).map((n) => (
-            <span key={n} className="flex flex-1 items-center last:flex-none">
-              <span
-                className={`grid h-4 w-4 flex-none place-items-center rounded-full border-2 ${
-                  n < session ? "border-blue bg-blue" : n === session ? "border-orange bg-orange/25 shadow-[0_0_0_4px_rgba(255,141,30,.18)]" : "border-[#34466e]"
-                }`}
-              />
-              <span className={`mx-1 h-0.5 flex-1 ${n < session ? "bg-blue" : "border-t-2 border-dashed border-[#34466e]"}`} />
-            </span>
-          ))}
-          <span className="ml-1 text-[15px]">🏁</span>
-        </div>
-        <div className="mt-1.5 flex justify-between text-[10.5px] text-mut">
-          <span>You</span>
-          <span>First paying coaching client</span>
-        </div>
-
-        {/* Level = chapter. The bar is how far through this chapter. */}
-        <div className="mt-4 flex items-center gap-3 rounded-[14px] border border-line bg-panel px-3.5 py-3">
-          <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] font-disp text-[18px] font-bold text-[#241100]">
-            {session}
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-baseline justify-between gap-2 text-[13px]">
-              <b className="font-disp font-semibold text-off">Level {session}</b>
-              <span className="text-mut">
-                {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
-              </span>
-            </div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-              <i
-                className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
-                style={{ width: `${Math.round((doneCount / Math.max(moves.length, 1)) * 100)}%` }}
-              />
-            </div>
-          </div>
-        </div>
-
-        {list && (
-          <a
-            href="/portal/outreach"
-            className="mt-3 flex items-center gap-3 rounded-[14px] border border-line border-l-[3px] border-l-blue bg-panel px-3.5 py-3 hover:border-[#3b5a92]"
-          >
-            <span className="min-w-0 flex-1">
-              <b className="block font-disp text-[13.5px] font-semibold text-off">
-                Your contact list: {list.names} of {list.target}
-              </b>
-              <span className="text-[12.5px] text-sec">
-                {list.thisWeek > 0 ? `+${list.thisWeek} this week. ` : ""}Anyone you know counts. Not your current therapy clients. Former clients: connectors only.
-              </span>
-              <span className="mt-2 block h-1 overflow-hidden rounded-full bg-line">
-                <i className="block h-full bg-blue" style={{ width: `${Math.min(100, Math.round((list.names / Math.max(list.target, 1)) * 100))}%` }} />
-              </span>
-            </span>
-            {list.earning && (
-              <span className="whitespace-nowrap font-disp text-[12px] font-semibold text-[#7fc0ff]">+10 a name</span>
-            )}
-          </a>
-        )}
       </div>
-
-      {due.length > 0 && (
-        <>
-          <Label>Due today</Label>
-          <ul className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2" aria-label="Due today">
-            {due.map((d) => (
-              <li
-                key={d.key}
-                className="flex w-[260px] flex-none snap-start flex-col rounded-[14px] border border-line border-t-[3px] border-t-blue bg-panel p-3.5"
-              >
-                <p className="font-disp text-[14.5px] font-semibold leading-snug text-off">{d.title}</p>
-                <p className="mb-3 mt-1 flex-1 text-[12.5px] leading-relaxed text-sec">{d.why}</p>
-                <div className="flex flex-wrap items-center gap-2">
-                  <OpenLink kind={d.opens} href={d.href ?? links[d.opens]} small />
-                  {d.tickIds.length > 0 && (
-                    <form action={tickMove}>
-                      {d.tickIds.map((id) => (
-                        <input key={id} type="hidden" name="move" value={id} />
-                      ))}
-                      <CelebrateButton className="psy-btn !px-3 !py-2 !text-[13px]" />
-                    </form>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
 
       {justDone && (
         <p className="mx-0.5 mt-5 rounded-xl border border-[#2f6b45] bg-[#13281c] px-4 py-3 text-[14px] text-[#c8f3d5]" role="status">
@@ -343,8 +242,8 @@ export function NextMove({
                       {gate!.namesNeeded > 0 && (
                         <li>
                           Add {gate!.namesNeeded} more {gate!.namesNeeded === 1 ? "name" : "names"} to your list. You need{" "}
-                          {gate!.namesMin} in total to finish this session. Anyone you know outside your therapy work
-                          counts. Never your current therapy clients.{" "}
+                          {gate!.namesMin} in total to finish this session. Not your current therapy clients. Former
+                          therapy clients can go on, only to ask who they know.{" "}
                           <a href={links.list} className="text-blue underline">Open The List →</a>
                         </li>
                       )}
@@ -362,7 +261,7 @@ export function NextMove({
                   ) : null}
                   {isDone(shown) ? (
                     <div className="mt-4 flex flex-wrap items-center gap-3">
-                      <span className="rounded-xl bg-[#0B1220] px-5 py-3 font-disp text-[15px] font-semibold text-[#9be7b0]">Done ✓</span>
+                      <span className="font-disp text-[15px] font-semibold text-[#14361f]">✓ You did this one</span>
                       <form action={untickMove}>
                         <input type="hidden" name="move" value={shown.id} />
                         <button type="submit" className="text-[13px] underline decoration-dotted underline-offset-2">
@@ -399,8 +298,8 @@ export function NextMove({
                 )}
                 {looking && (
                   <span className="flex gap-4">
-                    {fwd && <a href={`/portal?move=${fwd.id}#card`} className="hover:underline">Next card →</a>}
-                    <a href="/portal#card" className="hover:underline">Back to your next move →</a>
+                    {fwd && <a href={`/portal?move=${fwd.id}#card`} className="hover:underline">Later card →</a>}
+                    <a href="/portal#card" className="rounded-lg bg-[#0B1220] px-3 py-1.5 text-white hover:bg-[#16213a]">Back to today&rsquo;s move</a>
                   </span>
                 )}
               </nav>
@@ -429,6 +328,125 @@ export function NextMove({
           {shown.guide}
         </div>
       )}
+
+      {due.length > 0 && (
+        <>
+          <Label>Due today</Label>
+          <ul className="-mx-1 flex snap-x gap-3 overflow-x-auto px-1 pb-2" aria-label="Due today">
+            {due.map((d) => (
+              <li
+                key={d.key}
+                className="flex w-[260px] flex-none snap-start flex-col rounded-[14px] border border-line border-t-[3px] border-t-blue bg-panel p-3.5"
+              >
+                <p className="font-disp text-[14.5px] font-semibold leading-snug text-off">{d.title}</p>
+                <p className="mb-3 mt-1 flex-1 text-[12.5px] leading-relaxed text-sec">{d.why}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <OpenLink kind={d.opens} href={d.href ?? links[d.opens]} small />
+                  {d.tickIds.length > 0 && (
+                    <form action={tickMove}>
+                      {d.tickIds.map((id) => (
+                        <input key={id} type="hidden" name="move" value={id} />
+                      ))}
+                      <CelebrateButton label={d.doneLabel ?? "Done ✓"} className="psy-btn !px-3 !py-2 !text-[13px]" />
+                    </form>
+                  )}
+                  {d.alt && (
+                    <form action={tickMove}>
+                      {d.alt.tickIds.map((id) => (
+                        <input key={id} type="hidden" name="move" value={id} />
+                      ))}
+                      <button type="submit" className="psy-btn-ghost !px-3 !py-2 !text-[13px]">{d.alt.label}</button>
+                    </form>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {/* The chapter's villain, the road and your numbers, under the move (member test, 19 Nov). */}
+      <div className="mx-0.5 mt-6">
+        {chapter && (
+            <div className="relative mt-4 rounded-[14px] border border-[#5b2a3d] bg-[linear-gradient(135deg,#2a1420,#1b1424)] py-3 pl-[50px] pr-4">
+              <span
+                className="absolute left-3.5 top-3 grid h-[26px] w-[26px] place-items-center rounded-lg bg-[#ff5d73] text-[15px] text-[#2a0b12]"
+                aria-hidden="true"
+              >
+                ⚔
+              </span>
+              <span className="block font-disp text-[10.5px] font-semibold uppercase tracking-[1.4px] text-[#ff8fa0]">
+                The villain this chapter
+              </span>
+              <b className="mt-px block font-disp text-[15px] font-semibold text-off">{chapter.villain}</b>
+              <i className="mt-0.5 block text-[13px] text-sec">&ldquo;{chapter.says}&rdquo;</i>
+              <span className="mt-1.5 block text-[13px] text-[#9be7b0]">How you beat it: {chapter.beat}</span>
+            </div>
+        )}
+
+        {/* The road: seven chapters, from you to your first paying coaching client. */}
+        <div className="mt-5 flex items-center" aria-hidden="true">
+          {Array.from({ length: totalSessions }, (_, i) => i + 1).map((n) => (
+            <span key={n} className="flex flex-1 items-center last:flex-none">
+              <span
+                className={`grid h-4 w-4 flex-none place-items-center rounded-full border-2 ${
+                  n < session ? "border-blue bg-blue" : n === session ? "border-orange bg-orange/25 shadow-[0_0_0_4px_rgba(255,141,30,.18)]" : "border-[#34466e]"
+                }`}
+              />
+              <span className={`mx-1 h-0.5 flex-1 ${n < session ? "bg-blue" : "border-t-2 border-dashed border-[#34466e]"}`} />
+            </span>
+          ))}
+          <span className="ml-1 text-[15px]">🏁</span>
+        </div>
+        <div className="mt-1.5 flex justify-between text-[10.5px] text-mut">
+          <span>You</span>
+          <span>First paying coaching client</span>
+        </div>
+
+        {/* Level = chapter. The bar is how far through this chapter. */}
+        <div className="mt-4 flex items-center gap-3 rounded-[14px] border border-line bg-panel px-3.5 py-3">
+          <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] font-disp text-[18px] font-bold text-[#241100]">
+            {session}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-baseline justify-between gap-2 text-[13px]">
+              <b className="font-disp font-semibold text-off">Level {session}</b>
+              <span className="text-mut">
+                {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
+              </span>
+            </div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+              <i
+                className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
+                style={{ width: `${Math.round((doneCount / Math.max(moves.length, 1)) * 100)}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {list && (
+          <a
+            href="/portal/outreach"
+            className="mt-3 flex items-center gap-3 rounded-[14px] border border-line border-l-[3px] border-l-blue bg-panel px-3.5 py-3 hover:border-[#3b5a92]"
+          >
+            <span className="min-w-0 flex-1">
+              <b className="block font-disp text-[13.5px] font-semibold text-off">
+                Your contact list: {list.names}
+                {namesMin > list.names ? ` · ${namesMin} needed to finish Session ${session}` : ""} · goal {list.target}
+              </b>
+              <span className="text-[12.5px] text-sec">
+                {list.thisWeek > 0 ? `+${list.thisWeek} this week. ` : ""}Not your current therapy clients. Former therapy clients can go on, only to ask who they know.
+              </span>
+              <span className="mt-2 block h-1 overflow-hidden rounded-full bg-line">
+                <i className="block h-full bg-blue" style={{ width: `${Math.min(100, Math.round((list.names / Math.max(namesMin > list.names ? namesMin : list.target, 1)) * 100))}%` }} />
+              </span>
+            </span>
+            {list.earning && (
+              <span className="whitespace-nowrap font-disp text-[12px] font-semibold text-[#7fc0ff]">+10 a name</span>
+            )}
+          </a>
+        )}
+      </div>
 
       <details className="group mx-1.5 mt-1">
         <summary className="cursor-pointer list-none text-[13px] text-mut marker:hidden">

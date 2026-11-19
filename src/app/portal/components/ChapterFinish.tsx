@@ -72,7 +72,7 @@ export function ChapterFinish({
           )}
         </span>
         <h3 id="chapter-finish-title" className="mt-4 font-disp text-[22px] font-semibold text-off">
-          Chapter {info.number} complete
+          Chapter {info.number} (Session {info.number}) complete
         </h3>
         <span className="mt-1.5 inline-block rounded-full bg-[#16391f] px-3 py-1 font-disp text-[12px] font-semibold text-[#9be7b0]">
           You beat {info.villain}

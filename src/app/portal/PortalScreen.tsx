@@ -160,7 +160,13 @@ export async function PortalScreen({
         .select("id, name, status, correspondence, first_contact_date, last_contact_date, next_followup_date, created_at")
     : { data: [] as DueContact[] };
   const due = current
-    ? dueMoves({ contacts: (contactRows ?? []) as DueContact[], session: current.number, tier, ticked })
+    ? dueMoves({
+        contacts: (contactRows ?? []) as DueContact[],
+        session: current.number,
+        tier,
+        ticked,
+        listMoveOpen: moves.some((m) => m.opens === "list" && /-list$/.test(m.id) && !ticked.has(m.id)),
+      })
     : [];
   const sessionFinished =
     tier === "build"
@@ -412,6 +418,7 @@ export async function PortalScreen({
             points={points}
             justDone={justDone}
             welcomeBack={welcomeBack}
+            namesMin={sessionFinished ? 0 : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).namesMin}
             gate={sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined)}
             viewId={searchParams?.move}
             list={{

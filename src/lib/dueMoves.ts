@@ -33,6 +33,10 @@ export type DueMove = {
   /** Ticks saved when the member presses Done. Empty = no Done button: the
    *  card goes when The List changes. */
   tickIds: string[];
+  /** The Done button's words, when "Done" would be the wrong word. */
+  doneLabel?: string;
+  /** A second answer that also clears the card. */
+  alt?: { label: string; tickIds: string[] };
 };
 
 export function easternToday(now = new Date()): string {
@@ -60,7 +64,7 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 
 /** Ids the dated cards may tick. Checked before a tick is saved. */
 export const DUE_TICK_PATTERN =
-  /^s[1-7]-(names-\d{4}w\d{2}|ten-\d{8}|note-[0-9a-f]{12}|ok-[0-9a-f]{12}|won-[0-9a-f]{12}|price-\d{1,2})$/;
+  /^s[1-7]-(names-\d{4}w\d{2}|ten-\d{8}|note-[0-9a-f]{12}|ok-[0-9a-f]{12}|was-[0-9a-f]{12}|won-[0-9a-f]{12}|price-\d{1,2})$/;
 
 export function dueMoves({
   contacts,
@@ -68,12 +72,15 @@ export function dueMoves({
   tier,
   ticked,
   today = easternToday(),
+  listMoveOpen = false,
 }: {
   contacts: DueContact[];
   session: number;
   tier: Tier | undefined;
   ticked: Set<string>;
   today?: string;
+  /** The session's own "add names" move is still open, so the weekly card would repeat it. */
+  listMoveOpen?: boolean;
 }): DueMove[] {
   const out: DueMove[] = [];
   const s = `s${Math.min(Math.max(session, 1), 7)}`;
@@ -145,7 +152,10 @@ export function dueMoves({
   // Asked from the call onwards, including anyone moved straight to an offer
   // or a sale on The List (lane check, 19 Nov).
   const talking = contacts.filter(
-    (c) => ["call_booked", "offer_made", "converted"].includes(c.status) && !ticked.has(`s6-ok-${short(c.id)}`),
+    (c) =>
+      ["call_booked", "offer_made", "converted"].includes(c.status) &&
+      !ticked.has(`s6-ok-${short(c.id)}`) &&
+      !ticked.has(`s6-was-${short(c.id)}`),
   );
   for (const c of talking)
     out.push({
@@ -154,6 +164,9 @@ export function dueMoves({
       why: "Never offer coaching to a current or former therapy client. If they have been, cancel the call kindly and don't offer coaching. You can still thank them and ask who they know.",
       opens: "list",
       tickIds: [`s6-ok-${short(c.id)}`],
+      doneLabel: "Never my therapy client",
+      // The honest other answer clears the card too, and earns nothing (member test, 19 Nov).
+      alt: { label: "They were. I've cancelled", tickIds: [`s6-was-${short(c.id)}`] },
     });
 
   // An offer is made and they're still deciding.
@@ -209,7 +222,7 @@ export function dueMoves({
   }
 
   // Add names, once a week, Sessions 1 to 6.
-  if (session <= 6 && !(tier === "foundations" && contacts.length >= 50)) {
+  if (session <= 6 && !listMoveOpen && !(tier === "foundations" && contacts.length >= 50)) {
     const wk = `${s}-names-${isoWeek(today)}`;
     if (!ticked.has(wk)) {
       const weekStart = addDays(today, -6);
@@ -219,7 +232,7 @@ export function dueMoves({
         title: "Add names to your list",
         why: added
           ? `You’ve added ${added} this week. Keep going as people come to mind.`
-          : "Anyone who comes to mind this week. No current therapy clients, and former clients as connectors only.",
+          : "Anyone who comes to mind this week. Not your current therapy clients. Former therapy clients can go on, only to ask who they know.",
         opens: "list",
         tickIds: [wk],
       });

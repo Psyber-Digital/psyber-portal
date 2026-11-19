@@ -42,7 +42,7 @@ export function Milestones({
       </div>
       <div className="mt-4 grid grid-cols-3 gap-3">
         {[
-          [momentum.movesDone, momentum.movesDone === 1 ? "move done" : "moves done"],
+          [momentum.movesDone, momentum.movesDone === 1 ? "move done so far" : "moves done so far"],
           [momentum.weeksInMotion, momentum.weeksInMotion === 1 ? "active week" : "active weeks"],
           [momentum.names, "names on your list"],
         ].map(([n, label]) => (
