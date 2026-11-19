@@ -30,6 +30,9 @@ export type Move = {
   q: string;
   /** A short note from the guide, on the moves where people stall. */
   guide?: string;
+  /** Best done the day after this move. If it was ticked today, the card says
+   *  so above Done (member test, 19 Nov 2026). */
+  afterDay?: string;
   /** "If you have time": the session can finish without it (m19 gate). */
   optional?: boolean;
   /** Shown beside the button, e.g. "block 1". */
@@ -67,7 +70,7 @@ export const MOVES: Record<number, Move[]> = {
       why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s2-generate", q: "Who could I help, and what change could I help them make?", title: "Generate every transformation and audience you can think of", mins: "25 min", opens: "sheet", where: "stage 1",
       why: "Write more than feels sensible. Judge none of it yet." },
-    { id: "s2-narrow", q: "Which of my niche ideas is strongest?", guide: "Give this the full twenty minutes. It's what turns a niche you guessed into one you chose.", title: "Narrow your ideas down to your top three, using the lane test", mins: "20 min", opens: "sheet", where: "stage 2",
+    { id: "s2-narrow", afterDay: "s2-generate", q: "Which of my niche ideas is strongest?", guide: "Give this the full twenty minutes. It's what turns a niche you guessed into one you chose.", title: "Narrow your ideas down to your top three, using the lane test", mins: "20 min", opens: "sheet", where: "stage 2",
       why: "Come back a day after stage 1, with fresh eyes. Pair each audience with a change you could help them make. Then run the lane test: keep only pairs that take people from well to better, and drop any that would mean treating a problem. Score what's left." },
     { id: "s2-research", q: "Do people already pay coaches for my top three?", title: "Research your top three: four quick checks, about 15 minutes per niche", mins: "45 min", opens: "sheet", where: "stage 3",
       why: "Search online the way a future client would, for example \u201chow do I get promoted\u201d, not \u201canxiety\u201d. If other coaches already sell to this group, that's good news. It's a sign people already pay for help with this." },
@@ -103,7 +106,7 @@ export const MOVES: Record<number, Move[]> = {
       why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s4-sitting1", q: "What's my program's big promise, and what are its modules?", guide: "Aim for clear and simple. You'll refine it once you've run it.", title: "Sitting 1: steps 1 to 5 on your sheet", mins: "45 min", opens: "sheet", where: "steps 1–5",
       why: "Turn your coaching statement into one question: \u201cIf I were [your niche], how would I [the change you help with]?\u201d Then split the answer into modules." },
-    { id: "s4-sitting2", q: "What will my client learn and do in each module?", title: "Sitting 2: what goes inside each module (steps 6 to 9)", mins: "45 min", opens: "sheet", where: "steps 6–9",
+    { id: "s4-sitting2", afterDay: "s4-sitting1", q: "What will my client learn and do in each module?", title: "Sitting 2: what goes inside each module (steps 6 to 9)", mins: "45 min", opens: "sheet", where: "steps 6–9",
       why: "Do this the day after sitting 1." },
     { id: "s4-sitting3", q: "What fills each week, and how many weeks?", title: "Sitting 3: key ideas, resources and your program's length (steps 10 to 13)", mins: "40 min", opens: "sheet", where: "steps 10–13",
       why: "Eight to twelve weeks in total. Choose the shortest length that does the job." },

@@ -25,7 +25,7 @@ import { Milestones } from "./components/Milestones";
 import { ThisWeekToolkit } from "./components/ThisWeek";
 import { badgesOf, badgeTickId, momentumOf } from "@/lib/milestones";
 import { movesFor } from "@/lib/moves";
-import { dueMoves, type DueContact } from "@/lib/dueMoves";
+import { dueMoves, easternToday, type DueContact } from "@/lib/dueMoves";
 import { weekWorkbook, weekResources } from "@/lib/resources";
 import { cookies } from "next/headers";
 import { PARK_COOKIE } from "@/lib/moves";
@@ -421,6 +421,7 @@ export async function PortalScreen({
             namesMin={sessionFinished ? 0 : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).namesMin}
             gate={sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined)}
             viewId={searchParams?.move}
+            tickedToday={new Set((tickRows ?? []).filter((t) => easternToday(new Date(t.done_at)) === easternToday()).map((t) => t.move_id))}
             list={{
               names: contactsList.length,
               target: nameTarget,

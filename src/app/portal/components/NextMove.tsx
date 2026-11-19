@@ -89,6 +89,7 @@ export function NextMove({
   gate,
   namesMin = 0,
   viewId,
+  tickedToday = new Set(),
 }: {
   session: number;
   /** e.g. "Niche". */
@@ -121,6 +122,8 @@ export function NextMove({
   list?: { names: number; target: number; thisWeek: number; earning: boolean };
   /** Every move done and the list at its minimum, before the session can finish (m19). */
   gate?: Gate;
+  /** Moves ticked today (Eastern), for the "best done tomorrow" line. */
+  tickedToday?: Set<string>;
   /** Names needed to finish this session, shown on the list strip from the start. */
   namesMin?: number;
   /** A card the member stepped back to (?move=id). */
@@ -271,6 +274,11 @@ export function NextMove({
                     </div>
                   ) : (
                     <>
+                      {shown.afterDay && tickedToday.has(shown.afterDay) && (
+                        <p className="mt-4 rounded-xl bg-[#0B1220]/85 px-4 py-3 text-[14px] text-off">
+                          Best picked up tomorrow, with fresh eyes. You can close the page now. This card will be here.
+                        </p>
+                      )}
                       <form action={tickMove} className="mt-4">
                         <input type="hidden" name="move" value={shown.id} />
                         <CelebrateButton className="w-full rounded-xl bg-[#0B1220] py-3.5 font-disp text-[16px] font-semibold text-white hover:bg-[#16213a] sm:w-auto sm:px-10" />
