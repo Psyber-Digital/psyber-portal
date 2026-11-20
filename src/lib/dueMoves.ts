@@ -166,7 +166,7 @@ export function dueMoves({
       tickIds: [`s6-ok-${short(c.id)}`],
       doneLabel: "Never my therapy client",
       // The honest other answer clears the card too, and earns nothing (member test, 19 Nov).
-      alt: { label: "They were. I've cancelled", tickIds: [`s6-was-${short(c.id)}`] },
+      alt: { label: "They were. I've canceled", tickIds: [`s6-was-${short(c.id)}`] },
     });
 
   // An offer is made and they're still deciding.
