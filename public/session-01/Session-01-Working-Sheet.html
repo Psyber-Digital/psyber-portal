@@ -23,10 +23,32 @@ section{margin:0 0 34px;background:var(--panel);border:1px solid var(--line);bor
 h2{font-size:19px;margin-bottom:6px;font-weight:650}
 h2 span{color:var(--slate);font-weight:500;margin-right:10px}
 .help{color:var(--slate);font-size:14.5px;margin-bottom:16px;max-width:76ch}
+/* A worked example. COPY-STANDARD 16: when an instruction is abstract the fix
+   is one concrete instance, not more description — and it is the one place copy
+   is allowed to get longer. Set apart so it can be skipped by anybody who does
+   not need it. */
+.rowcount{font-size:12.5px;color:var(--slate);margin-left:10px;font-variant-numeric:tabular-nums}
+.rowcount.done{color:var(--ok)}
+.req{font-size:14px;color:var(--off);margin:2px 0 6px;font-weight:500;max-width:76ch}
+.eg{background:rgba(240,131,40,.06);border-left:2px solid var(--orange);border-radius:0 8px 8px 0;padding:11px 14px;margin:-4px 0 16px;color:var(--slate);font-size:13.5px;line-height:1.65;max-width:76ch}
+.eg b{color:var(--off);font-weight:600}
 label{display:block;font-size:13.5px;color:#B9C7DA;margin:14px 0 6px}
 input[type=text],textarea{width:100%;background:#08111f;color:var(--off);
  border:1px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
 textarea{min-height:88px;resize:vertical}
+td textarea{min-height:58px}
+/* WORKSHEET-STANDARD rule 2: the box must fit the answer. 88px is right for a
+   few lines and wrong for a story — section 3 asks for ten minutes of writing
+   into a box three lines deep, which reads as 'keep it short' when the whole
+   point is the opposite. */
+textarea.tall{min-height:360px}
+/* Print mirror — never visible on screen. An <input> is a single line and cannot
+   wrap, so on paper anything longer than the box is silently cut off mid-word.
+   A client filled this sheet in properly, printed it, sent it, and roughly a
+   third of what she had written was missing from the PDF with nothing to show
+   it had ever been there. The value is copied into this block element just
+   before printing and the field itself is hidden. */
+.pv{display:none}
 input:focus,textarea:focus{outline:2px solid var(--blue);outline-offset:1px;border-color:transparent}
 table{width:100%;border-collapse:collapse;margin:8px 0 16px}
 th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);
@@ -39,10 +61,19 @@ td.fixed{color:#B9C7DA;font-size:14px;padding:10px 8px}
  justify-content:center;backdrop-filter:blur(8px)}
 button{font:inherit;font-size:14px;padding:9px 16px;border-radius:8px;border:1px solid var(--line);
  background:#12203a;color:var(--off);cursor:pointer}
+/* Reads as one of the buttons, but it is a real link — it navigates to the
+   portal's Shared Files tab, and middle-click and copy-link behave properly. */
+.barlink{font:inherit;font-size:14px;padding:9px 16px;border-radius:8px;
+ border:1px solid var(--line);background:#12203a;color:var(--off);
+ text-decoration:none;line-height:normal;display:inline-block}
+.barlink:hover{filter:brightness(1.18)}
 button.primary{background:var(--orange);border-color:var(--orange);color:#160a02;font-weight:600}
 button:hover{filter:brightness(1.12)}
 .saved{color:var(--ok);font-size:13px;min-width:150px}
 .note{color:var(--slate);font-size:13px;text-align:center;margin-top:26px}
+/* Left to the browser default this renders as bright #0000EE on the dark panel. */
+.note a{color:var(--blue);text-decoration-color:rgba(93,171,229,.5);text-underline-offset:3px}
+.note a:hover{color:var(--orange);text-decoration-color:rgba(240,131,40,.6)}
 /* The block we complete together on the call. Everything else on the sheet is
    solo work, so this one carries the accent rather than blending into the run. */
 section.live{border-color:rgba(240,131,40,.55);
@@ -67,6 +98,10 @@ section.live h2 span{color:var(--orange)}
  width:5px;height:10px;border:solid #160a02;border-width:0 2.2px 2.2px 0;transform:rotate(42deg)}
 .shift input[type=checkbox]:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 .shift .nm{font-weight:600;font-size:15.5px}
+/* display:block, or the whole rule does nothing. .why is a <span>, and margin-top
+   and max-width are both ignored on an inline box — so every shift read
+   "Fixed → growthYou have no coaching experience…" with no space, on the live
+   portal, in block one of session one. */
 .shift .why{display:block;color:var(--slate);font-size:14px;margin-top:3px;max-width:72ch}
 .shift .moment{display:none;margin-top:10px}
 .shift.on .moment{display:block}
@@ -95,8 +130,16 @@ section.live h2 span{color:var(--orange)}
 .modal .mnote{color:var(--slate);font-size:14.5px;margin-bottom:18px;max-width:74ch}
 .modal .row{display:grid;grid-template-columns:230px 1fr;gap:10px 18px;
  padding:8px 0;border-bottom:1px solid rgba(30,43,69,.7);font-size:14.5px}
+.modal .row.three{grid-template-columns:200px 1fr 1fr}
 .modal .row b{font-weight:600}
 .modal .row span{color:var(--slate)}
+/* The reframe reads as the destination, not as more of the same complaint. */
+.modal .row span.pos{color:var(--blue)}
+/* Emitted inside .mbody, not .mhead — scoping it to the header meant the grid never
+   applied and the two labels rendered as "Sounds likeOnce it has shifted". */
+.modal .cols{display:grid;grid-template-columns:200px 1fr 1fr;gap:10px 18px;
+ font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);
+ padding:6px 0 4px;border-bottom:1px solid rgba(30,43,69,.7)}
 .modal .chips{display:flex;flex-wrap:wrap;gap:8px}
 .modal .chips span{background:#08111f;border:1px solid var(--line);border-radius:999px;
  padding:6px 12px;font-size:14px;color:#D6E0EE}
@@ -107,7 +150,8 @@ section.live h2 span{color:var(--orange)}
  .modal .mhead{padding:16px 16px 12px;gap:10px}
  .modal .mhead h3{font-size:19px}
  .modal .mbody{padding:14px 16px 20px}
- .modal .row{grid-template-columns:1fr;gap:2px;padding:10px 0}
+ .modal .row,.modal .row.three{grid-template-columns:1fr;gap:2px;padding:10px 0}
+ .modal .cols{display:none}
  .modal .close{padding:8px 13px;font-size:13.5px}
 }
 /* Stop the sheet behind scrolling while a menu is open, on iOS especially. */
@@ -130,8 +174,27 @@ td.xlast{position:relative;padding-right:32px}
  td.xlast{padding-right:4px}
  section{background:#fff;border:1px solid #ccc;break-inside:avoid}
  .intro{background:#f6f6f6;color:#222} h1 em{color:#9A4516} .principle{color:#444}
+ /* Examples are ours, not hers. She downloads this and sends it back, so they
+    would be pages of our own guidance returned to us. Screen only. */
+ .eg{display:none !important}
+ .rowcount{display:none !important}
  input,textarea{background:#fff;color:#111;border:1px solid #bbb}
+ /* Show the mirror, hide the field it came from. Checkboxes are untouched —
+    they print as themselves. */
+ input[type=text],textarea{display:none}
+ .pv{display:block;white-space:pre-wrap;overflow-wrap:anywhere;
+  background:#fff;color:#111;border:1px solid #bbb;border-radius:8px;
+  padding:10px 12px;font:inherit;font-size:15px;min-height:42px}
+ /* box-sizing is border-box, so min-height is the whole box. 42px is what an
+    empty text input measures, checked against the printed page rather than
+    calculated — leave it lower and every empty field prints shorter than it
+    used to, which quietly costs a blank sheet two pages of writing room.
+    .ta matches the textarea. */
+ .pv.ta{min-height:88px}
  .eyebrow,.help,th{color:#555}
+ /* "Click here" means nothing on paper, so print names the destination instead. */
+ .note a{color:#111;text-decoration:none}
+ .note a::after{content:" — the Shared Files tab in your portal"}
  .shift{background:#fff;border:1px solid #ccc;break-inside:avoid}
  .shift.on{background:#faf3ec;border-color:#9A4516}
  .shift .why{color:#555} .shift .moment{display:block}
@@ -140,172 +203,108 @@ td.xlast{position:relative;padding-right:32px}
  section.live h2 span{color:#9A4516}
  .livetag{color:#9A4516;background:#fff;border-color:#9A4516}
 }
+
+/* Shared from Session 04's design pass, applied to every sheet on Don's say-so, 7 Oct 2026.
+   Worked examples a touch larger and lighter; module-label columns narrow and fixed so
+   the writing boxes line up; cells top-aligned. Module tables only (table[data-grow]):
+   Session 02's research checks keep long labels in that column. */
+@media screen{
+ td{vertical-align:top}
+ table[data-grow] td.fixed{width:104px;white-space:nowrap;padding-top:15px}
+ .eg{font-size:14px;color:#A9B8CC}
+}
+@media screen and (max-width:640px){
+ table[data-grow] td.fixed{width:74px;padding-left:2px;padding-right:6px;font-size:13px}
+}
 </style></head><body><div class='wrap'>
 <header>
 <div class='eyebrow'>Therapy<b>+</b> · Working Sheet · Session 01</div>
 <h1>Foundations</h1>
 <div class='principle'>Be decisive. It is better to make decisions and iterate. Decisiveness is like a muscle — the more you use it, the stronger it becomes.</div>
 </header>
-<div class='intro'>Four blocks, one question: what could derail you? One focused sitting.</div>
+<div class='intro'>Three blocks, one question: what could derail you? One focused sitting. Rough is fine: half-formed answers still count.</div>
 <section>
-<h2><span>01</span>The shifts that are live for you</h2>
-<div class='help'>Tick the three most alive for you right now — three, not seven. Each one is explained in full on your Principle Card.</div>
-<div class='shifts'>
-<div class='shift'>
-<label class='top' for='f1'>
-<input type='checkbox' id='f1'>
-<span><span class='nm'>Fixed → growth</span><span class='why'>You have no coaching experience and decades of helping people change. The second one is what counts; the first is temporary.</span></span></label>
-<div class='moment'><label for='f1m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f1m'></div>
+<h2><span>01</span>The beliefs that will slow you down</h2>
+<div class='help'>Pick the ones most alive for you. Choose from the menu below or write your own. The last column is the hard one: not a nicer thought, but something truer that you would defend if somebody challenged it.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-beliefs'>Beliefs menu</button>
 </div>
-<div class='shift'>
-<label class='top' for='f2'>
-<input type='checkbox' id='f2'>
-<span><span class='nm'>Unworthy → capable</span><span class='why'>Somebody better could do this. Somebody better is not sitting with your clients, hearing what you have heard, year after year.</span></span></label>
-<div class='moment'><label for='f2m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f2m'></div>
-</div>
-<div class='shift'>
-<label class='top' for='f3'>
-<input type='checkbox' id='f3'>
-<span><span class='nm'>Scarcity → abundance</span><span class='why'>There are not enough people who would pay for this. In any real market there are far more than you could ever serve.</span></span></label>
-<div class='moment'><label for='f3m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f3m'></div>
-</div>
-<div class='shift'>
-<label class='top' for='f4'>
-<input type='checkbox' id='f4'>
-<span><span class='nm'>Money is evil → money is neutral</span><span class='why'>Money is a tool, and what you do with it decides its character. Being paid well lets you give more away, not less.</span></span></label>
-<div class='moment'><label for='f4m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f4m'></div>
-</div>
-<div class='shift'>
-<label class='top' for='f5'>
-<input type='checkbox' id='f5'>
-<span><span class='nm'>Charge by time → charge by value</span><span class='why'>The hour is not the product. The change is the product, and the change is what carries a price.</span></span></label>
-<div class='moment'><label for='f5m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f5m'></div>
-</div>
-<div class='shift'>
-<label class='top' for='f6'>
-<input type='checkbox' id='f6'>
-<span><span class='nm'>You're right → the market is right</span><span class='why'>You cannot make people want something. You can find what they already want, and build for that.</span></span></label>
-<div class='moment'><label for='f6m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f6m'></div>
-</div>
-<div class='shift'>
-<label class='top' for='f7'>
-<input type='checkbox' id='f7'>
-<span><span class='nm'>Quit by feeling → adapt by feedback</span><span class='why'>Motivation rises and falls every week. Decisions get made on what the market actually did.</span></span></label>
-<div class='moment'><label for='f7m'>A real moment from the last fortnight when the old version showed up</label><input type='text' id='f7m'></div>
-</div>
-</div>
+<table data-x='1' data-cols='2'>
+<thead><tr>
+<th>The belief</th>
+<th>An alternative belief that is true</th>
+</tr></thead><tbody>
+<tr>
+<td><input type='text' id='f1'></td>
+<td><input type='text' id='f2'></td>
+</tr>
+<tr>
+<td><input type='text' id='f3'></td>
+<td><input type='text' id='f4'></td>
+</tr>
+</tbody></table>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='1'>+ Add row</button><span class='rowcount' data-count='1'></span></div>
 </section>
 <section>
-<h2><span>02</span>The moment behind each one</h2>
-<div class='help'>For each shift you ticked, a real moment from the last fortnight when the old version showed up. A moment, not a description.</div>
-<table data-x='1' data-cols='2'><thead><tr>
-<th>The shift you ticked</th>
-<th>A real moment in the last fortnight</th>
+<h2><span>02</span>The circumstances that could knock you off course</h2>
+<div class='help'>Name them before they arrive. The last column has to be something you could do in ninety seconds: block the time in your calendar, open this sheet and write one line, commit to the next video.</div>
+<div class='menus'>
+<button type='button' class='menubtn' data-menu='menu-circumstances'>Circumstances menu</button>
+</div>
+<table data-x='2' data-cols='3'>
+<thead><tr>
+<th>The circumstance</th>
+<th>The earliest sign I would notice</th>
+<th>What I will do if it arises</th>
 </tr></thead><tbody>
+<tr>
+<td><input type='text' id='f5'></td>
+<td><input type='text' id='f6'></td>
+<td><input type='text' id='f7'></td>
+</tr>
 <tr>
 <td><input type='text' id='f8'></td>
 <td><input type='text' id='f9'></td>
-</tr>
-<tr>
 <td><input type='text' id='f10'></td>
-<td><input type='text' id='f11'></td>
-</tr>
-<tr>
-<td><input type='text' id='f12'></td>
-<td><input type='text' id='f13'></td>
 </tr>
 </tbody></table>
-<div class='addwrap'><button type='button' class='addrow' data-addrow='1'>+ Add row</button></div>
+<div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add row</button><span class='rowcount' data-count='2'></span></div>
 </section>
 <section>
-<h2><span>03</span>The sentence you would actually believe</h2>
-<div class='help'>For the shift with the most charge, write the new version as a sentence you would defend. Start with “I”.</div>
-<label for='f14'>I…</label>
-<textarea id='f14'></textarea>
+<h2><span>03</span>Your commitment</h2>
+<div class='help'>Two decisions and when you'll start. Read the last one out loud before you close this.</div>
+<label for='f11'>A · What I want to be true in ninety days</label>
+<input type='text' id='f11'>
+<label for='f12'>B · The one thing I will do every week to get there</label>
+<input type='text' id='f12'>
+<label for='f13'>C · My first step, and the date I will take it by</label>
+<input type='text' id='f13'>
 </section>
-<section>
-<h2><span>04</span>Three beliefs that will slow you down</h2>
-<div class='help'>Sentences you carry, rather than general self-criticism. The last column is the hard one: something truer that you would defend if challenged.</div>
-<table data-x='2' data-cols='4'><thead><tr>
-<th>The belief</th>
-<th>Where it came from</th>
-<th>What it costs me in behavior</th>
-<th>Something truer I would defend</th>
-</tr></thead><tbody>
-<tr>
-<td><input type='text' id='f15'></td>
-<td><input type='text' id='f16'></td>
-<td><input type='text' id='f17'></td>
-<td><input type='text' id='f18'></td>
-</tr>
-<tr>
-<td><input type='text' id='f19'></td>
-<td><input type='text' id='f20'></td>
-<td><input type='text' id='f21'></td>
-<td><input type='text' id='f22'></td>
-</tr>
-<tr>
-<td><input type='text' id='f23'></td>
-<td><input type='text' id='f24'></td>
-<td><input type='text' id='f25'></td>
-<td><input type='text' id='f26'></td>
-</tr>
-</tbody></table>
-<div class='addwrap'><button type='button' class='addrow' data-addrow='2'>+ Add row</button></div>
-</section>
-<section>
-<h2><span>05</span>Three moments that could knock you off course</h2>
-<div class='help'>Named before they arrive. The last column must be physical and take under two minutes — sending one message counts, feeling more positive does not.</div>
-<table data-x='3' data-cols='3'><thead><tr>
-<th>The moment</th>
-<th>The earliest sign I would notice</th>
-<th>The small action I will take instead</th>
-</tr></thead><tbody>
-<tr>
-<td><input type='text' id='f27'></td>
-<td><input type='text' id='f28'></td>
-<td><input type='text' id='f29'></td>
-</tr>
-<tr>
-<td><input type='text' id='f30'></td>
-<td><input type='text' id='f31'></td>
-<td><input type='text' id='f32'></td>
-</tr>
-<tr>
-<td><input type='text' id='f33'></td>
-<td><input type='text' id='f34'></td>
-<td><input type='text' id='f35'></td>
-</tr>
-</tbody></table>
-<div class='addwrap'><button type='button' class='addrow' data-addrow='3'>+ Add row</button></div>
-</section>
-<section>
-<h2><span>06</span>Your commitment</h2>
-<div class='help'>Read the last line out loud before you close this.</div>
-<label for='f36'>One outcome for the next ninety days</label>
-<input type='text' id='f36'>
-<label for='f37'>Why it matters — what is at stake if you build this, and if you do not</label>
-<textarea id='f37'></textarea>
-<label for='f38'>One action I will repeat — small enough to survive a full clinical week</label>
-<input type='text' id='f38'>
-<label for='f39'>When it is protected — the day, the time, and what it displaces</label>
-<input type='text' id='f39'>
-<label for='f40'>My first step, and the date I will take it by</label>
-<input type='text' id='f40'>
-</section>
-<section>
-<h2><span>07</span>Your list</h2>
-<div class='help'>This one runs across weeks, not one evening. Add people whenever they come to mind.</div>
-<label for='f41'>Names on the list so far</label>
-<input type='text' id='f41'>
-<label for='f42'>Three people I thought of who surprised me</label>
-<input type='text' id='f42'>
-<label for='f43'>All sessions booked in the diary? (yes / no)</label>
-<input type='text' id='f43'>
-</section>
-<div class='note'>Your answers save automatically in this browser. They are not sent anywhere. Use Download / print to keep a copy, and share the PDF with your coach 24 hours before the session.</div>
+<div class='note'><b>Keep a copy:</b> download it. If you have a call or drop-in coming up, <a href='/portal/shared'>share it on the portal</a> at least 24 hours before. Your answers save automatically in this browser — they are not sent anywhere until you send them.</div>
 </div>
-<div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
+<div class='modal' id='menu-beliefs' role='dialog' aria-modal='true' aria-label='Beliefs menu'><div class='box'>
+<div class='mhead'><h3>Beliefs</h3><button type='button' class='close'>Close</button></div>
+<div class='mbody'>
+<div class='mnote'>The seven that come up again and again for therapists making this move. The middle column is what each one sounds like from the inside; the right-hand column is the same person once the belief has shifted. All seven are on your Principle Card. Pick from here or write your own.</div>
+<div class='cols'><span></span><span>Sounds like</span><span>An alternative belief that is true</span></div>
+<div class='row three'><b>Fixed → growth</b><span>I have never coached anyone - I will be terrible at it. Who am I to charge for this?</span><span class='pos'>I have spent years helping people change — it is in my training, my expertise and my experience. I am well placed to coach, and with the right mindset and support I can do it well.</span></div>
+<div class='row three'><b>Unworthy → capable</b><span>Somebody better could do this. There must be so many coaches with more training than me.</span><span class='pos'>There is no coach on the face of the earth who can deliver this coaching program the way I can. Nobody has my life experiences, background, eccentricities, style.</span></div>
+<div class='row three'><b>Scarcity → abundance</b><span>There cannot be enough people who would pay for this. The market is saturated.</span><span class='pos'>There are more people who need this than I could ever serve. I only need a few of them.</span></div>
+<div class='row three'><b>Money is evil → money is neutral</b><span>Charging a lot feels wrong. I did not get into this for money.</span><span class='pos'>Money is a tool, and what I do with it decides its character. Being paid well lifts the strain off everything else, so I can give my full self — to my family and my own life as much as to my clients.</span></div>
+<div class='row three'><b>Charge by time → charge by value</b><span>I cannot charge that - nobody will pay it. I should stick to charging by the hour, like I do with therapy.</span><span class='pos'>The hour is not the product. The change is the product, and that is what carries the price.</span></div>
+<div class='row three'><b>You're right → the market is right</b><span>They just do not understand it yet. If I explain it better they will want it.</span><span class='pos'>I cannot talk somebody into wanting something. I can find what they already want and build for that.</span></div>
+<div class='row three'><b>Quit by feeling → adapt by feedback</b><span>I am not feeling it this week. Maybe this is not for me after all.</span><span class='pos'>Motivation moves every week and it is not data. I decide on what actually happened.</span></div>
+</div></div></div>
+<div class='modal' id='menu-circumstances' role='dialog' aria-modal='true' aria-label='Circumstances menu'><div class='box'>
+<div class='mhead'><h3>Circumstances</h3><button type='button' class='close'>Close</button></div>
+<div class='mbody'>
+<div class='mnote'>Three that derail this more often than anything in the material. None of them can be argued out of existence, so the right-hand column is what you do when one turns up rather than a truer way to see it.</div>
+<div class='cols'><span></span><span>Sounds like</span><span>What to do when it arrives</span></div>
+<div class='row three'><b>A busy week ahead</b><span>I will pick it back up when the caseload eases. There is nothing left in the evenings right now.</span><span class='pos'>Thirty minutes on Thursday morning, in the calendar like any other appointment.</span></div>
+<div class='row three'><b>Overthinking a decision that did not need it</b><span>I will decide once I have thought it through properly. I just want to get it right.</span><span class='pos'>Set a timer for ten minutes, pick the better of two options, and write down what would make me change my mind.</span></div>
+<div class='row three'><b>A belief surfacing at the wrong moment</b><span>I was about to send it, and then I thought — who is going to read this from me?</span><span class='pos'>Have the thought and send it anyway.</span></div>
+</div></div></div>
+<div class='bar'><button id='save'>Save now</button><button class='primary' id='print'>Download / print</button><a class='barlink' href='/portal/shared'>Share on the portal</a><button id='clear'>Clear</button><span class='saved' id='saved'></span></div>
 <script>
 (function(){
  var KEY='psyberB-wk1';
@@ -337,9 +336,20 @@ td.xlast{position:relative;padding-right:32px}
    var tid=tb.getAttribute('data-x');
    var body=tb.querySelector('tbody');if(!body)return null;
    var tr=document.createElement('tr');tr.className='xrow';
+   var tallAttr=tb.getAttribute('data-tall');
+   var tallSet={};if(tallAttr){tallAttr.split(',').forEach(function(x){tallSet[+x]=1;});}
+   var grow=tb.getAttribute('data-grow');
    for(var c=1;c<=cols;c++){
      var td=document.createElement('td');
-     var inp=document.createElement('input');inp.type='text';
+     var inp;
+     if(grow&&c===1){
+       // a growing labelled table: the first cell names the row, like the printed ones
+       td.className='fixed';
+       td.textContent=grow+' '+((parseInt(tb.getAttribute('data-growbase'),10)||0)+r);
+       tr.appendChild(td);continue;
+     }
+     if(tallSet[c-1]){inp=document.createElement('textarea');}
+     else{inp=document.createElement('input');inp.type='text';}
      inp.id='x'+tid+'_'+r+'_'+c;
      td.appendChild(inp);
      if(c===cols){
@@ -360,7 +370,7 @@ td.xlast{position:relative;padding-right:32px}
  function nextRow(tb){
    var top=0;
    rowsIn(tb).forEach(function(tr){
-     var inp=tr.querySelector('input');if(!inp)return;
+     var inp=tr.querySelector('input,textarea');if(!inp)return;
      var m=inp.id.match(/_(\d+)_\d+$/);if(m&&+m[1]>top)top=+m[1];});
    return top+1;
  }
@@ -378,19 +388,64 @@ td.xlast{position:relative;padding-right:32px}
      var tb=document.querySelector("table[data-x='"+b.getAttribute('data-addrow')+"']");
      if(!tb)return;
      var tr=addRow(tb,nextRow(tb));
-     if(tr){var f=tr.querySelector('input');if(f)f.focus();}});});
+     if(tr){var f=tr.querySelector('input,textarea');if(f)f.focus();}});});
 
+ // How many lines are actually written, against the target the session asks for.
+ // "Aim for ten" is not an instruction anybody can follow without being able to see
+ // where they are.
+ function counts(){
+   [].slice.call(document.querySelectorAll('.rowcount')).forEach(function(sp){
+     var tb=document.querySelector("table[data-x='"+sp.getAttribute('data-count')+"']");
+     if(!tb)return;
+     // Count ROWS with anything in them, not cells. A three-column table used to
+     // report 18 for a complete six-row map, directly under "four to six modules".
+     var n=0;
+     [].slice.call(tb.querySelectorAll('tbody tr')).forEach(function(tr){
+       var filled=false;
+       [].slice.call(tr.querySelectorAll('input,textarea')).forEach(function(i){
+         if(i.value&&i.value.trim())filled=true;});
+       if(filled)n++;});
+     var t=sp.getAttribute('data-target');
+     sp.textContent = t ? (n+' of '+t) : (n?n+' written':'');
+     sp.className = 'rowcount'+(t&&n>=+t?' done':'');
+   });
+ }
  function load(){var d={};try{d=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
    restoreRows(d);
    all().forEach(function(e){if(d[e.id]!==undefined)set(e,d[e.id]);});
-   paint();}
+   paint();counts();}
 
  // Delegated, so rows added after load save exactly like the printed ones.
- document.addEventListener('input',function(){clearTimeout(t);t=setTimeout(save,400);});
+ document.addEventListener('input',function(){counts();clearTimeout(t);t=setTimeout(save,400);});
  document.addEventListener('change',function(ev){
    if(ev.target&&box(ev.target)){paint();save();}});
  document.getElementById('save').addEventListener('click',save);
- document.getElementById('print').addEventListener('click',function(){save();window.print();});
+
+ // ── print mirror ───────────────────────────────────────────────────────────
+ // A text input cannot wrap, so on paper it prints one line and drops the rest
+ // with no ellipsis and no warning. Copy every value into a real block element
+ // and let that print instead. Rebuilt on every print rather than kept in sync,
+ // so rows added after load are covered without a listener.
+ function mirror(){
+   [].slice.call(document.querySelectorAll('input[type=text],textarea'))
+     .forEach(function(e){
+       var p=e.nextElementSibling;
+       if(!p||p.className.indexOf('pv')!==0){
+         p=document.createElement('div');
+         p.className='pv'+(e.tagName==='TEXTAREA'?' ta':'');
+         e.parentNode.insertBefore(p,e.nextSibling);}
+       p.textContent=e.value;});}
+ document.getElementById('print').addEventListener('click',function(){
+   save();mirror();window.print();});
+ // Cmd-P and the browser's own print menu never touch that button. onbeforeprint
+ // covers Chrome and Firefox; Safari does not fire it, but does fire a change on
+ // the print media query, so both are wired.
+ window.addEventListener('beforeprint',mirror);
+ if(window.matchMedia){
+   var pmq=window.matchMedia('print');
+   var onp=function(m){if(m.matches)mirror();};
+   if(pmq.addEventListener)pmq.addEventListener('change',onp);
+   else if(pmq.addListener)pmq.addListener(onp);}
  document.getElementById('clear').addEventListener('click',function(){
    if(confirm('Clear every answer on this sheet? This cannot be undone.')){
      localStorage.removeItem(KEY);
@@ -419,4 +474,5 @@ td.xlast{position:relative;padding-right:32px}
  load();
  window.addEventListener('beforeunload',save);
 })();
-</script></body></html>
+</script>
+</body></html>

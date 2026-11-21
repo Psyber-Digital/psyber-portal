@@ -189,7 +189,7 @@ export function movesFor(session: number, tier: Tier | undefined): Move[] {
       const fill = (s: string) => s.split("{meet}").join(meet);
       let why = fill(m.why);
       // Foundations: the free list holds 50 names (ADR-0027 addendum 3).
-      if (t === "foundations" && m.id === "s1-list") why += " Your free list holds up to 50 names.";
+      if (t === "foundations" && m.id === "s1-list") why += " The full program works towards 250. Your free list holds your first 50.";
       // Foundations finish opens nothing (0016).
       if (t === "foundations" && m.finish) why = "This marks your free session as done.";
       return { ...m, title: fill(m.title), why };

@@ -333,6 +333,7 @@ export async function PortalScreen({
         files={filesFor(focused.id)}
         intro={weekGuide(focused.number)?.bannerIntro}
         welcome={currentWeek <= 1 ? <WelcomeVideo currentWeek={currentWeek} /> : undefined}
+        free={tier === "foundations"}
       />
       {currentWeek > 1 && <WelcomeVideo currentWeek={currentWeek} />}
 
