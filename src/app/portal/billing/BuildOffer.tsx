@@ -40,7 +40,6 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
   const oneOnOne = [
     "Seven one-on-one sessions and three clinics to build your program",
     "Personal feedback on your niche, message, offer and program",
-    "We stay with you until your first paying coaching client signs, as long as you do the work and keep at it. That's our 90-Day Guarantee.",
   ];
   const blueTick = (
     <svg viewBox="0 0 20 20" aria-hidden className="mt-[3px] h-4 w-4 flex-none text-blue">
@@ -171,6 +170,18 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
                 </li>
               ))}
             </ul>
+            <div className="mt-4 flex gap-3 rounded-[12px] border border-blue/50 bg-blue/[0.14] p-4">
+              <svg viewBox="0 0 20 20" aria-hidden className="mt-[2px] h-6 w-6 flex-none text-blue">
+                <path fill="currentColor" d="M10 1.5 3 4.2v5c0 4.3 3 7.9 7 9.3 4-1.4 7-5 7-9.3v-5zm-1.3 12-3.4-3.4 1.4-1.4 2 2 4.4-4.4 1.4 1.4z" />
+              </svg>
+              <div>
+                <p className="font-disp text-[16px] font-semibold text-off">Our 90-Day Guarantee</p>
+                <p className="mt-1 text-[13.5px] leading-relaxed text-sec">
+                  We stay with you until your first paying coaching client signs, as long as you do the
+                  work and keep at it.
+                </p>
+              </div>
+            </div>
             <a href={STRATEGY_CALL_URL} className="psy-btn mt-5 block w-full text-center">
               Book a call about one-on-one
             </a>
