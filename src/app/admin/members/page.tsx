@@ -82,7 +82,7 @@ export default async function MembersPage() {
   const subOf = new Map((subs ?? []).map((s) => [s.user_id, s]));
   const groups = [
     { tier: "build", label: "Build" },
-    { tier: "foundations", label: "Foundations" },
+    { tier: "foundations", label: "Build Free" },
     { tier: "pending", label: "Not yet in (no access)" },
   ];
   const refusalCounts = (refusals ?? []).reduce<Record<string, number>>((acc, r) => {

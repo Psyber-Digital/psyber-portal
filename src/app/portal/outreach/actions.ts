@@ -27,7 +27,7 @@ const MAX_TOTAL_CONTACTS = 5000;
 // these lines only turn that into a clear message and a partial add.
 const FREE_LIST_CAP = 50;
 const LIST_FULL =
-  "Your list is full. Foundations™ holds 50 names, and the method works toward 250. Join Build™ to keep adding.";
+  "Your list is full. Build™ Free holds 50 names, and the method works toward 250. Join Build™ to keep adding.";
 const friendly = (message: string) => (message.includes("FREE_LIST_FULL") ? LIST_FULL : message);
 
 // How many more names this person may add, or null if there's no cap for them.

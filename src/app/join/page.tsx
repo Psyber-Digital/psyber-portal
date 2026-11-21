@@ -371,6 +371,10 @@ export default function JoinPage() {
         <p className="mt-2 text-xs leading-relaxed text-slate">
           Your answer decides the next step we show you and the emails we send. You can change it later.
         </p>
+        <p className="mt-3 rounded-[9px] border border-line px-3 py-2.5 text-xs leading-relaxed text-sec">
+          Your free account is Build™ Free: Session 1, and a contact list for up to 50 names.
+          The weekly live drop-ins come with full Build™.
+        </p>
 
         <h2 className="mt-9 font-disp text-[15px] font-semibold text-off">
           Your account

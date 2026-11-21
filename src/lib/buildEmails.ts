@@ -87,7 +87,7 @@ export function cancelEmail(p: {
   const end = day(p.endDate);
   const paras = [
     `Your Build membership is canceled. You keep everything until ${end}.`,
-    "After that you move to Foundations. Session 1 and your contact list stay with you.",
+    "After that you move to Build Free. Session 1 and your contact list stay with you.",
     `We'll hold your place in the program until ${day(placeDate(p.endDate))}. Rejoin by then and you carry on from Session ${p.session}.`,
     "Changed your mind? You can renew from Manage billing on your account page, and you carry straight on.",
   ];

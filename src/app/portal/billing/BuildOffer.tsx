@@ -50,7 +50,7 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
     ["Want full support?", "Choose one-on-one. We build your program with you, step by step, with personal feedback. It starts with a call."],
     ["What if I have a busy month?", "Your sessions wait for you. Pick up where you left off, and bring anything you're stuck on to the weekly drop-in."],
     ["Can I cancel?", "Yes, any time, online, from Manage billing on your account page. You keep access until the end of the period you've paid for."],
-    ["What happens to my contact list?", "It's yours. Export it any time. If you cancel Build, it stays with you on Foundations. If you close your account, it's deleted, so export it first."],
+    ["What happens to my contact list?", "It's yours. Export it any time. If you cancel Build, it stays with you on Build Free. If you close your account, it's deleted, so export it first."],
   ];
 
   return (
