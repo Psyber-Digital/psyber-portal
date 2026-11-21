@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { emailShellHtml, escHtml, paragraphsHtml, portalUrl } from "@/lib/email";
 import { sendOnce, type Kind, type Rendered } from "@/lib/buildEmails";
+import { buildOnSale } from "@/lib/sale";
 
 // Upsell emails to Foundations members. Wording approved by Don on board card
 // m03, 5 Nov 2026: Offer-Ladder/build/FOUNDATIONS-UPSELL-draft.md. Change the
@@ -495,12 +496,16 @@ export async function sendDueUpsell(userId: string, now = new Date()) {
     const { data: auth } = await admin.auth.admin.getUserById(userId);
     if (!auth.user?.email_confirmed_at) return report;
 
-    if (p.list_full_at) {
+    // Build not on sale yet: only the one-on-one call invitations go out, and
+    // the $99 clock never starts (Don, 21 Nov 2026).
+    const onSale = buildOnSale();
+    if (p.list_full_at && onSale) {
       const result = await sendOnce(userId, "upsell_8", "1", renderUpsell("upsell_8", p, now));
       report.push({ kind: "upsell_8", to: p.email, result });
     }
 
     let due = dueEmail(p, now);
+    if (!onSale && due && !["upsell_a", "upsell_b", "upsell_c"].includes(due)) due = null;
     if (due === "start_offer") {
       const { data: ends } = await admin.rpc("start_first_month_offer", { p_user: userId });
       if (!ends) return report;

@@ -35,6 +35,7 @@ import { ChapterFinish } from "./components/ChapterFinish";
 import { CHAPTERS } from "@/lib/story";
 import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal } from "@/lib/points";
 import { sessionGate } from "@/lib/gates";
+import { buildOnSale, OPENS_SOON } from "@/lib/sale";
 
 const BOOK_ID = "book";
 
@@ -178,8 +179,12 @@ export async function PortalScreen({
   // The finish button moves into the card when it is the next move, so the
   // page never shows it twice.
   const finishInCard = Boolean(nextMove?.finish);
+  // One-on-one clients keep today's screen unless switched on (card L3, my pick,
+  // 21 Nov 2026): the new Today launches for free and Build members first.
+  const nextMoveForTier =
+    tier === "foundations" || tier === "build" || process.env.NEXT_MOVE_FOR_ONE_ON_ONE === "true";
   const showNextMove =
-    Boolean(current) && !viewingPast && moves.length > 0 &&
+    nextMoveForTier && Boolean(current) && !viewingPast && moves.length > 0 &&
     !(tier === "foundations" && (freeFinished || profile?.lapsed_at));
   const moveLinks: MoveLinks = current
     ? {
@@ -261,7 +266,7 @@ export async function PortalScreen({
 
       {/* Foundations members: the way into Build. WORDING: board card r11,
           re-sold per Codex VOICE-20261030-2 and 20261031-1. */}
-      {profile?.tier === "foundations" && offerIsOpen && (
+      {profile?.tier === "foundations" && buildOnSale() && offerIsOpen && (
         <a
           href="/portal/billing"
           className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
@@ -274,7 +279,11 @@ export async function PortalScreen({
         </a>
       )}
 
-      {profile?.tier === "foundations" && !offerIsOpen && (
+      {profile?.tier === "foundations" && !buildOnSale() && (
+        <p className="psy-card mb-6 p-5 text-sm text-slate">{OPENS_SOON}</p>
+      )}
+
+      {profile?.tier === "foundations" && buildOnSale() && !offerIsOpen && (
         <a
           href="/portal/billing"
           className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
@@ -335,7 +344,7 @@ export async function PortalScreen({
           first-month offer (0016). WORDING: board card m03, 5 Nov 2026. */}
       {/* Finishing a session happens on Today: the card's last move, or "Mark
           done" in its list (Don, board m10b A, 18 Nov 2026). */}
-      {freeFinished && offerIsOpen && (
+      {freeFinished && offerIsOpen && buildOnSale() && (
         <div className="psy-card mt-6 p-5">
           <p className="font-disp text-base font-semibold text-off">
             Session 1 done. Next is Session 2: your niche.

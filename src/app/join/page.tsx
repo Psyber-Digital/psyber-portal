@@ -348,27 +348,28 @@ export default function JoinPage() {
           Yes
         </Choice>
 
-        {/* Don, 5 Nov 2026: decides which upsell emails they get. Not a
+        {/* Don, 5 Nov 2026, reworded at his d6 A (21 Nov): everyone must choose
+            how they want to work. Decides the next step and the emails. Not a
             coaching-rule question, so it's unnumbered and never refuses. */}
         <h2 className="mt-9 font-disp text-[15px] font-semibold leading-snug text-off">
-          Would you like personalized one-on-one support?
+          How would you like to work?
         </h2>
         <Choice
           name="one_on_one"
           checked={gate.one_on_one === true}
           onChange={() => setGate((g) => ({ ...g, one_on_one: true }))}
         >
-          Yes, tell me more
+          One-on-one, with a coach
         </Choice>
         <Choice
           name="one_on_one"
           checked={gate.one_on_one === false}
           onChange={() => setGate((g) => ({ ...g, one_on_one: false }))}
         >
-          Not right now
+          On my own, with weekly drop-ins
         </Choice>
         <p className="mt-2 text-xs leading-relaxed text-slate">
-          Your answer decides the next step we show you and the emails we send.
+          Your answer decides the next step we show you and the emails we send. You can change it later.
         </p>
 
         <h2 className="mt-9 font-disp text-[15px] font-semibold text-off">

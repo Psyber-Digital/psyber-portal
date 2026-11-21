@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { buildOnSale, OPENS_SOON } from "@/lib/sale";
 import Link from "next/link";
 import { VimeoEmbed } from "@/app/portal/components/VimeoEmbed";
 import type { WeekVideo } from "@/lib/videos";
@@ -89,9 +90,13 @@ export default function BuildPage() {
             <div className="mt-1 font-disp text-2xl font-semibold text-off">$1,197 a year</div>
             <p className="mt-1 text-xs text-slate">Saves you $591, nearly four months free.</p>
           </div>
-          <Link href="/join?plan=build" className="psy-btn mt-2 w-full justify-center">
-            Join Build™
-          </Link>
+          {buildOnSale() ? (
+            <Link href="/join?plan=build" className="psy-btn mt-2 w-full justify-center">
+              Join Build™
+            </Link>
+          ) : (
+            <p className="mt-2 rounded-[9px] border border-blue/30 bg-blue/10 px-3 py-2.5 text-sm text-sec">{OPENS_SOON}</p>
+          )}
           {/* Renewal and refund terms beside the button (terms 3.2, 4.1-4.4). */}
           <p className="text-xs leading-relaxed text-slate">
             Renews automatically until you cancel. Monthly: cancel any time, no

@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { buildOnSale } from "@/lib/sale";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -51,6 +52,8 @@ async function signedInMember() {
 }
 
 export async function startCheckout(formData: FormData) {
+  // No payment until Build is on sale (Don, 21 Nov 2026).
+  if (!buildOnSale()) redirect("/portal/billing");
   const plan = String(formData.get("plan") ?? "") as BuildPlan;
   if (!(plan in BUILD_PRICES)) redirect("/portal/billing");
 

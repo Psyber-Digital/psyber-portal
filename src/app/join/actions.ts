@@ -95,7 +95,7 @@ function missing(a: Answers): string | null {
   )
     return "Add your license type, state and number.";
   if (a.coaches_therapy_clients === null) return "Answer question 3.";
-  if (a.one_on_one === null) return "Tell us if you'd like one-on-one support.";
+  if (a.one_on_one === null) return "Choose how you'd like to work: one-on-one, or on your own.";
   return null;
 }
 

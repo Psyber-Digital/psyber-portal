@@ -5,6 +5,7 @@ import { stripe, syncSubscription } from "@/lib/stripe";
 import { startCheckout } from "./actions";
 import { Brand } from "../components/Brand";
 import { deadlineDay, offerOpen } from "@/lib/upsellEmails";
+import { buildOnSale, OPENS_SOON } from "@/lib/sale";
 
 export const dynamic = "force-dynamic";
 
@@ -124,6 +125,19 @@ export default async function BillingPage({
           <Link href="/portal/billing/manage" className="psy-btn mt-5 block w-full text-center">
             Manage billing
           </Link>
+        </div>
+        {back}
+      </main>
+    );
+  }
+
+  // Build not on sale yet (Don, 21 Nov 2026): no prices, no payment button.
+  if (!buildOnSale()) {
+    return (
+      <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
+        <div className="psy-card p-8">
+          <h1 className="font-disp text-xl font-semibold"><Brand name="Build" tm /> opens soon</h1>
+          <p className="mt-2 text-sm leading-relaxed text-slate">{OPENS_SOON}</p>
         </div>
         {back}
       </main>
