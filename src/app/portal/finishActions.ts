@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { sendDueUpsell } from "@/lib/upsellEmails";
 import { movesFor } from "@/lib/moves";
 import { sessionGate } from "@/lib/gates";
+import { buildOnSale } from "@/lib/sale";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // Build members mark their current session complete (Build terms 2.2). The
 // database decides what opens next (finish_session, 0011); this only passes
@@ -41,6 +43,21 @@ export async function finishSession(formData: FormData) {
 
   const { data, error } = await supabase.rpc("finish_session", { p_week: week });
   if (error) console.error("finish_session failed:", error.message);
+
+  // Build not on sale yet (Don, 21 Nov 2026): finish_session (0016) starts the
+  // seven-day $99 clock in the database. Undo it for this member only, so the
+  // clock starts fresh, with its emails, on the day Build goes on sale.
+  if (data === "finished_free" && !buildOnSale()) {
+    const { data: auth } = await supabase.auth.getUser();
+    if (auth.user) {
+      const { error: undoErr } = await createAdminClient()
+        .from("profiles")
+        .update({ offer_started_at: null, offer_ends_at: null })
+        .eq("id", auth.user.id)
+        .eq("tier", "foundations");
+      if (undoErr) console.error("undo offer clock failed:", undoErr.message);
+    }
+  }
 
   // A Foundations member just finished Session 1: their offer email goes now.
   if (data === "finished_free") {

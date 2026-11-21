@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { SetPasswordForm } from "./SetPasswordForm";
 import { CloseAccountForm } from "./CloseAccountForm";
 import { setWorkStyle } from "./actions";
+import { buildOnSale } from "@/lib/sale";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +48,7 @@ export default async function AccountPage() {
           <button type="submit" className="psy-btn-ghost mt-4 w-full">Save</button>
         </form>
       )}
-      {selfServe && (
+      {selfServe && (profile?.tier === "build" || buildOnSale()) && (
         <Link href="/portal/billing" className="psy-btn mt-5 block w-full text-center">
           {profile?.tier === "build" ? "Manage billing" : "Join Build"}
         </Link>
