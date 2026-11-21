@@ -2,6 +2,7 @@
 
 import { headers } from "next/headers";
 import { buildOnSale } from "@/lib/sale";
+import { currentStep } from "@/lib/ladder";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -33,7 +34,7 @@ async function signedInMember() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("tier, role, full_name, email, lapsed_at, offer_ends_at")
+    .select("tier, role, full_name, email, lapsed_at, offer_ends_at, created_at")
     .eq("id", user.id)
     .single();
   // Only self-serve members buy Build. Flagship clients and admins never see
@@ -97,16 +98,15 @@ export async function startCheckout(formData: FormData) {
   });
   if (!prices[0]) throw new Error(`No active Stripe price for ${BUILD_PRICES[plan]}`);
 
-  // The first-month offer, decided here on the server, never by the browser.
-  // Monthly plan only. The checkout page can't outlive the offer by much:
-  // Stripe needs at least 30 minutes, and allows 24 hours at most.
-  const offer = plan === "monthly" && !profile.lapsed_at && offerOpen(profile);
+  // The launch ladder (ADR-0027 addendum 6), decided here on the server, never
+  // by the browser. Yearly plan only. The checkout page can't outlive the step
+  // by much: Stripe needs at least 30 minutes, and allows 24 hours at most.
+  // A row with no status is only a customer from an unfinished checkout, not a
+  // past membership, so it doesn't lose the saving.
+  const step = plan === "yearly" && !sub?.status ? currentStep(profile) : null;
   const now = Date.now();
-  const expiresAt = offer
-    ? Math.floor(
-        Math.max(now + 31 * 60_000, Math.min(new Date(profile.offer_ends_at!).getTime(), now + 23 * 3_600_000)) /
-          1000,
-      )
+  const expiresAt = step
+    ? Math.floor(Math.max(now + 31 * 60_000, Math.min(step.endsAt.getTime(), now + 23 * 3_600_000)) / 1000)
     : undefined;
 
   const session = await stripe().checkout.sessions.create({
@@ -114,13 +114,13 @@ export async function startCheckout(formData: FormData) {
     customer: customerId,
     client_reference_id: user.id,
     line_items: [{ price: prices[0].id, quantity: 1 }],
-    ...(offer ? { discounts: [{ coupon: FIRST_MONTH_COUPON }], expires_at: expiresAt } : {}),
+    ...(step ? { discounts: [{ coupon: step.coupon }], expires_at: expiresAt } : {}),
     // Kept on the subscription as the record of the renewal tick box.
     subscription_data: {
       metadata: {
         user_id: user.id,
         renewal_consent_at: new Date().toISOString(),
-        ...(offer ? { first_month_offer: "1" } : {}),
+        ...(step ? { launch_saving: String(step.off) } : {}),
       },
     },
     success_url: `${siteUrl()}/portal/billing?joined=1&session_id={CHECKOUT_SESSION_ID}`,

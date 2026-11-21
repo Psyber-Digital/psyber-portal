@@ -36,6 +36,8 @@ import { CHAPTERS } from "@/lib/story";
 import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal } from "@/lib/points";
 import { sessionGate } from "@/lib/gates";
 import { buildOnSale, OPENS_SOON } from "@/lib/sale";
+import { currentStep, PRICE } from "@/lib/ladder";
+import { Countdown } from "./components/Countdown";
 
 const BOOK_ID = "book";
 
@@ -111,6 +113,7 @@ export async function PortalScreen({
 
   // The first-month offer (0016). Only someone who has never paid has dates here.
   const offerIsOpen = profile?.tier === "foundations" && !profile.lapsed_at && offerOpen(profile);
+  const ladderStep = profile?.tier === "foundations" ? currentStep(profile) : null;
   const freeFinished =
     profile?.tier === "foundations" && !profile.lapsed_at && Boolean(profile.session1_finished_at);
 
@@ -186,6 +189,8 @@ export async function PortalScreen({
   const showNextMove =
     nextMoveForTier && Boolean(current) && !viewingPast && moves.length > 0 &&
     !(tier === "foundations" && (freeFinished || profile?.lapsed_at));
+  // On Today the countdown sits at the top; elsewhere it sits with the banners.
+  const countdownOnTop = view === "today" && showNextMove && Boolean(ladderStep);
   const moveLinks: MoveLinks = current
     ? {
         video: "#watch",
@@ -266,7 +271,7 @@ export async function PortalScreen({
 
       {/* Foundations members: the way into Build. WORDING: board card r11,
           re-sold per Codex VOICE-20261030-2 and 20261031-1. */}
-      {profile?.tier === "foundations" && buildOnSale() && offerIsOpen && (
+      {false && profile?.tier === "foundations" && buildOnSale() && offerIsOpen && (
         <a
           href="/portal/billing"
           className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
@@ -279,11 +284,22 @@ export async function PortalScreen({
         </a>
       )}
 
-      {profile?.tier === "foundations" && !buildOnSale() && (
+      {/* The launch ladder countdown (Don, 21 Nov 2026, ADR-0027 addendum 6):
+          prominent in the free version, counted from sign-up. */}
+      {profile?.tier === "foundations" && ladderStep && !countdownOnTop && (
+        <Countdown
+          endsAt={ladderStep.endsAt.toISOString()}
+          off={ladderStep.off}
+          nextOff={ladderStep.next?.off}
+          yearly={PRICE.yearly}
+          onSale={buildOnSale()}
+        />
+      )}
+      {profile?.tier === "foundations" && !ladderStep && !buildOnSale() && (
         <p className="psy-card mb-6 p-5 text-sm text-slate">{OPENS_SOON}</p>
       )}
 
-      {profile?.tier === "foundations" && buildOnSale() && !offerIsOpen && (
+      {profile?.tier === "foundations" && buildOnSale() && !ladderStep && (
         <a
           href="/portal/billing"
           className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
@@ -345,7 +361,7 @@ export async function PortalScreen({
           first-month offer (0016). WORDING: board card m03, 5 Nov 2026. */}
       {/* Finishing a session happens on Today: the card's last move, or "Mark
           done" in its list (Don, board m10b A, 18 Nov 2026). */}
-      {freeFinished && offerIsOpen && buildOnSale() && (
+      {false && freeFinished && offerIsOpen && buildOnSale() && (
         <div className="psy-card mt-6 p-5">
           <p className="font-disp text-base font-semibold text-off">
             Session 1 done. Next is Session 2: your niche.
@@ -411,6 +427,18 @@ export async function PortalScreen({
 
       {view === "today" && showNextMove && current && (
         <div className="mx-auto max-w-[720px]">
+          {/* Prominent: the first thing a free member sees (Don, 21 Nov 2026). */}
+          {countdownOnTop && ladderStep && (
+            <div className="mt-5">
+              <Countdown
+          endsAt={ladderStep.endsAt.toISOString()}
+          off={ladderStep.off}
+          nextOff={ladderStep.next?.off}
+          yearly={PRICE.yearly}
+          onSale={buildOnSale()}
+        />
+            </div>
+          )}
           <NextMove
             session={current.number}
             sessionName={shortTitle(current.title)}

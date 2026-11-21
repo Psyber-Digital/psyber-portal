@@ -6,6 +6,7 @@ import { startCheckout } from "./actions";
 import { Brand } from "../components/Brand";
 import { deadlineDay, offerOpen } from "@/lib/upsellEmails";
 import { buildOnSale, OPENS_SOON } from "@/lib/sale";
+import { currentStep, PRICE } from "@/lib/ladder";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +55,7 @@ export default async function BillingPage({
   }
 
   const [{ data: profile }, { data: sub }] = await Promise.all([
-    supabase.from("profiles").select("tier, role, lapsed_at, offer_ends_at").eq("id", user.id).single(),
+    supabase.from("profiles").select("tier, role, lapsed_at, offer_ends_at, created_at").eq("id", user.id).single(),
     supabase
       .from("subscriptions")
       .select("status, billing_interval, current_period_end, cancel_at_period_end")
@@ -144,8 +145,10 @@ export default async function BillingPage({
     );
   }
 
-  // Foundations: offer Build. startCheckout re-checks the offer on the server.
-  const offer = !profile.lapsed_at && offerOpen(profile);
+  // Foundations: offer Build. startCheckout re-checks the saving on the server
+  // (launch ladder, ADR-0027 addendum 6).
+  const step = sub?.status ? null : currentStep(profile);
+  const firstYear = step ? PRICE.yearly - step.off : PRICE.yearly;
   return (
     <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
       <div className="psy-card p-8">
@@ -153,10 +156,10 @@ export default async function BillingPage({
             for people who go it alone and want to avoid the pitfalls; all the
             resources and the weekly drop-in; never define it by what
             one-on-one adds. What's inside, not how many sessions (r11). */}
-        {offer && (
+        {step && (
           <p className="mb-4 rounded-[9px] border border-orange/30 bg-orange/[0.06] px-3 py-2.5 text-sm leading-relaxed text-sec">
-            Your first month is $99 instead of $149 until {deadlineDay(profile.offer_ends_at!)}, on the
-            monthly plan. Then it’s $149 a month. This offer doesn’t come back.
+            Your launch saving: ${step.off} off your first year, until {deadlineDay(step.endsAt.toISOString())}.
+            {step.next ? ` Then the saving drops to $${step.next.off}.` : " Then it's the full price."}
           </p>
         )}
         <div className="psy-eyebrow text-sec">Introducing <Brand name="Build" tm /></div>
@@ -180,9 +183,10 @@ export default async function BillingPage({
           Every week you wait is another week your program isn’t for sale.
         </p>
         <p className="mt-2 text-sm leading-relaxed text-slate">
-          Your membership renews automatically until you cancel: {offer ? "$99 for your first month, then " : ""}$149 a month on
-          the monthly plan, or $1,197 a year on the yearly plan. Cancel any time
-          from Manage billing on your account page.
+          Your membership renews automatically until you cancel: ${PRICE.monthly} a month on the monthly
+          plan, or ${PRICE.yearly} a year on the yearly plan
+          {step ? ` ($${firstYear} for your first year)` : ""}. Cancel any time from Manage billing on your
+          account page.
         </p>
         <form action={startCheckout}>
           {/* Separate renewal consent, apart from the terms (adviser Q2,
@@ -196,20 +200,30 @@ export default async function BillingPage({
             Yearly plan: a full refund within 14 days of paying. Monthly plan: no
             refunds.
           </p>
-          <button name="plan" value="monthly" className="psy-btn mt-5 w-full">
-            {offer ? "Monthly · $99 first month, then $149 a month" : "Monthly · $149 a month"}
+          <button name="plan" value="yearly" className="psy-btn mt-5 w-full">
+            {step ? `Yearly · $${firstYear} for your first year, then $${PRICE.yearly}` : `Yearly · $${PRICE.yearly} a year`}
           </button>
-          <button name="plan" value="yearly" className="psy-btn mt-3 w-full">
-            Yearly · $1,197 a year
+          <button name="plan" value="monthly" className="psy-btn-ghost mt-3 w-full">
+            Monthly · ${PRICE.monthly} a month
           </button>
-          {/* 12 × $149 = $1,788, so yearly saves $591: 3.97 months at $149. */}
+          {/* 12 × $97 = $1,164, so yearly saves $167 a year. */}
           <p className="mt-2 text-center text-xs text-slate">
-            Yearly saves you $591, nearly four months free.
+            Yearly saves you {step ? `$${12 * PRICE.monthly - firstYear} in your first year` : "$167 a year"}.
           </p>
         </form>
         <p className="mt-4 text-xs leading-relaxed text-slate">
           Stripe takes the payment. We never see your card details.
         </p>
+      </div>
+      {/* One-on-one beside Build, before payment (Don, 21 Nov 2026). */}
+      <div className="psy-card mt-4 p-6">
+        <div className="psy-eyebrow text-sec">Prefer to do it with a coach?</div>
+        <p className="mt-1 text-sm leading-relaxed text-slate">
+          One-on-one support: we build your program with you, step by step. It starts with a call.
+        </p>
+        <Link href="/portal/one-on-one" className="psy-btn-ghost mt-3 block w-full text-center">
+          See one-on-one support
+        </Link>
       </div>
       {back}
     </main>
