@@ -35,8 +35,8 @@ import { ChapterFinish } from "./components/ChapterFinish";
 import { CHAPTERS } from "@/lib/story";
 import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal } from "@/lib/points";
 import { sessionGate } from "@/lib/gates";
-import { buildOnSale, OPENS_SOON } from "@/lib/sale";
-import { currentStep, PRICE } from "@/lib/ladder";
+import { buildOnSale, OPENS_SOON, SAVING_WAITS } from "@/lib/sale";
+import { currentStep, PRICE, savingWaiting } from "@/lib/ladder";
 import { Countdown } from "./components/Countdown";
 
 const BOOK_ID = "book";
@@ -296,7 +296,9 @@ export async function PortalScreen({
         />
       )}
       {profile?.tier === "foundations" && !ladderStep && !buildOnSale() && (
-        <p className="psy-card mb-6 p-5 text-sm text-slate">{OPENS_SOON}</p>
+        <p className="psy-card mb-6 p-5 text-sm text-slate">
+          {profile && savingWaiting(profile) ? SAVING_WAITS : OPENS_SOON}
+        </p>
       )}
 
       {profile?.tier === "foundations" && buildOnSale() && !ladderStep && (
