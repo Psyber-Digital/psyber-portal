@@ -3,6 +3,7 @@ import { startCheckout } from "./actions";
 import { Brand } from "../components/Brand";
 import { Countdown } from "../components/Countdown";
 import { PRICE, type Step } from "@/lib/ladder";
+import { STRATEGY_CALL_URL } from "@/lib/upsellEmails";
 
 // The Build upgrade page body for a Foundations member (Don, card P1, 21 Nov
 // 2026). Split from page.tsx so it can be previewed with sample data.
@@ -36,7 +37,18 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
     "A live group drop-in every week, for help before a wrong turn costs you weeks",
     "Go as fast as your week allows",
   ];
+  const oneOnOne = [
+    "Seven one-on-one sessions and three clinics to build your program",
+    "Personal feedback on your niche, message, offer and program",
+    "We stay with you until your first paying coaching client signs, as long as you do the work and keep at it. That's our 90-Day Guarantee.",
+  ];
+  const blueTick = (
+    <svg viewBox="0 0 20 20" aria-hidden className="mt-[3px] h-4 w-4 flex-none text-blue">
+      <path fill="currentColor" d="M8.2 14.6 3.9 10.3l1.4-1.4 2.9 2.9 6.5-6.5 1.4 1.4z" />
+    </svg>
+  );
   const faqs: [string, string][] = [
+    ["Want full support?", "Choose one-on-one. We build your program with you, step by step, with personal feedback. It starts with a call."],
     ["What if I have a busy month?", "Your sessions wait for you. Pick up where you left off, and bring anything you're stuck on to the weekly drop-in."],
     ["Can I cancel?", "Yes, any time, online, from Manage billing on your account page. You keep access until the end of the period you've paid for."],
     ["What happens to my contact list?", "It's yours. Export it any time. If you cancel Build, it stays with you on Foundations. If you close your account, it's deleted, so export it first."],
@@ -57,10 +69,14 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
           information, months spent on the wrong thing. We designed <Brand name="Build" /> so
           you can go it alone and avoid them.
         </p>
+        <p className="mt-3 text-[14px] text-sec">
+          Want full support instead?{" "}
+          <a href="#one-on-one" className="font-semibold text-blue">See one-on-one →</a>
+        </p>
       </header>
       <div className="mt-6 grid items-start gap-6 md:grid-cols-[1.15fr_1fr]">
-        {/* Right: the offer. Sticky on desktop so the price stays in view. */}
-        <aside className="md:sticky md:top-6 md:col-start-2 md:row-start-1">
+        {/* Right: the offer, then one-on-one. Not sticky: the column is taller than a screen. */}
+        <aside className="md:col-start-2 md:row-start-1">
           {step && (
             <Countdown
               endsAt={step.endsAt.toISOString()}
@@ -136,14 +152,30 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
             </p>
           </div>
 
-          {/* One-on-one beside Build, before payment (Don, 21 Nov 2026). */}
-          <div className="psy-card mt-4 p-5">
-            <div className="psy-eyebrow text-sec">Prefer one-on-one support?</div>
-            <p className="mt-1 text-[13.5px] leading-relaxed text-slate">
-              One-on-one support: we build your program with you, step by step. It starts with a call.
+          {/* One-on-one beside Build, before payment, and hard to miss (Don, P1
+              notes 21 Nov 2026: "barely noticeable", "add a question like want
+              full support?"). Bullets are the approved one-on-one wording
+              (upsell email A, card m03). The guarantee is one-on-one only
+              (terms 5.2), so it sits here and never in the Build column. */}
+          <div id="one-on-one" className="mt-4 overflow-hidden rounded-[18px] border-2 border-blue bg-[linear-gradient(160deg,rgba(30,144,255,0.18),rgba(30,144,255,0.04))] p-6">
+            <div className="psy-eyebrow text-blue">One-on-one support</div>
+            <h2 className="mt-1 font-disp text-[22px] font-semibold leading-snug text-off">Want full support?</h2>
+            <p className="mt-2 text-[14px] leading-relaxed text-sec">
+              Launch your coaching program with us beside you. We build it with you, step by step.
             </p>
-            <Link href="/portal/one-on-one" className="psy-btn-ghost mt-3 block w-full text-center">
-              See one-on-one support
+            <ul className="mt-3 space-y-2">
+              {oneOnOne.map((t) => (
+                <li key={t} className="flex gap-2.5 text-[13.5px] leading-relaxed text-sec">
+                  {blueTick}
+                  <span>{t}</span>
+                </li>
+              ))}
+            </ul>
+            <a href={STRATEGY_CALL_URL} className="psy-btn mt-5 block w-full text-center">
+              Book a call about one-on-one
+            </a>
+            <Link href="/portal/one-on-one" className="mt-3 block text-center text-[13px] font-semibold text-blue">
+              See what one-on-one includes →
             </Link>
           </div>
         </aside>
