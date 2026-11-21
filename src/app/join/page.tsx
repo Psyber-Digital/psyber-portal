@@ -17,7 +17,7 @@ const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 const initial: JoinState = {};
 
 // The published terms. Until they are live, the box shows without a link.
-const TERMS_URL = process.env.NEXT_PUBLIC_TERMS_URL ?? "";
+const TERMS_URL = process.env.NEXT_PUBLIC_TERMS_URL || "/terms.html";
 
 const LICENSE_TYPES = ["LCSW", "LPC", "LMFT", "Psychologist", "Other"];
 
