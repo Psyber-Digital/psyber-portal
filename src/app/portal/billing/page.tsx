@@ -6,7 +6,8 @@ import { startCheckout } from "./actions";
 import { Brand } from "../components/Brand";
 import { deadlineDay, offerOpen } from "@/lib/upsellEmails";
 import { buildOnSale, OPENS_SOON } from "@/lib/sale";
-import { currentStep, PRICE } from "@/lib/ladder";
+import { currentStep } from "@/lib/ladder";
+import { BuildOffer } from "./BuildOffer";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export const dynamic = "force-dynamic";
 //                 they don't depend on the webhook arriving first.
 //   Build       → their plan, the next date, and "Manage billing".
 // Flagship clients and admins never reach this page.
-// WORDING: passed lane-guard and voice-guard; shown to Don on board card r11.
+// WORDING: the Foundations offer lives in BuildOffer.tsx (lane + voice checked 21 Nov 2026).
 
 const PLAN_NAME: Record<string, string> = { month: "Monthly", year: "Yearly" };
 
@@ -147,85 +148,5 @@ export default async function BillingPage({
 
   // Foundations: offer Build. startCheckout re-checks the saving on the server
   // (launch ladder, ADR-0027 addendum 6).
-  const step = sub?.status ? null : currentStep(profile);
-  const firstYear = step ? PRICE.yearly - step.off : PRICE.yearly;
-  return (
-    <main className="relative z-10 mx-auto mt-[6vh] w-full max-w-[430px] px-5">
-      <div className="psy-card p-8">
-        {/* Sold, not described (Codex VOICE-20261030-1, -2 and 20261031-1):
-            for people who go it alone and want to avoid the pitfalls; all the
-            resources and the weekly drop-in; never define it by what
-            one-on-one adds. What's inside, not how many sessions (r11). */}
-        {step && (
-          <p className="mb-4 rounded-[9px] border border-orange/30 bg-orange/[0.06] px-3 py-2.5 text-sm leading-relaxed text-sec">
-            Your launch saving: ${step.off} off your first year, until {deadlineDay(step.endsAt.toISOString())}.
-            {step.next ? ` Then the saving drops to $${step.next.off}.` : " Then it's the full price."}
-          </p>
-        )}
-        <div className="psy-eyebrow text-sec">Introducing <Brand name="Build" tm /></div>
-        <h1 className="mt-1 font-disp text-xl font-semibold">
-          Launch your coaching program on your own, without the pitfalls
-        </h1>
-        <p className="mt-2 text-sm leading-relaxed text-slate">
-          Some people want to do it themselves, at their own pace. They don’t need constant
-          support. But going it alone has its pitfalls: not knowing where to
-          start, too much information, months spent on the wrong thing. We
-          designed <Brand name="Build" /> so you can go it alone and avoid them.
-        </p>
-        <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate">
-          <li>A clear first step and a proven roadmap, so you know where to start</li>
-          <li>Every session, each with its video, Working Sheet and Principle Card</li>
-          <li>Each session opens as you finish the one before, so you only work on what matters next</li>
-          <li>A live group drop-in every week, for help before a wrong turn costs you weeks</li>
-          <li>Go as fast as your week allows</li>
-        </ul>
-        <p className="mt-3 text-sm font-semibold leading-relaxed text-off">
-          Every week you wait is another week your program isn’t for sale.
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-slate">
-          Your membership renews automatically until you cancel: ${PRICE.monthly} a month on the monthly
-          plan, or ${PRICE.yearly} a year on the yearly plan
-          {step ? ` ($${firstYear} for your first year)` : ""}. Cancel any time from Manage billing on your
-          account page.
-        </p>
-        <form action={startCheckout}>
-          {/* Separate renewal consent, apart from the terms (adviser Q2,
-              approved by Don in m06). Checked again on the server. */}
-          <label className="mt-5 flex items-start gap-2.5 text-sm leading-relaxed text-slate">
-            <input type="checkbox" name="accept_renewal" required className="mt-1" />
-            <span>I agree my <Brand name="Build" /> membership renews automatically until I cancel.</span>
-          </label>
-          {/* Refund position on the sign-up page (adviser Q13, terms 4.3-4.4). */}
-          <p className="mt-3 text-xs leading-relaxed text-slate">
-            Yearly plan: a full refund within 14 days of paying. Monthly plan: no
-            refunds.
-          </p>
-          <button name="plan" value="yearly" className="psy-btn mt-5 w-full">
-            {step ? `Yearly · $${firstYear} for your first year, then $${PRICE.yearly}` : `Yearly · $${PRICE.yearly} a year`}
-          </button>
-          <button name="plan" value="monthly" className="psy-btn-ghost mt-3 w-full">
-            Monthly · ${PRICE.monthly} a month
-          </button>
-          {/* 12 × $97 = $1,164, so yearly saves $167 a year. */}
-          <p className="mt-2 text-center text-xs text-slate">
-            Yearly saves you {step ? `$${12 * PRICE.monthly - firstYear} in your first year` : "$167 a year"}.
-          </p>
-        </form>
-        <p className="mt-4 text-xs leading-relaxed text-slate">
-          Stripe takes the payment. We never see your card details.
-        </p>
-      </div>
-      {/* One-on-one beside Build, before payment (Don, 21 Nov 2026). */}
-      <div className="psy-card mt-4 p-6">
-        <div className="psy-eyebrow text-sec">Prefer to do it with a coach?</div>
-        <p className="mt-1 text-sm leading-relaxed text-slate">
-          One-on-one support: we build your program with you, step by step. It starts with a call.
-        </p>
-        <Link href="/portal/one-on-one" className="psy-btn-ghost mt-3 block w-full text-center">
-          See one-on-one support
-        </Link>
-      </div>
-      {back}
-    </main>
-  );
+  return <BuildOffer step={sub?.status ? null : currentStep(profile)} back={back} />;
 }

@@ -10,12 +10,15 @@ export function Countdown({
   nextOff,
   yearly,
   onSale,
+  link = true,
 }: {
   endsAt: string;
   off: number;
   nextOff?: number;
   yearly: number;
   onSale: boolean;
+  // Off on the upgrade page itself, where a link back to it is pointless.
+  link?: boolean;
 }) {
   const [left, setLeft] = useState(() => new Date(endsAt).getTime() - Date.now());
   useEffect(() => {
@@ -32,7 +35,7 @@ export function Countdown({
     <div className="mb-6 overflow-hidden rounded-[18px] border border-[#ffb36b] bg-[linear-gradient(135deg,#FFA54A,#E8780F)] p-5 text-[#1a0d00]">
       <p className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px]">Your launch saving</p>
       <p className="mt-1 font-disp text-[20px] font-semibold leading-snug sm:text-[22px]">
-        ${off} off a year of Build™: ${yearly - off} instead of ${yearly}
+        ${off} off your first year of Build™: ${yearly - off} instead of ${yearly}
       </p>
       <div className="mt-3 grid grid-cols-4 gap-2 sm:max-w-[360px]">
         {parts.map(([n, label]) => (
@@ -44,7 +47,7 @@ export function Countdown({
       </div>
       <p className="mt-3 text-[13.5px]">
         {nextOff ? `Then the saving drops to $${nextOff}.` : "Then it's the full price."}{" "}
-        {onSale ? (
+        {!link ? null : onSale ? (
           <a href="/portal/billing" className="font-semibold underline">See Build™ →</a>
         ) : (
           "Build™ opens soon."
