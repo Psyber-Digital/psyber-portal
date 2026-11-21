@@ -182,10 +182,10 @@ export async function PortalScreen({
   // The finish button moves into the card when it is the next move, so the
   // page never shows it twice.
   const finishInCard = Boolean(nextMove?.finish);
-  // One-on-one clients keep today's screen unless switched on (card L3, my pick,
-  // 21 Nov 2026): the new Today launches for free and Build members first.
+  // Everyone gets the new Today, one-on-one clients included (Don, card L3 = B,
+  // 21 Nov 2026). NEXT_MOVE_FOR_ONE_ON_ONE="false" holds it back from them.
   const nextMoveForTier =
-    tier === "foundations" || tier === "build" || process.env.NEXT_MOVE_FOR_ONE_ON_ONE === "true";
+    tier === "foundations" || tier === "build" || process.env.NEXT_MOVE_FOR_ONE_ON_ONE !== "false";
   const showNextMove =
     nextMoveForTier && Boolean(current) && !viewingPast && moves.length > 0 &&
     !(tier === "foundations" && (freeFinished || profile?.lapsed_at));
@@ -456,7 +456,7 @@ export async function PortalScreen({
             points={points}
             justDone={justDone}
             welcomeBack={welcomeBack}
-            namesMin={sessionFinished ? 0 : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).namesMin}
+            namesMin={sessionFinished || (tier !== "build" && tier !== "foundations") ? 0 : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).namesMin}
             gate={sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined)}
             viewId={searchParams?.move}
             tickedToday={new Set((tickRows ?? []).filter((t) => easternToday(new Date(t.done_at)) === easternToday()).map((t) => t.move_id))}
