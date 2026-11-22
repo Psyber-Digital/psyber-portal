@@ -125,7 +125,7 @@ export default function BuildPage() {
         {[
           ["7", "sessions"],
           ["1", "live drop-in every week"],
-          ["250", "people who’ll hear you’re coaching"],
+          ["250", "people you’ll tell you’re coaching"],
         ].map(([n, l]) => (
           <div key={l} className="psy-card px-2 py-5">
             <div className={`font-disp font-semibold leading-tight text-orange ${n.length > 2 ? "text-[22px] sm:text-[34px]" : "text-[34px] sm:text-[44px]"}`}><CountUp to={Number(n)} /></div>
@@ -143,7 +143,7 @@ export default function BuildPage() {
           Watch it. Work it. Keep it.
         </h2>
         <p className="mx-auto mt-2 max-w-[520px] text-[16px] text-sec">
-          A short video, a Working Sheet that turns it into your decisions, and a Principle Card to keep. Try them.
+          A short video, a Working Sheet that turns it into your decisions, and a Principle Card. Try two of them.
         </p>
         <div className="mt-8 text-left">
           <SessionShowcase />

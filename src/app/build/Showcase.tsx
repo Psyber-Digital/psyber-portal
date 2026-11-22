@@ -85,7 +85,7 @@ const BELIEFS = [
   {
     name: "Fixed → growth",
     sounds: "I have never coached anyone. I will be terrible at it.",
-    truer: "I have spent years helping people change. It is in my training, my expertise and my experience.",
+    truer: "I have spent years helping people change. It is in my training and my experience. I am well placed to coach.",
   },
   {
     name: "Unworthy → capable",
@@ -115,9 +115,9 @@ export function SessionShowcase() {
       <div className="mx-auto flex max-w-[520px] gap-2 rounded-full bg-white/5 p-1">
         {(
           [
+            ["video", "Session video"],
             ["sheet", "Working Sheet"],
             ["card", "Principle Card"],
-            ["video", "Session video"],
           ] as [Tab, string][]
         ).map(([k, l]) => (
           <button
@@ -190,7 +190,7 @@ function CardDemo() {
   const [flipped, setFlipped] = useState<number | null>(null);
   return (
     <div className="mx-auto max-w-[720px]">
-      <p className="mb-4 text-center text-[14px] text-sec">Every session ends with a Principle Card. Tap a shift to flip it.</p>
+      <p className="mb-4 text-center text-[14px] text-sec">Every session comes with a Principle Card. Tap one to see why it matters.</p>
       <div className="grid gap-3 sm:grid-cols-3">
         {SHIFTS.map(([from, to, why], i) => (
           <button
@@ -224,12 +224,12 @@ function VideoDemo() {
     <div className="mx-auto max-w-[720px]">
       <div className="relative overflow-hidden rounded-[18px] border border-line bg-[linear-gradient(135deg,#121B2E,#0B1220)] p-8 text-center shadow-2xl">
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-orange/20 blur-2xl" />
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-orange text-[26px] text-[#1a0d00] shadow-lg">▶</div>
-        <div className="mt-4 font-disp text-[13px] font-semibold uppercase tracking-[1.6px] text-orange">Session 1 · 9 min</div>
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-orange/20 text-[28px]">🎬</div>
+        <div className="mt-4 font-disp text-[13px] font-semibold uppercase tracking-[1.6px] text-orange">Session 1 · the video</div>
         <div className="mt-1 font-disp text-[24px] font-semibold text-off">Foundations: clear the road</div>
         <p className="mx-auto mt-2 max-w-[440px] text-[14.5px] text-sec">
-          A short video opens every session. Then the Working Sheet turns it into your own decisions, and the
-          Principle Card keeps it in front of you.
+          What could derail you on the way to becoming a successful coach? Name it now, plan for it, and set
+          your first step.
         </p>
       </div>
     </div>
