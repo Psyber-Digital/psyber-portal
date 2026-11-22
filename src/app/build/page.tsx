@@ -5,6 +5,7 @@ import { VimeoEmbed } from "@/app/portal/components/VimeoEmbed";
 import type { WeekVideo } from "@/lib/videos";
 import { Brand } from "@/app/portal/components/Brand";
 import { BuildDemo } from "./BuildDemo";
+import { CountUp, Reveal, SessionShowcase } from "./Showcase";
 
 // Public Build landing page. Rebuilt 22 Nov 2026 to Don's note on card N1:
 // "Don't talk about what it doesn't do ... make it sound revolutionary - a
@@ -89,6 +90,7 @@ export default function BuildPage() {
       </section>
 
       {/* Next Move */}
+      <Reveal>
       <section id="next-move" className="mt-16 grid items-center gap-10 md:grid-cols-[1.1fr_1fr]">
         {/* Playable, like the Quranic Family site (Don, N1, 22 Nov 2026). */}
         <BuildDemo />
@@ -115,7 +117,10 @@ export default function BuildPage() {
         </div>
       </section>
 
-      {/* Three facts */}
+      </Reveal>
+
+      {/* Three facts, counting up as they scroll in. */}
+      <Reveal>
       <section className="mt-16 grid grid-cols-3 gap-3 text-center">
         {[
           ["7", "sessions"],
@@ -123,11 +128,28 @@ export default function BuildPage() {
           ["250", "people who’ll hear you’re coaching"],
         ].map(([n, l]) => (
           <div key={l} className="psy-card px-2 py-5">
-            <div className={`font-disp font-semibold leading-tight text-orange ${n.length > 2 ? "text-[22px] sm:text-[34px]" : "text-[34px] sm:text-[44px]"}`}>{n}</div>
+            <div className={`font-disp font-semibold leading-tight text-orange ${n.length > 2 ? "text-[22px] sm:text-[34px]" : "text-[34px] sm:text-[44px]"}`}><CountUp to={Number(n)} /></div>
             <div className="mt-1 text-[12.5px] leading-snug text-sec sm:text-[14px]">{l}</div>
           </div>
         ))}
       </section>
+      </Reveal>
+
+      {/* Inside every session: the sheet and card you can play with (Don, N1, 22 Nov). */}
+      <Reveal>
+      <section className="mt-20 text-center">
+        <div className="psy-eyebrow text-orange">Inside every session</div>
+        <h2 className="mt-2 font-disp text-[28px] font-semibold leading-tight text-off sm:text-[36px]">
+          Watch it. Work it. Keep it.
+        </h2>
+        <p className="mx-auto mt-2 max-w-[520px] text-[16px] text-sec">
+          A short video, a Working Sheet that turns it into your decisions, and a Principle Card to keep. Try them.
+        </p>
+        <div className="mt-8 text-left">
+          <SessionShowcase />
+        </div>
+      </section>
+      </Reveal>
 
       <section className="mt-14">
         {BUILD_VIDEO ? (
@@ -145,6 +167,7 @@ export default function BuildPage() {
       </section>
 
       {/* What you get and the price */}
+      <Reveal>
       <section className="mt-14 grid items-start gap-6 md:grid-cols-[1fr_320px] md:gap-8">
         <div className="psy-card p-6 sm:p-8">
           <h2 className="font-disp text-[22px] font-semibold text-off">What you get</h2>
@@ -195,6 +218,8 @@ export default function BuildPage() {
           </p>
         </div>
       </section>
+
+      </Reveal>
 
       <p className="mt-12 text-center font-disp text-[18px] font-semibold text-off">
         Every week you wait is another week your program isn’t for sale.
