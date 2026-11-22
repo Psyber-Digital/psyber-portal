@@ -26,6 +26,10 @@ const BUILD_VIDEO: WeekVideo | null = { id: "1243971172", hash: "ed44b8a740", ti
 
 const STRATEGY_CALL_URL = "https://calendly.com/psyberdigital/coaching-application";
 
+// Read the sale switch on every visit, so turning Build on sale on Friday
+// changes this page without a redeploy (portal-qa, 22 Nov 2026).
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Build™ · Psyber Digital",
   description:
