@@ -39,9 +39,9 @@ export const metadata = {
 
 // Short on purpose (Don: "I don't want long passages of text").
 const POWERS: [string, string][] = [
-  ["Never get stuck", "Open the portal. Your next move is waiting."],
-  ["Everything in one place", "Every video, sheet and card, packaged into your next move."],
-  ["Progress becomes fun", "Points, levels and badges for the moves that win clients."],
+  ["One move at a time", "Open the portal. Your next move is waiting."],
+  ["The right resource, right there", "Each move opens the video, sheet or card it needs."],
+  ["Points, levels and badges", "The most points go to messages sent and calls booked."],
   ["Follow-ups on time", "The portal shows who to follow up with, and when."],
 ];
 
@@ -95,7 +95,7 @@ export default function BuildPage() {
         {[
           ["🧭", "Don’t get stuck.", "Always know what to do next."],
           ["📦", "Everything in one place.", "All the resources you need, packaged in Next Move."],
-          ["🎯", "Progress becomes fun.", "Every move scores. Every chapter levels you up."],
+          ["🎯", "Progress becomes fun.", "Your moves score points. Every chapter levels you up."],
         ].map(([icon, h, t]) => (
           <div key={h} className="rounded-[18px] border border-orange/30 bg-[linear-gradient(160deg,rgba(255,141,30,0.12),rgba(255,141,30,0.02))] p-5 text-center">
             <div className="text-[30px]">{icon}</div>
@@ -118,7 +118,7 @@ export default function BuildPage() {
             Meet Next Move
           </h2>
           <p className="mt-2 text-[17px] leading-relaxed text-sec">
-            All the resources you need, in one place, packaged into Next Move. Making progress becomes fun. Tap the demo and play.
+            One clear move at a time, each one opening exactly what it needs. Tap the demo and play.
           </p>
           <ul className="mt-6 space-y-4">
             {POWERS.map(([t, d], i) => (

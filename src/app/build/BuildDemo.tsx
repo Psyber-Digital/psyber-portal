@@ -73,7 +73,7 @@ function MoveDemo() {
       <div className="flex items-center justify-between text-[12.5px] text-sec">
         <span className="font-disp font-semibold text-off">Chapter 2 · Choose your niche</span>
         <span>
-          Level {done ? 3 : 2} · <b className="text-orange">{points}</b> points
+          Level 2 · <b className="text-orange">{points}</b> points
         </span>
       </div>
       <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
@@ -102,7 +102,7 @@ function MoveDemo() {
           <div className="text-[40px]">🎉</div>
           <p className="mt-1 font-disp text-[22px] font-semibold text-off">Four moves done!</p>
           <p className="mt-1 text-[14px] text-sec">
-            {points} points. Add 25 names to your list, then you level up to Chapter 3: find your words.
+            {points} points. Add 25 names and choose your niche, then level up to Chapter 3: find your words.
           </p>
           <button onClick={() => { setI(0); setPoints(0); }} className="mt-4 text-[13px] font-semibold text-blue">
             Play again
