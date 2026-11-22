@@ -39,9 +39,9 @@ export const metadata = {
 
 // Short on purpose (Don: "I don't want long passages of text").
 const POWERS: [string, string][] = [
-  ["One move at a time", "Open the portal, see exactly what to do."],
-  ["Your program, as a story", "Each chapter names the villain in your way, and how to beat it."],
-  ["Points, levels and badges", "Most points for the moves that win clients."],
+  ["Never get stuck", "Open the portal. Your next move is waiting."],
+  ["Everything in one place", "Every video, sheet and card, packaged into your next move."],
+  ["Progress becomes fun", "Points, levels and badges for the moves that win clients."],
   ["Follow-ups on time", "The portal shows who to follow up with, and when."],
 ];
 
@@ -77,7 +77,7 @@ export default function BuildPage() {
           <span className="bg-[linear-gradient(90deg,#FFA54A,#FF8D1E)] bg-clip-text text-transparent">One move at a time.</span>
         </h1>
         <p className="mx-auto mt-5 max-w-[560px] text-[17px] leading-relaxed text-sec">
-          Go it alone, without the pitfalls. <Brand name="Build" /> runs on Next Move, a method we designed to supercharge your progress.
+          Go it alone, and never get stuck. <Brand name="Build" /> runs on Next Move, a method we designed to supercharge your progress.
         </p>
         <div className="mx-auto mt-7 flex max-w-[460px] flex-col gap-3 sm:flex-row">
           <Link href="/join" className="psy-btn flex-1 justify-center py-3.5 text-[15px]">
@@ -88,6 +88,23 @@ export default function BuildPage() {
           </a>
         </div>
       </section>
+
+      {/* Three promises, in Don's words (N1 note, 22 Nov 2026). */}
+      <Reveal>
+      <section className="mt-14 grid gap-3 sm:grid-cols-3">
+        {[
+          ["🧭", "Don’t get stuck.", "Always know what to do next."],
+          ["📦", "Everything in one place.", "All the resources you need, packaged in Next Move."],
+          ["🎯", "Progress becomes fun.", "Every move scores. Every chapter levels you up."],
+        ].map(([icon, h, t]) => (
+          <div key={h} className="rounded-[18px] border border-orange/30 bg-[linear-gradient(160deg,rgba(255,141,30,0.12),rgba(255,141,30,0.02))] p-5 text-center">
+            <div className="text-[30px]">{icon}</div>
+            <div className="mt-2 font-disp text-[19px] font-semibold text-off">{h}</div>
+            <div className="mt-1 text-[14px] leading-relaxed text-sec">{t}</div>
+          </div>
+        ))}
+      </section>
+      </Reveal>
 
       {/* Next Move */}
       <Reveal>
@@ -101,7 +118,7 @@ export default function BuildPage() {
             Meet Next Move
           </h2>
           <p className="mt-2 text-[17px] leading-relaxed text-sec">
-            Building your program becomes a game. Every move scores. Tap the demo and play.
+            All the resources you need, in one place, packaged into Next Move. Making progress becomes fun. Tap the demo and play.
           </p>
           <ul className="mt-6 space-y-4">
             {POWERS.map(([t, d], i) => (

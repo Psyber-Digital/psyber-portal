@@ -28,7 +28,7 @@ export function BuildDemo() {
       <div className="flex gap-2 rounded-full bg-white/5 p-1">
         {(
           [
-            ["move", "Do a move"],
+            ["move", "Make a move"],
             ["villain", "Beat the villain"],
             ["list", "Grow your list"],
           ] as [Tab, string][]
