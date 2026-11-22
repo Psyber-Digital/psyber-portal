@@ -87,6 +87,12 @@ export default function BuildPage() {
             See how it works
           </a>
         </div>
+        <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-orange/40 bg-orange/10 px-4 py-1.5 text-[13px] text-off">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-orange" />
+          {onSale
+            ? "New members: $300 off your first year if you upgrade within 7 days."
+            : "Start free today. $300 off your first year when Build™ opens."}
+        </p>
       </section>
 
       {/* Three promises, in Don's words (N1 note, 22 Nov 2026). */}
@@ -238,16 +244,41 @@ export default function BuildPage() {
 
       </Reveal>
 
-      <p className="mt-12 text-center font-disp text-[18px] font-semibold text-off">
-        Every week you wait is another week your program isn’t for sale.
-      </p>
+      <Reveal>
+      <section className="mt-16 overflow-hidden rounded-[24px] border border-[#ffb36b] bg-[linear-gradient(135deg,#FFA54A,#E8780F)] p-8 text-center text-[#1a0d00] sm:p-12">
+        <h2 className="mx-auto max-w-[620px] font-disp text-[28px] font-semibold leading-tight sm:text-[38px]">
+          Every week you wait is another week your program isn’t for sale.
+        </h2>
+        <p className="mt-3 text-[16px]">Make your first move tonight.</p>
+        <Link href="/join" className="mt-6 inline-block rounded-[14px] bg-[#0B1220] px-8 py-4 font-disp text-[16px] font-semibold text-white transition hover:scale-[1.03]">
+          Try Build™ for free
+        </Link>
+      </section>
+      </Reveal>
 
-      <p className="mt-6 text-center text-sm text-slate">
-        Want us beside you the whole way?{" "}
-        <a href={STRATEGY_CALL_URL} target="_blank" rel="noopener" className="font-semibold text-blue">
-          Book a call about one-on-one support
+      <Reveal>
+      <section className="mt-6 rounded-[22px] border-2 border-blue bg-[linear-gradient(160deg,rgba(30,144,255,0.16),rgba(30,144,255,0.03))] p-7 sm:flex sm:items-center sm:justify-between sm:gap-8">
+        <div>
+          <div className="psy-eyebrow text-blue">One-on-one support</div>
+          <h2 className="mt-1 font-disp text-[24px] font-semibold text-off">Want full support?</h2>
+          <p className="mt-1 max-w-[520px] text-[14.5px] leading-relaxed text-sec">
+            Launch your coaching program with us beside you. Seven one-on-one sessions and three clinics, with
+            personal feedback on your niche, message, offer and program.
+          </p>
+        </div>
+        <a href={STRATEGY_CALL_URL} target="_blank" rel="noopener" className="psy-btn mt-5 block shrink-0 text-center sm:mt-0">
+          Book a call
         </a>
-      </p>
+      </section>
+      </Reveal>
+
+      {/* Always one tap away on a phone. */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-[#0B1220]/95 p-3 backdrop-blur sm:hidden">
+        <Link href="/join" className="psy-btn block w-full text-center">
+          Try Build™ for free
+        </Link>
+      </div>
+      <div className="h-16 sm:hidden" aria-hidden />
     </main>
   );
 }
