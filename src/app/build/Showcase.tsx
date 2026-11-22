@@ -43,10 +43,13 @@ export function Reveal({ children, delay = 0, className = "" }: { children: Reac
 /** Counts up to a number when it scrolls into view. */
 export function CountUp({ to, className = "" }: { to: number; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const [n, setN] = useState(0);
+  // Starts at the real number, so the page shows it before scripts run (and to
+  // search engines); drops to 0 only to count up once it scrolls into view.
+  const [n, setN] = useState(to);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (el.getBoundingClientRect().top > window.innerHeight) setN(0);
     let raf = 0;
     const run = () => {
       const start = performance.now();
