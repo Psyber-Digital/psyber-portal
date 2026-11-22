@@ -9,7 +9,10 @@
 //     its leftover fields stay empty; the ladder replaced it
 //   - the one-on-one track's call invitations (emails A, B, C) still send
 // Turn it on in the live project's settings on the day Build goes on sale.
-export const buildOnSale = (): boolean => process.env.BUILD_ON_SALE === "true";
+// On sale only when the sale date is set too, so a page can never promise a
+// saving the ladder can't give (lane-guard, 22 Nov 2026).
+export const buildOnSale = (): boolean =>
+  process.env.BUILD_ON_SALE === "true" && !Number.isNaN(Date.parse(process.env.BUILD_SALE_STARTS_AT ?? ""));
 
 export const OPENS_SOON =
   "Build™ opens soon. Until then, Session 1 is yours, free.";

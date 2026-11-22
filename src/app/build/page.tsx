@@ -1,18 +1,27 @@
 import Image from "next/image";
-import { buildOnSale, OPENS_SOON } from "@/lib/sale";
+import { buildOnSale } from "@/lib/sale";
 import Link from "next/link";
 import { VimeoEmbed } from "@/app/portal/components/VimeoEmbed";
 import type { WeekVideo } from "@/lib/videos";
 import { Brand } from "@/app/portal/components/Brand";
 
-// Public Build landing page, for people who said at call booking that they'd
-// rather have a roadmap, resources and drop-ins than one-on-one support (Don,
-// Emails m35, 30 Oct). Sold to Codex VOICE-20261030-1 and -2. Framed to Codex
-// VOICE-20261031-1 (go it alone, and avoid the pitfalls; Don, m41, 31 Oct). Facts must match the Build terms.
+// Public Build landing page. Rebuilt 22 Nov 2026 to Don's note on card N1:
+// "Don't talk about what it doesn't do ... make it sound revolutionary - a
+// method we've designed to supercharge their progress, productivity. Make it
+// exciting ... I also don't want long passages of text. Clarity. Simplicity.
+// Influence." Sold to Codex VOICE-20261030-1 (bold, but only true claims).
+// Facts must match the Build terms and the portal code:
+//   one move at a time ............ lib/moves.ts, components/NextMove.tsx
+//   chapters with an obstacle ...... lib/story.ts
+//   points, levels, badges ......... lib/points.ts, lib/milestones.ts
+//   follow-ups under Due today ..... lib/dueMoves.ts
+//   7 sessions, weekly drop-in ..... terms 2.1, 2.3
+// The mock card shows a real Session 2 move (s2-narrow: 20 min, a sheet move,
+// so 20 points) in the real chapter (story.ts chapter 2). The bar is 3 of 7
+// Build moves done before it: 43%.
 //
 // The video is made by Audit (board m41/m42, approved by Don on bv3, 5 Nov).
-// Its Vimeo embed is locked to the portal domains. If BUILD_VIDEO is set back
-// to null, the page shows a still panel in its place.
+// Its Vimeo embed is locked to the portal domains.
 const BUILD_VIDEO: WeekVideo | null = { id: "1243971172", hash: "ed44b8a740", title: "Introducing Build™" };
 
 const STRATEGY_CALL_URL = "https://calendly.com/psyberdigital/coaching-application";
@@ -20,70 +29,125 @@ const STRATEGY_CALL_URL = "https://calendly.com/psyberdigital/coaching-applicati
 export const metadata = {
   title: "Build™ · Psyber Digital",
   description:
-    "Launch your coaching program on your own, without the pitfalls. Every session, every resource, a live drop-in each week, and Next Move to show you one clear step at a time.",
+    "Launch your coaching program, one move at a time. Build runs on Next Move, a method designed to supercharge your progress.",
 };
 
-// Next Move, the way Build works inside (Don: d3, 21 Nov 2026). Each line is
-// true of the portal today; see the comment above NEXT_MOVE's section.
-const NEXT_MOVE: [string, string][] = [
-  ["One move at a time", "Open the portal and your next move is right there, front and center. Do it, tick it, and the next one is already waiting. You always know what tonight's job is."],
-  ["Your program, as a story", "Each session is a chapter, and you're the hero. Every chapter names the one obstacle most likely to stop you, and shows you how to beat it."],
-  ["Progress you can see", "Moves earn points, and so does every name you add and every message you send. Every chapter you finish is a level up, with badges along the way. You always know how far you've come."],
-  ["Follow-ups on the right day", "When someone on your contact list is due for a follow-up, they show up under Due today, on the day they're due."],
+// Short on purpose (Don: "I don't want long passages of text").
+const POWERS: [string, string][] = [
+  ["One move at a time", "Open the portal, see exactly what to do."],
+  ["Your program, as a story", "Each chapter names the villain in your way, and how to beat it."],
+  ["Points, levels and badges", "Most points for the moves that win clients."],
+  ["Follow-ups on time", "The portal shows who to follow up with, and when."],
 ];
 
-// Each line answers one pitfall of going it alone (Codex VOICE-20261031-1).
 const INCLUDED = [
-  "A clear first step and a proven roadmap, so you know where to start",
-  "Every session, each with its video, Working Sheet and Principle Card",
-  "Next Move: the right step waiting each time you log in, from your first evening to a program that's ready to sell",
-  "Each session opens as you finish the one before, so you only work on what matters next",
-  "A live group drop-in every week, for help before a wrong turn costs you weeks",
+  "All 7 sessions, each with its video, Working Sheet and Principle Card",
+  "Next Move, guiding every step",
+  "A live group drop-in every week",
+  "No limit on your contact list",
   "Go as fast as your week allows",
 ];
 
-export default function BuildPage() {
+function Dot({ n }: { n: number }) {
   return (
-    <main className="relative z-10 mx-auto w-full max-w-[880px] px-5 pb-20 pt-10">
+    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-full bg-orange font-disp text-[14px] font-bold text-[#1a0d00]">
+      {n}
+    </span>
+  );
+}
+
+export default function BuildPage() {
+  const onSale = buildOnSale();
+  return (
+    <main className="relative z-10 mx-auto w-full max-w-[960px] px-5 pb-20 pt-10">
       <div className="mb-10 flex justify-center">
         <Image src="/wordmark.png" alt="Psyber Digital" width={240} height={46} priority className="h-10 w-auto" />
       </div>
 
+      {/* Hero */}
       <section className="text-center">
-        <div className="psy-eyebrow text-sec">Introducing <Brand name="Build" tm />, with Next Move</div>
-        <h1 className="mx-auto mt-2 max-w-[640px] font-disp text-3xl font-semibold leading-tight text-off sm:text-4xl">
-          Launch your coaching program on your own, without the pitfalls
+        <div className="psy-eyebrow text-orange">Introducing <Brand name="Build" tm /></div>
+        <h1 className="mx-auto mt-3 max-w-[720px] font-disp text-[34px] font-semibold leading-[1.1] text-off sm:text-[52px]">
+          Launch your coaching program.{" "}
+          <span className="bg-[linear-gradient(90deg,#FFA54A,#FF8D1E)] bg-clip-text text-transparent">One move at a time.</span>
         </h1>
-        <p className="mx-auto mt-4 max-w-[600px] text-[15px] leading-relaxed text-slate">
-          Some people want to do it themselves, at their own pace. They don’t need constant
-          support. But going it alone has its pitfalls: not knowing where to
-          start, too much information, months spent on the wrong thing. We
-          designed <Brand name="Build" /> so you can go it alone and avoid them.
+        <p className="mx-auto mt-5 max-w-[560px] text-[17px] leading-relaxed text-sec">
+          Go it alone, without the pitfalls. <Brand name="Build" /> runs on Next Move, a method we designed to supercharge your progress.
         </p>
-      </section>
-
-      {/* Next Move leads (Don, 21 Nov 2026). */}
-      <section className="mt-10 overflow-hidden rounded-[20px] border-2 border-orange/60 bg-[linear-gradient(160deg,rgba(255,141,30,0.16),rgba(255,141,30,0.03))] p-6 sm:p-9">
-        <div className="psy-eyebrow text-orange">New: Next Move</div>
-        <h2 className="mt-2 max-w-[620px] font-disp text-[26px] font-semibold leading-tight text-off sm:text-[32px]">
-          Never wonder what to do next
-        </h2>
-        <p className="mt-3 max-w-[620px] text-[15px] leading-relaxed text-sec">
-          A pile of videos leaves you to work out the order yourself. <Brand name="Build" /> doesn’t.
-          Next Move turns the whole program into one clear step at a time, so every evening you sit down,
-          you know exactly what to do.
-        </p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {NEXT_MOVE.map(([t, d]) => (
-            <div key={t} className="rounded-[14px] border border-line bg-[#0B1220]/60 p-5">
-              <h3 className="font-disp text-[16px] font-semibold text-off">{t}</h3>
-              <p className="mt-1.5 text-[14px] leading-relaxed text-sec">{d}</p>
-            </div>
-          ))}
+        <div className="mx-auto mt-7 flex max-w-[460px] flex-col gap-3 sm:flex-row">
+          <Link href="/join" className="psy-btn flex-1 justify-center py-3.5 text-[15px]">
+            Try Build™ for free
+          </Link>
+          <a href="#next-move" className="psy-btn-ghost flex-1 py-3.5 text-center text-[15px]">
+            See how it works
+          </a>
         </div>
       </section>
 
-      <section className="mt-9">
+      {/* Next Move */}
+      <section id="next-move" className="mt-16 grid items-center gap-10 md:grid-cols-2">
+        {/* A picture of the real card, built in the page so it stays sharp. */}
+        <div aria-hidden className="relative">
+          <div className="absolute -inset-6 rounded-[32px] bg-orange/20 blur-3xl" />
+          <div className="relative rounded-[22px] border border-[#ffb36b] bg-[linear-gradient(135deg,#FFA54A,#E8780F)] p-6 text-[#1a0d00] shadow-2xl">
+            <div className="flex items-center justify-between">
+              <span className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px]">Your next move</span>
+              <span className="rounded-full bg-[#0B1220] px-2.5 py-1 font-disp text-[11px] font-semibold text-white">+20 points</span>
+            </div>
+            <p className="mt-3 font-disp text-[22px] font-semibold leading-snug">
+              Narrow your ideas down to your top three, using the lane test
+            </p>
+            <p className="mt-1 text-[14px]">20 min · Working Sheet</p>
+            <div className="mt-5 rounded-[12px] bg-[#0B1220] py-3 text-center font-disp text-[14px] font-semibold text-white">
+              Done ✓
+            </div>
+          </div>
+          <div className="relative mt-4 rounded-[16px] border border-line bg-[#121B2E] p-4">
+            <div className="flex items-center justify-between text-[12px] text-sec">
+              <span className="font-disp font-semibold text-off">Chapter 2 · Choose your niche</span>
+              <span>Level 2</span>
+            </div>
+            <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
+              <div className="h-full w-[43%] rounded-full bg-orange" />
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div className="psy-eyebrow text-orange">The method</div>
+          <h2 className="mt-2 font-disp text-[30px] font-semibold leading-tight text-off sm:text-[38px]">
+            Next Move
+          </h2>
+          <p className="mt-2 text-[17px] text-sec">Your next step, always ready.</p>
+          <ul className="mt-6 space-y-4">
+            {POWERS.map(([t, d], i) => (
+              <li key={t} className="flex items-start gap-3.5">
+                <Dot n={i + 1} />
+                <span>
+                  <span className="block font-disp text-[16px] font-semibold text-off">{t}</span>
+                  <span className="text-[14.5px] text-sec">{d}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* Three facts */}
+      <section className="mt-16 grid grid-cols-3 gap-3 text-center">
+        {[
+          ["7", "sessions"],
+          ["1", "live drop-in every week"],
+          ["No limit", "on your contact list"],
+        ].map(([n, l]) => (
+          <div key={l} className="psy-card px-2 py-5">
+            <div className={`font-disp font-semibold leading-tight text-orange ${n.length > 2 ? "text-[22px] sm:text-[34px]" : "text-[34px] sm:text-[44px]"}`}>{n}</div>
+            <div className="mt-1 text-[12.5px] leading-snug text-sec sm:text-[14px]">{l}</div>
+          </div>
+        ))}
+      </section>
+
+      <section className="mt-14">
         {BUILD_VIDEO ? (
           <VimeoEmbed video={BUILD_VIDEO} title="Introducing Build™" />
         ) : (
@@ -98,13 +162,14 @@ export default function BuildPage() {
         )}
       </section>
 
-      <section className="mt-10 grid gap-6 md:grid-cols-[1fr_300px] md:gap-8">
+      {/* What you get and the price */}
+      <section className="mt-14 grid items-start gap-6 md:grid-cols-[1fr_320px] md:gap-8">
         <div className="psy-card p-6 sm:p-8">
-          <h2 className="font-disp text-xl font-semibold text-off">What you get</h2>
-          <ul className="mt-4 space-y-2.5 text-[15px] leading-relaxed text-sec">
+          <h2 className="font-disp text-[22px] font-semibold text-off">What you get</h2>
+          <ul className="mt-5 space-y-3.5 text-[16px] text-sec">
             {INCLUDED.map((b) => (
-              <li key={b} className="flex gap-2.5">
-                <span className="mt-[3px] text-blue">✓</span>
+              <li key={b} className="flex gap-3">
+                <span className="text-orange">✓</span>
                 <span>{b}</span>
               </li>
             ))}
@@ -112,59 +177,48 @@ export default function BuildPage() {
         </div>
 
         <div className="psy-card flex flex-col gap-4 p-6">
-          <div>
-            <div className="psy-eyebrow text-blue">Monthly</div>
-            <div className="mt-1 font-disp text-2xl font-semibold text-off">$97 a month</div>
+          <div className="flex items-end justify-between">
+            <div>
+              <div className="psy-eyebrow text-blue">Yearly</div>
+              <div className="mt-1 font-disp text-[30px] font-semibold leading-none text-off">$997</div>
+            </div>
+            <div className="text-right">
+              <div className="psy-eyebrow text-blue">Monthly</div>
+              <div className="mt-1 font-disp text-[22px] font-semibold leading-none text-off">$97</div>
+            </div>
           </div>
-          <div>
-            <div className="psy-eyebrow text-blue">Yearly</div>
-            <div className="mt-1 font-disp text-2xl font-semibold text-off">$997 a year</div>
-            <p className="mt-1 text-xs text-slate">Saves you $167 a year.</p>
-            <p className="mt-2 rounded-[9px] border border-orange/30 bg-orange/[0.08] px-3 py-2 text-xs leading-relaxed text-sec">
-              {buildOnSale() ? (
-                <>
-                  Start with <Brand name="Foundations" />, then upgrade within 7 days of signing up for
-                  $300 off your first year on the yearly plan. After that, the saving drops by $100 a week.
-                </>
-              ) : (
-                <>
-                  Start with <Brand name="Foundations" /> now. When <Brand name="Build" /> opens, you get
-                  $300 off your first year on the yearly plan if you upgrade within 7 days.
-                </>
-              )}
-            </p>
-          </div>
-          {buildOnSale() ? (
-            <Link href="/join?plan=build" className="psy-btn mt-2 w-full justify-center">
-              Join Build™
-            </Link>
-          ) : (
-            <p className="mt-2 rounded-[9px] border border-blue/30 bg-blue/10 px-3 py-2.5 text-sm text-sec">{OPENS_SOON}</p>
-          )}
-          {/* Renewal and refund terms beside the button (terms 3.2, 4.1-4.4). */}
-          <p className="text-xs leading-relaxed text-slate">
-            Renews automatically until you cancel. Monthly: cancel any time, no
-            refunds. Yearly: a full refund within 14 days of paying.
+          <p className="rounded-[9px] border border-orange/40 bg-orange/[0.1] px-3 py-2.5 text-[13px] leading-relaxed text-off">
+            {onSale ? (
+              <>New members: start free, then upgrade within 7 days: <b>$300 off</b> your first year on the yearly plan. It drops every week after.</>
+            ) : (
+              <>New members: start free now. When <Brand name="Build" /> opens, upgrade within 7 days: <b>$300 off</b> your first year on the yearly plan, dropping every week after.</>
+            )}
           </p>
-          {/* The free way in (Don, 5 Nov 2026, board m03 and m04). */}
-          <div className="border-t border-line pt-4">
-            <p className="text-sm leading-relaxed text-slate">
-              Not ready yet? Start with <Brand name="Foundations" />, your first tangible step:
-              Session 1, and a contact list for up to 50 names. The weekly drop-ins come
-              with full <Brand name="Build" />.
-            </p>
-            <Link href="/join" className="psy-btn-ghost mt-3 block w-full text-center">
-              Try Build™ for free
+          <Link href="/join" className="psy-btn w-full justify-center py-3">
+            Try Build™ for free
+          </Link>
+          {onSale ? (
+            <Link href="/join?plan=build" className="psy-btn-ghost block w-full text-center">
+              Join Build™ now
             </Link>
-          </div>
+          ) : null}
+          {/* What the free plan is, plainly (Don, 21 Nov 2026: no drop-ins). */}
+          <p className="text-[12.5px] leading-relaxed text-slate">
+            Free: Session 1, and a contact list for up to 50 names. Drop-ins come with full <Brand name="Build" />.
+          </p>
+          {/* Renewal and refund terms beside the buttons (terms 3.2, 4.1-4.4). */}
+          <p className="text-[12px] leading-relaxed text-slate">
+            Renews automatically until you cancel. Monthly: cancel any time, no refunds. Yearly: a full
+            refund within 14 days of paying.
+          </p>
         </div>
       </section>
 
-      <p className="mt-8 text-center text-sm font-semibold text-off">
+      <p className="mt-12 text-center font-disp text-[18px] font-semibold text-off">
         Every week you wait is another week your program isn’t for sale.
       </p>
 
-      <p className="mt-8 text-center text-sm text-slate">
+      <p className="mt-6 text-center text-sm text-slate">
         Want us beside you the whole way?{" "}
         <a href={STRATEGY_CALL_URL} target="_blank" rel="noopener" className="font-semibold text-blue">
           Book a call about one-on-one support
