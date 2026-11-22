@@ -5,19 +5,19 @@ import { useState } from "react";
 // A playable taste of Next Move on the public Build page (Don, card N1, 22 Nov
 // 2026: "use engagement and interactivity (showcasing the elements of Build)
 // like we did for new Quranic Family website"). Every figure is the portal's
-// own: the four Session 2 moves and their times (lib/moves.ts), points per kind
+// own: four of the Session 2 moves and their times (lib/moves.ts), points per kind
 // (lib/points.ts: video 5, sheet 20, name 10), the chapter 2 villain and how to
 // beat it (lib/story.ts), level = chapter (NextMove.tsx), and the list target
 // of 250 (lib/contacts.ts LIST_TARGET). Nothing here is saved.
 
 const MOVES = [
   { title: "Watch the Niche video", mins: "7 min", kind: "Video", pts: 5 },
-  { title: "Generate every transformation and audience you can think of", mins: "25 min", kind: "Working Sheet", pts: 20 },
-  { title: "Narrow your ideas down to your top three, using the lane test", mins: "20 min", kind: "Working Sheet", pts: 20 },
+  { title: "List every change you could help people make, and who for", mins: "25 min", kind: "Working Sheet", pts: 20 },
+  { title: "Narrow your ideas to your top three", mins: "20 min", kind: "Working Sheet", pts: 20 },
   { title: "Research your top three: four quick checks", mins: "45 min", kind: "Working Sheet", pts: 20 },
 ];
 
-const NAMES = ["A former colleague", "Your book club host", "A friend from college", "A parent from your kid's school", "A neighbor who runs a gym"];
+const NAMES = ["A coworker from a past job", "Your book club host", "A friend from college", "A parent from your kid's school", "A neighbor who runs a gym"];
 
 type Tab = "move" | "villain" | "list";
 
@@ -49,7 +49,7 @@ export function BuildDemo() {
         {tab === "villain" && <VillainDemo />}
         {tab === "list" && <ListDemo />}
       </div>
-      <p className="mt-3 text-center text-[11.5px] text-slate">A live demo. Tap away: nothing is saved.</p>
+      <p className="mt-3 text-center text-[11.5px] text-slate">A live demo. Tap away.</p>
       <style>{"@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}"}</style>
     </div>
   );
@@ -100,9 +100,9 @@ function MoveDemo() {
       ) : (
         <div className="mt-5 animate-[fadeIn_.35s_ease] rounded-[18px] border-2 border-orange bg-orange/10 p-6 text-center">
           <div className="text-[40px]">🎉</div>
-          <p className="mt-1 font-disp text-[22px] font-semibold text-off">Level up!</p>
+          <p className="mt-1 font-disp text-[22px] font-semibold text-off">Four moves done!</p>
           <p className="mt-1 text-[14px] text-sec">
-            {points} points. On to Chapter 3: find your words.
+            {points} points. Add 25 names to your list, then you level up to Chapter 3: find your words.
           </p>
           <button onClick={() => { setI(0); setPoints(0); }} className="mt-4 text-[13px] font-semibold text-blue">
             Play again
@@ -163,11 +163,13 @@ function ListDemo() {
         </span>
       </div>
       <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-        <div className="h-full rounded-full bg-orange transition-all duration-500" style={{ width: `${Math.max(2, (added.length / 250) * 100 * 10)}%` }} />
+        <div className="h-full rounded-full bg-orange transition-all duration-500" style={{ width: `${Math.max(2, (added.length / 250) * 100)}%` }} />
       </div>
       <p className="mt-3 text-[13.5px] leading-relaxed text-sec">
-        The people who will hear about your coaching first. The method builds it toward 250 names, and every
-        name earns 10 points.
+        The people who’ll hear about your coaching first. Aim for 250. Every name earns 10 points.
+      </p>
+      <p className="mt-1 text-[12px] leading-relaxed text-slate">
+        No current therapy clients. Colleagues can introduce you, but never ask for their clients.
       </p>
       <ul className="mt-3 space-y-2">
         {added.map((n) => (
@@ -182,7 +184,7 @@ function ListDemo() {
         </button>
       ) : (
         <div className="mt-3 animate-[fadeIn_.35s_ease] rounded-[12px] border border-orange/50 bg-orange/10 p-3 text-[14px] text-off">
-          Five names, 50 points. Build Free holds 50 names. <b>Build has no limit</b>, so you can reach all 250.
+          Five names, 50 points. Build Free stops at 50 names. <b>Build holds them all</b>, 250 and beyond.
           <button onClick={() => setAdded([])} className="ml-2 text-[13px] font-semibold text-blue">Play again</button>
         </div>
       )}

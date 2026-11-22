@@ -48,7 +48,7 @@ const INCLUDED = [
   "All 7 sessions, each with its video, Working Sheet and Principle Card",
   "Next Move, guiding every step",
   "A live group drop-in every week",
-  "No limit on your contact list (Build Free stops at 50)",
+  "Room for your whole contact list: the people who’ll hear you’re coaching first (free holds 50)",
   "Go as fast as your week allows",
 ];
 
@@ -99,7 +99,7 @@ export default function BuildPage() {
             Meet Next Move
           </h2>
           <p className="mt-2 text-[17px] leading-relaxed text-sec">
-            Building your program becomes a game you want to play. Try it: tap the demo.
+            Building your program becomes a game. Every move scores. Tap the demo and play.
           </p>
           <ul className="mt-6 space-y-4">
             {POWERS.map(([t, d], i) => (
@@ -120,7 +120,7 @@ export default function BuildPage() {
         {[
           ["7", "sessions"],
           ["1", "live drop-in every week"],
-          ["250", "names: the list the method builds"],
+          ["250", "people who’ll hear you’re coaching"],
         ].map(([n, l]) => (
           <div key={l} className="psy-card px-2 py-5">
             <div className={`font-disp font-semibold leading-tight text-orange ${n.length > 2 ? "text-[22px] sm:text-[34px]" : "text-[34px] sm:text-[44px]"}`}>{n}</div>
