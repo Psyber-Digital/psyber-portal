@@ -59,7 +59,7 @@ function Dot({ n }: { n: number }) {
 export default function BuildPage() {
   const onSale = buildOnSale();
   return (
-    <main className="relative z-10 mx-auto w-full max-w-[960px] px-5 pb-20 pt-10">
+    <main className="relative z-10 mx-auto w-full max-w-[960px] overflow-x-clip px-5 pb-20 pt-10">
       <div className="mb-10 flex justify-center">
         <Image src="/wordmark.png" alt="Psyber Digital" width={240} height={46} priority className="h-10 w-auto" />
       </div>
