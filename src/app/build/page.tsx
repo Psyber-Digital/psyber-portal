@@ -4,6 +4,7 @@ import Link from "next/link";
 import { VimeoEmbed } from "@/app/portal/components/VimeoEmbed";
 import type { WeekVideo } from "@/lib/videos";
 import { Brand } from "@/app/portal/components/Brand";
+import { BuildDemo } from "./BuildDemo";
 
 // Public Build landing page. Rebuilt 22 Nov 2026 to Don's note on card N1:
 // "Don't talk about what it doesn't do ... make it sound revolutionary - a
@@ -16,9 +17,8 @@ import { Brand } from "@/app/portal/components/Brand";
 //   points, levels, badges ......... lib/points.ts, lib/milestones.ts
 //   follow-ups under Due today ..... lib/dueMoves.ts
 //   7 sessions, weekly drop-in ..... terms 2.1, 2.3
-// The mock card shows a real Session 2 move (s2-narrow: 20 min, a sheet move,
-// so 20 points) in the real chapter (story.ts chapter 2). The bar is 3 of 7
-// Build moves done before it: 43%.
+// The playable demo (BuildDemo.tsx) uses real Session 2 moves, points and the
+// chapter 2 villain.
 //
 // The video is made by Audit (board m41/m42, approved by Don on bv3, 5 Nov).
 // Its Vimeo embed is locked to the portal domains.
@@ -48,7 +48,7 @@ const INCLUDED = [
   "All 7 sessions, each with its video, Working Sheet and Principle Card",
   "Next Move, guiding every step",
   "A live group drop-in every week",
-  "No limit on your contact list",
+  "No limit on your contact list (Build Free stops at 50)",
   "Go as fast as your week allows",
 ];
 
@@ -89,40 +89,18 @@ export default function BuildPage() {
       </section>
 
       {/* Next Move */}
-      <section id="next-move" className="mt-16 grid items-center gap-10 md:grid-cols-2">
-        {/* A picture of the real card, built in the page so it stays sharp. */}
-        <div aria-hidden className="relative">
-          <div className="absolute -inset-6 rounded-[32px] bg-orange/20 blur-3xl" />
-          <div className="relative rounded-[22px] border border-[#ffb36b] bg-[linear-gradient(135deg,#FFA54A,#E8780F)] p-6 text-[#1a0d00] shadow-2xl">
-            <div className="flex items-center justify-between">
-              <span className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px]">Your next move</span>
-              <span className="rounded-full bg-[#0B1220] px-2.5 py-1 font-disp text-[11px] font-semibold text-white">+20 points</span>
-            </div>
-            <p className="mt-3 font-disp text-[22px] font-semibold leading-snug">
-              Narrow your ideas down to your top three, using the lane test
-            </p>
-            <p className="mt-1 text-[14px]">20 min · Working Sheet</p>
-            <div className="mt-5 rounded-[12px] bg-[#0B1220] py-3 text-center font-disp text-[14px] font-semibold text-white">
-              Done ✓
-            </div>
-          </div>
-          <div className="relative mt-4 rounded-[16px] border border-line bg-[#121B2E] p-4">
-            <div className="flex items-center justify-between text-[12px] text-sec">
-              <span className="font-disp font-semibold text-off">Chapter 2 · Choose your niche</span>
-              <span>Level 2</span>
-            </div>
-            <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-              <div className="h-full w-[43%] rounded-full bg-orange" />
-            </div>
-          </div>
-        </div>
+      <section id="next-move" className="mt-16 grid items-center gap-10 md:grid-cols-[1.1fr_1fr]">
+        {/* Playable, like the Quranic Family site (Don, N1, 22 Nov 2026). */}
+        <BuildDemo />
 
         <div>
           <div className="psy-eyebrow text-orange">The method</div>
           <h2 className="mt-2 font-disp text-[30px] font-semibold leading-tight text-off sm:text-[38px]">
-            Next Move
+            Meet Next Move
           </h2>
-          <p className="mt-2 text-[17px] text-sec">Your next step, always ready.</p>
+          <p className="mt-2 text-[17px] leading-relaxed text-sec">
+            Building your program becomes a game you want to play. Try it: tap the demo.
+          </p>
           <ul className="mt-6 space-y-4">
             {POWERS.map(([t, d], i) => (
               <li key={t} className="flex items-start gap-3.5">
@@ -142,7 +120,7 @@ export default function BuildPage() {
         {[
           ["7", "sessions"],
           ["1", "live drop-in every week"],
-          ["No limit", "on your contact list"],
+          ["250", "names: the list the method builds"],
         ].map(([n, l]) => (
           <div key={l} className="psy-card px-2 py-5">
             <div className={`font-disp font-semibold leading-tight text-orange ${n.length > 2 ? "text-[22px] sm:text-[34px]" : "text-[34px] sm:text-[44px]"}`}>{n}</div>
