@@ -498,7 +498,11 @@ export async function sendDueUpsell(userId: string, now = new Date()) {
 
     // Build not on sale yet: only the one-on-one call invitations go out, and
     // the $99 clock never starts (Don, 21 Nov 2026).
-    const onSale = buildOnSale();
+    // The Build-selling emails (1 to 8) still carry the old $99 offer. They stay
+    // off until the new ladder wording is approved and wired in, even once
+    // Build is on sale (Don, 22 Nov 2026: "all emails can be on hold until
+    // this is done"). UPSELL_BUILD_EMAILS="true" turns them back on.
+    const onSale = buildOnSale() && process.env.UPSELL_BUILD_EMAILS === "true";
     if (p.list_full_at && onSale) {
       const result = await sendOnce(userId, "upsell_8", "1", renderUpsell("upsell_8", p, now));
       report.push({ kind: "upsell_8", to: p.email, result });
