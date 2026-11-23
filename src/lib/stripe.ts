@@ -13,9 +13,9 @@ export function stripe() {
   return client;
 }
 
-// The two Build prices, found by lookup key so test and live use the same code.
+// The Build price, found by lookup key so test and live use the same code.
+// Yearly only (Don, 23 Nov 2026): a "monthly" plan from an old page is refused.
 export const BUILD_PRICES = {
-  monthly: "build_monthly",
   yearly: "build_yearly",
 } as const;
 export type BuildPlan = keyof typeof BUILD_PRICES;

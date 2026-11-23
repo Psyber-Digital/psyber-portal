@@ -205,21 +205,18 @@ export default function BuildPage() {
         </div>
 
         <div className="psy-card flex flex-col gap-4 p-6">
-          <div className="flex items-end justify-between">
-            <div>
-              <div className="psy-eyebrow text-blue">Yearly</div>
-              <div className="mt-1 font-disp text-[30px] font-semibold leading-none text-off">$997</div>
+          <div>
+            <div className="psy-eyebrow text-blue">Build™ · yearly</div>
+            <div className="mt-1 font-disp text-[30px] font-semibold leading-none text-off">
+              $997 <span className="text-[15px] font-normal text-slate">a year</span>
             </div>
-            <div className="text-right">
-              <div className="psy-eyebrow text-blue">Monthly</div>
-              <div className="mt-1 font-disp text-[22px] font-semibold leading-none text-off">$97</div>
-            </div>
+            <p className="mt-1 text-[12.5px] text-slate">Under $84 a month, paid once a year.</p>
           </div>
           <p className="rounded-[9px] border border-orange/40 bg-orange/[0.1] px-3 py-2.5 text-[13px] leading-relaxed text-off">
             {onSale ? (
-              <>New members: start free, then upgrade within 7 days: <b>$300 off</b> your first year on the yearly plan. It drops every week after.</>
+              <>New members: start free, then upgrade within 7 days: <b>$300 off</b> your first year. It drops every week after.</>
             ) : (
-              <>New members: start free now. When <Brand name="Build" /> opens, upgrade within 7 days: <b>$300 off</b> your first year on the yearly plan, dropping every week after.</>
+              <>New members: start free now. When <Brand name="Build" /> opens, upgrade within 7 days: <b>$300 off</b> your first year, dropping every week after.</>
             )}
           </p>
           <Link href="/join" className="psy-btn w-full justify-center py-3">
@@ -236,8 +233,7 @@ export default function BuildPage() {
           </p>
           {/* Renewal and refund terms beside the buttons (terms 3.2, 4.1-4.4). */}
           <p className="text-[12px] leading-relaxed text-slate">
-            Renews automatically until you cancel. Monthly: cancel any time, no refunds. Yearly: a full
-            refund within 14 days of paying.
+            Renews automatically each year until you cancel. A full refund within 14 days of paying.
           </p>
         </div>
       </section>

@@ -23,7 +23,8 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
   const times = Math.floor(2500 / firstYear);
   const timesWord = times >= 4 ? "four times over" : times === 3 ? "three times over" : times === 2 ? "twice over" : "";
   const yearWord = step ? "your first year" : "a year";
-  const yearlySaves = 12 * PRICE.monthly - firstYear;
+  // Yearly only (Don, 23 Nov 2026). Shown per month to make the price easy to weigh.
+  const perMonth = Math.ceil(firstYear / 12);
 
   const tick = (
     <svg viewBox="0 0 20 20" aria-hidden className="mt-[3px] h-4 w-4 flex-none text-orange">
@@ -93,9 +94,6 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
                 value="yearly"
                 className="group relative block w-full rounded-[14px] border-2 border-orange bg-orange/[0.08] p-5 text-left transition hover:bg-orange/[0.14]"
               >
-                <span className="absolute -top-3 right-4 rounded-full bg-orange px-2.5 py-0.5 font-disp text-[11px] font-semibold uppercase tracking-[1px] text-[#1a0d00]">
-                  Best value
-                </span>
                 <span className="block font-disp text-[13px] font-semibold uppercase tracking-[1.2px] text-sec">Yearly</span>
                 <span className="mt-1 flex items-baseline gap-2">
                   <span className="font-disp text-[32px] font-semibold leading-none text-off">${firstYear}</span>
@@ -103,24 +101,10 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
                   <span className="text-[13px] text-slate">{step ? "your first year" : "a year"}</span>
                 </span>
                 <span className="mt-2 block text-[13px] leading-relaxed text-sec">
-                  ${yearlySaves} less than paying monthly for a year.
+                  Under ${perMonth} a month, paid once a year.
                   {step ? ` Then $${PRICE.yearly} a year.` : ""}
                 </span>
-                <span className="psy-btn mt-4 block w-full text-center">Join Build™ yearly</span>
-              </button>
-
-              <button
-                name="plan"
-                value="monthly"
-                className="mt-3 block w-full rounded-[14px] border border-line p-4 text-left transition hover:border-sec"
-              >
-                <span className="flex items-baseline justify-between">
-                  <span className="font-disp text-[13px] font-semibold uppercase tracking-[1.2px] text-sec">Monthly</span>
-                  <span>
-                    <span className="font-disp text-[20px] font-semibold text-off">${PRICE.monthly}</span>
-                    <span className="text-[13px] text-slate"> a month</span>
-                  </span>
-                </span>
+                <span className="psy-btn mt-4 block w-full text-center">Join Build™</span>
               </button>
 
               {/* Separate renewal consent, apart from the terms (adviser Q2,
@@ -131,22 +115,20 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
               </label>
             </form>
 
-            {/* Risk reversal: terms 4.3 (yearly, 14 days). Refund position also
-                stated plainly for the monthly plan (adviser Q13, terms 4.4). */}
+            {/* Risk reversal: terms 4.3 (14 days). */}
             <div className="mt-4 flex gap-2.5 rounded-[10px] bg-blue/[0.08] p-3 text-[13px] leading-relaxed text-sec">
               <svg viewBox="0 0 20 20" aria-hidden className="mt-[2px] h-4 w-4 flex-none text-blue">
                 <path fill="currentColor" d="M10 1.5 3 4.2v5c0 4.3 3 7.9 7 9.3 4-1.4 7-5 7-9.3v-5zm-1.3 12-3.4-3.4 1.4-1.4 2 2 4.4-4.4 1.4 1.4z" />
               </svg>
               <span>
-                <b className="text-off">14-day full refund</b> on the yearly plan. Change your mind? Ask
-                within 14 days of paying and get every cent back (terms apply). Monthly plan: no refunds,
-                cancel any time.
+                <b className="text-off">14-day full refund.</b> Change your mind? Ask within 14 days of
+                paying and get every cent back (terms apply).
               </span>
             </div>
             <p className="mt-3 text-[12px] leading-relaxed text-slate">
-              Renews automatically until you cancel. Yearly:{" "}
-              {step ? `$${firstYear} your first year, then $${PRICE.yearly} a year.` : `$${PRICE.yearly} a year.`} Monthly:
-              ${PRICE.monthly} a month. Cancel any time from Manage billing.
+              Renews automatically each year until you cancel:{" "}
+              {step ? `$${firstYear} your first year, then $${PRICE.yearly} a year.` : `$${PRICE.yearly} a year.`} Cancel
+              any time from Manage billing.
               Stripe takes the payment. We never see your card details.
             </p>
           </div>

@@ -1,7 +1,7 @@
 // Build's prices and launch ladder (Don, 21 Nov 2026, Codex ADR-0027 addendum 6):
-// $97 a month or $997 a year. The yearly plan is cheaper the sooner someone
+// $997 a year, yearly only (Don, 23 Nov 2026; monthly at $97 was dropped). The yearly plan is cheaper the sooner someone
 // upgrades, counted from their free sign-up: $300 off in week 1, $200 off in
-// week 2, $100 off in week 3, then the full $997. The monthly plan has no
+// week 2, $100 off in week 3, then the full $997. There is no monthly plan, so no
 // discount. Every deadline is real and decided here, on the server.
 //
 // Each saving is a once-only Stripe coupon with the same id in test and live.
@@ -12,7 +12,7 @@
 // date-time). With it unset, nobody's clock runs and the free version says the
 // saving starts when Build opens. Terms 3.7 says the same.
 
-export const PRICE = { monthly: 97, yearly: 997 } as const;
+export const PRICE = { yearly: 997 } as const;
 
 const DAY = 24 * 60 * 60 * 1000;
 

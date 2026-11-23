@@ -39,7 +39,6 @@ export default async function ManageBillingPage() {
           <li>Your place in the program is kept for one month after <Brand name="Build" /> ends. Rejoin after that and you start again from Session 1.</li>
           <li>Anything you’ve written stays yours.</li>
           <li>Yearly plan: a full refund if you ask within 14 days of paying.</li>
-          <li>Monthly plan: no refunds.</li>
         </ul>
         <form action={openBillingPortal}>
           <button type="submit" className="psy-btn mt-6 w-full">
