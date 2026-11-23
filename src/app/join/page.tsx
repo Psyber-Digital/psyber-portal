@@ -352,7 +352,7 @@ export default function JoinPage() {
             how they want to work. Decides the next step and the emails. Not a
             coaching-rule question, so it's unnumbered and never refuses. */}
         <h2 className="mt-9 font-disp text-[15px] font-semibold leading-snug text-off">
-          How would you like to work?
+          If you were to launch a coaching program, would you prefer to do it:
         </h2>
         <Choice
           name="one_on_one"
