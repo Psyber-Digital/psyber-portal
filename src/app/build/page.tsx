@@ -40,7 +40,7 @@ export const metadata = {
 // Short on purpose (Don: "I don't want long passages of text").
 const POWERS: [string, string][] = [
   ["One move at a time", "Open the portal. Your next move is waiting."],
-  ["The right resource, right there", "Each move opens the video, sheet or card it needs."],
+  ["Your program, as a story", "You're the hero. Each chapter names the villain in your way, and how to beat it."],
   ["Points, levels and badges", "The most points go to messages sent and calls booked."],
   ["Follow-ups on time", "The portal shows who to follow up with, and when."],
 ];
@@ -140,6 +140,46 @@ export default function BuildPage() {
         </div>
       </section>
 
+      </Reveal>
+
+      {/* Why Build exists (Don, Y1 note, 23 Nov 2026). */}
+      <Reveal>
+      <section className="mt-20">
+        <div className="text-center">
+          <div className="psy-eyebrow text-orange">Why Build exists</div>
+          <h2 className="mx-auto mt-2 max-w-[640px] font-disp text-[28px] font-semibold leading-tight text-off sm:text-[36px]">
+            Going it alone has its dangers. <Brand name="Build" /> was made to stop them.
+          </h2>
+        </div>
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          {[
+            ["Not knowing where to start", "Your first move is waiting the moment you log in."],
+            ["Too much information", "One move at a time. Only what matters next."],
+            ["Months on the wrong thing", "A live drop-in every week, to check before a wrong turn costs you weeks."],
+            ["Quietly stalling in a busy month", "Your next move waits for you. The drop-in gets you going again."],
+          ].map(([danger, fix]) => (
+            <div key={danger} className="rounded-[16px] border border-line bg-[#121B2E] p-5">
+              <div className="text-[13px] font-semibold text-slate line-through decoration-orange/70">{danger}</div>
+              <div className="mt-1.5 font-disp text-[17px] font-semibold leading-snug text-off">{fix}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-6 overflow-hidden rounded-[22px] border-2 border-blue bg-[linear-gradient(160deg,rgba(30,144,255,0.18),rgba(30,144,255,0.03))] p-7 sm:flex sm:items-center sm:gap-8 sm:p-9">
+          <div className="text-[52px] leading-none">🎥</div>
+          <div className="mt-4 sm:mt-0">
+            <div className="psy-eyebrow text-blue">The weekly drop-in</div>
+            <h3 className="mt-1 font-disp text-[24px] font-semibold leading-tight text-off sm:text-[28px]">
+              Never alone for more than a week.
+            </h3>
+            <p className="mt-2 max-w-[560px] text-[15px] leading-relaxed text-sec">
+              Every week, live on video. Bring your next decision: the niche you’re torn on, the price
+              you’re unsure of, the message you’re about to send. Leave knowing your next move. Missed it?
+              Watch the recording.
+            </p>
+          </div>
+        </div>
+      </section>
       </Reveal>
 
       {/* Three facts, counting up as they scroll in. */}
