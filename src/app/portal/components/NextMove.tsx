@@ -53,7 +53,8 @@ function OpenLink({
   const same = SAME_TAB.includes(kind);
   return (
     <a
-      href={href}
+      // A sheet opens on the part this move is about, highlighted (Don, card BT1, 24 Nov 2026).
+      href={kind === "sheet" && where ? `${href}#part=${encodeURIComponent(where)}` : href}
       target={same ? undefined : "_blank"}
       rel={same ? undefined : "noopener noreferrer"}
       className={
@@ -158,6 +159,27 @@ export function NextMove({
           Welcome back. You&rsquo;re on Chapter {session}{chapter ? `, ${chapter.title}` : ""}. Here&rsquo;s your next move.
         </p>
       )}
+
+    {/* Level and points at the top (Don, card BT1, 24 Nov 2026). Level = chapter; the bar is how far through it. */}
+      <div className="mx-0.5 mt-5 flex items-center gap-3 rounded-[14px] border border-line bg-panel px-3.5 py-3">
+        <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] font-disp text-[18px] font-bold text-[#241100]">
+          {session}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline justify-between gap-2 text-[13px]">
+            <b className="font-disp font-semibold text-off">Level {session}</b>
+            <span className="text-mut">
+              {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
+            </span>
+          </div>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+            <i
+              className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
+              style={{ width: `${Math.round((doneCount / Math.max(moves.length, 1)) * 100)}%` }}
+            />
+          </div>
+        </div>
+      </div>
 
       {/* The chapter: where the hero is, and the villain in the way. */}
       <div className="mx-0.5 mt-5">
@@ -409,27 +431,6 @@ export function NextMove({
         <div className="mt-1.5 flex justify-between text-[10.5px] text-mut">
           <span>You</span>
           <span>First paying coaching client</span>
-        </div>
-
-        {/* Level = chapter. The bar is how far through this chapter. */}
-        <div className="mt-4 flex items-center gap-3 rounded-[14px] border border-line bg-panel px-3.5 py-3">
-          <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] font-disp text-[18px] font-bold text-[#241100]">
-            {session}
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex items-baseline justify-between gap-2 text-[13px]">
-              <b className="font-disp font-semibold text-off">Level {session}</b>
-              <span className="text-mut">
-                {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
-              </span>
-            </div>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-              <i
-                className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
-                style={{ width: `${Math.round((doneCount / Math.max(moves.length, 1)) * 100)}%` }}
-              />
-            </div>
-          </div>
         </div>
 
         {list && (

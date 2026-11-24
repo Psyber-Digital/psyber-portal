@@ -124,23 +124,16 @@ export async function PortalScreen({
   // RLS hides unpublished weeks from clients, so we read the outline with the
   // service-role client (server-only; the access check above has already run).
   // Only number/title/published are selected — no draft content reaches the browser.
-  const { data: outlineRows } = await createAdminClient()
-    .from("weeks")
-    .select("id, number, title, published")
-    .order("number");
-  const outline = (outlineRows ?? publishedWeeks) as WeekOutline[];
-
-  // "Your next move" (0017; War Room run psyber/2026-11-18-next-move). One
-  // card for the current session; the materials below are unchanged.
+  // These four reads run side by side, not one after another: each one is a
+  // trip to the database, and in a row they made switching tabs lag (Don, card
+  // BT1, 24 Nov 2026).
   const tier = profile?.tier;
   const moves = current ? movesFor(current.number, tier) : [];
-  const { data: tickRows } = current
-    ? await supabase.from("move_ticks").select("move_id, done_at").not("move_id", "like", "s1-p-%")
-    : { data: [] as { move_id: string; done_at: string }[] };
   // Kept points (s1-p-) are read separately, a page at a time, so a member
   // with hundreds of them never pushes real ticks past the API's row limit.
-  const pointRows: { move_id: string; done_at: string }[] = [];
-  if (current) {
+  const readPoints = async () => {
+    const rows: { move_id: string; done_at: string }[] = [];
+    if (!current) return rows;
     for (let from = 0; from < 20000; from += 1000) {
       const { data: page, error: pageErr } = await supabase
         .from("move_ticks")
@@ -152,17 +145,32 @@ export async function PortalScreen({
         console.error("read points failed:", pageErr.message);
         break;
       }
-      pointRows.push(...(page ?? []));
+      rows.push(...(page ?? []));
       if (!page || page.length < 1000) break;
     }
-  }
+    return rows;
+  };
+  const [{ data: outlineRows }, { data: tickRows }, pointRows, { data: contactRows }] = await Promise.all([
+    // Full program outline for the stepper — every session, including ones not yet
+    // published, so the client sees the whole path with remaining sessions greyed out.
+    // RLS hides unpublished weeks from clients, so we read the outline with the
+    // service-role client (server-only; the access check above has already run).
+    // Only number/title/published are selected — no draft content reaches the browser.
+    createAdminClient().from("weeks").select("id, number, title, published").order("number"),
+    // "Your next move" (0017; War Room run psyber/2026-11-18-next-move).
+    current
+      ? supabase.from("move_ticks").select("move_id, done_at").not("move_id", "like", "s1-p-%")
+      : Promise.resolve({ data: [] as { move_id: string; done_at: string }[] }),
+    readPoints(),
+    // Dated cards come from the member's own list (owner-only RLS, 0005).
+    current
+      ? supabase
+          .from("contacts")
+          .select("id, name, status, correspondence, first_contact_date, last_contact_date, next_followup_date, created_at")
+      : Promise.resolve({ data: [] as DueContact[] }),
+  ]);
+  const outline = (outlineRows ?? publishedWeeks) as WeekOutline[];
   const ticked = new Set((tickRows ?? []).map((r) => r.move_id));
-  // Dated cards come from the member's own list (owner-only RLS, 0005).
-  const { data: contactRows } = current
-    ? await supabase
-        .from("contacts")
-        .select("id, name, status, correspondence, first_contact_date, last_contact_date, next_followup_date, created_at")
-    : { data: [] as DueContact[] };
   const due = current
     ? dueMoves({
         contacts: (contactRows ?? []) as DueContact[],
