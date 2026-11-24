@@ -39,10 +39,10 @@ export const metadata = {
 
 // Short on purpose (Don: "I don't want long passages of text").
 const POWERS: [string, string][] = [
-  ["One move at a time", "Open the portal. Your next move is waiting."],
+  ["One move at a time", "Log in and your next move is already waiting. No guessing, ever."],
   ["Your launch, as a story", "You're the hero. Each chapter names the villain in your way, like The Wide Net, and how to beat it."],
-  ["Points, levels and badges", "The most points go to messages sent and calls booked."],
-  ["Follow-ups on time", "The portal shows who to follow up with, and when."],
+  ["Points, levels and badges", "The big points go to the moves that count: messages sent, calls booked."],
+  ["Never let a warm lead go cold", "The portal tells you exactly who to follow up with, and when."],
 ];
 
 const INCLUDED = [
@@ -50,7 +50,7 @@ const INCLUDED = [
   "Next Move, guiding every step",
   "A live group drop-in every week",
   "Room for your whole contact list: the people who’ll hear you’re coaching first (free holds 50)",
-  "Go as fast as your week allows",
+  "Sprint or stroll. You set the pace.",
 ];
 
 function Dot({ n }: { n: number }) {
@@ -77,7 +77,7 @@ export default function BuildPage() {
           <span className="bg-[linear-gradient(90deg,#FFA54A,#FF8D1E)] bg-clip-text text-transparent">One move at a time.</span>
         </h1>
         <p className="mx-auto mt-5 max-w-[560px] text-[17px] leading-relaxed text-sec">
-          Go it alone, and never get stuck. <Brand name="Build" /> runs on Next Move, a method we designed to supercharge your progress.
+          Go it alone and never get stuck again! <Brand name="Build" /> runs on Next Move: the method we designed to supercharge your progress.
         </p>
         <div className="mx-auto mt-7 flex max-w-[460px] flex-col gap-3 sm:flex-row">
           <Link href="/join" className="psy-btn flex-1 justify-center py-3.5 text-[15px]">
@@ -90,8 +90,8 @@ export default function BuildPage() {
         <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-orange/40 bg-orange/10 px-4 py-1.5 text-[13px] text-off">
           <span className="h-2 w-2 animate-pulse rounded-full bg-orange" />
           {onSale
-            ? "New members: $300 off your first year if you upgrade within 7 days."
-            : "Start free today. $300 off your first year when Build™ opens."}
+            ? "New members: unlock $300 off your first year when you upgrade within 7 days!"
+            : "Start free today, and unlock $300 off your first year when Build™ opens!"}
         </p>
       </section>
 
@@ -124,7 +124,7 @@ export default function BuildPage() {
             Meet Next Move
           </h2>
           <p className="mt-2 text-[17px] leading-relaxed text-sec">
-            One clear move at a time, each one opening exactly what it needs. Tap the demo and play.
+            One clear move at a time, each one opening exactly what it needs. Tap the demo and play!
           </p>
           <ul className="mt-6 space-y-4">
             {POWERS.map(([t, d], i) => (
@@ -148,7 +148,7 @@ export default function BuildPage() {
         <div className="text-center">
           <div className="psy-eyebrow text-orange">Why Build exists</div>
           <h2 className="mx-auto mt-2 max-w-[640px] font-disp text-[28px] font-semibold leading-tight text-off sm:text-[36px]">
-            Go it alone, without the pitfalls. That’s what we built <Brand name="Build" /> for.
+            Go it alone. Skip the pitfalls. That’s what <Brand name="Build" /> is for!
           </h2>
         </div>
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -170,7 +170,7 @@ export default function BuildPage() {
           <div className="mt-4 sm:mt-0">
             <div className="psy-eyebrow text-blue">The weekly drop-in</div>
             <h3 className="mt-1 font-disp text-[24px] font-semibold leading-tight text-off sm:text-[28px]">
-              Live help with your next decision, every week.
+              Stuck? Get live answers every single week.
             </h3>
             <p className="mt-2 max-w-[560px] text-[15px] leading-relaxed text-sec">
               Every week, live on video. Bring your next decision: the niche you’re torn on, the price
@@ -285,7 +285,7 @@ export default function BuildPage() {
         <h2 className="mx-auto max-w-[620px] font-disp text-[28px] font-semibold leading-tight sm:text-[38px]">
           Every week you wait is another week your program isn’t for sale.
         </h2>
-        <p className="mt-3 text-[16px]">Make your first move tonight.</p>
+        <p className="mt-3 text-[16px]">Make your first move tonight. It’s free!</p>
         <Link href="/join" className="mt-6 inline-block rounded-[14px] bg-[#0B1220] px-8 py-4 font-disp text-[16px] font-semibold text-white transition hover:scale-[1.03]">
           Try Build™ for free
         </Link>

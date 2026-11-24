@@ -33,7 +33,7 @@ export function Countdown({
   const parts: [number, string][] = [[d, "days"], [h, "hours"], [m, "mins"], [s, "secs"]];
   return (
     <div className="mb-6 overflow-hidden rounded-[18px] border border-[#ffb36b] bg-[linear-gradient(135deg,#FFA54A,#E8780F)] p-5 text-[#1a0d00]">
-      <p className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px]">Your launch saving</p>
+      <p className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px]">{onSale ? "Your launch saving is live!" : "Your launch saving"}</p>
       <p className="mt-1 font-disp text-[20px] font-semibold leading-snug sm:text-[22px]">
         ${off} off your first year of Build™: ${yearly - off} instead of ${yearly}
       </p>

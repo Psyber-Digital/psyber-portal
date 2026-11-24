@@ -32,11 +32,11 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
     </svg>
   );
   const inside = [
-    "A clear first step and a proven roadmap, so you know where to start",
+    "A clear first step and a step-by-step roadmap, so you know where to start",
     "Every session, each with its video, Working Sheet and Principle Card",
     "Each session opens as you finish the one before, so you only work on what matters next",
     "A live group drop-in every week, for help before a wrong turn costs you weeks",
-    "Go as fast as your week allows",
+    "Sprint or stroll. You set the pace.",
   ];
   const oneOnOne = [
     "Seven one-on-one sessions and three clinics to build your program",
@@ -61,13 +61,11 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
       <header className="max-w-[640px]">
         <div className="psy-eyebrow text-orange">Introducing <Brand name="Build" tm /></div>
         <h1 className="mt-2 font-disp text-[28px] font-semibold leading-[1.2] sm:text-[34px]">
-          Launch your coaching program on your own, without the pitfalls
+          Launch your coaching program on your own, and never get stuck!
         </h1>
         <p className="mt-4 text-[15px] leading-relaxed text-slate">
-          Some people want to do it themselves, at their own pace. They don’t need constant
-          support. But going it alone has its pitfalls: not knowing where to start, too much
-          information, months spent on the wrong thing. We designed <Brand name="Build" /> so
-          you can go it alone and avoid them.
+          Going it alone has its pitfalls. Not knowing where to start. Too much information.
+          Months on the wrong thing. We designed <Brand name="Build" /> to help you dodge every one!
         </p>
         <p className="mt-3 text-[14px] text-sec">
           Want full support instead?{" "}
