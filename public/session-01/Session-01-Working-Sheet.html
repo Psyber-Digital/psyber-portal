@@ -319,7 +319,8 @@ td.xlast{position:relative;padding-right:32px}
  function paint(){[].slice.call(document.querySelectorAll('.shift')).forEach(function(s){
    var c=s.querySelector('input[type=checkbox]');s.classList.toggle('on',!!(c&&c.checked));});}
  var t;
- function save(){var d={};all().forEach(function(e){var v=get(e);if(v)d[e.id]=v;});
+ var dirty=false;
+ function save(){dirty=false;var d={};all().forEach(function(e){var v=get(e);if(v)d[e.id]=v;});
    localStorage.setItem(KEY,JSON.stringify(d));
    status.textContent='Saved '+new Date().toLocaleTimeString();}
 
@@ -416,7 +417,7 @@ td.xlast{position:relative;padding-right:32px}
    paint();counts();}
 
  // Delegated, so rows added after load save exactly like the printed ones.
- document.addEventListener('input',function(){counts();clearTimeout(t);t=setTimeout(save,400);});
+ document.addEventListener('input',function(){dirty=true;counts();clearTimeout(t);t=setTimeout(save,400);});
  document.addEventListener('change',function(ev){
    if(ev.target&&box(ev.target)){paint();save();}});
  document.getElementById('save').addEventListener('click',save);
@@ -472,7 +473,11 @@ td.xlast{position:relative;padding-right:32px}
  document.addEventListener('keydown',function(ev){if(ev.key==='Escape')shut();});
 
  load();
- window.addEventListener('beforeunload',save);
+ // Two tabs of the same sheet must never wipe each other (portal walk-through,
+ // 25 Nov 2026). Only a tab with unsaved typing saves on close, and a tab with
+ // nothing unsaved reloads when another tab saves, so it always shows the latest.
+ window.addEventListener('beforeunload',function(){if(dirty)save();});
+ window.addEventListener('storage',function(ev){if(ev.key===KEY&&!dirty)location.reload();});
 })();
 </script>
 <script>/* Highlight the part of the sheet a move points to (Don, card BT1, 24 Nov 2026).

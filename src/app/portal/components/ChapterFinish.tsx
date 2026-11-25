@@ -27,6 +27,7 @@ export function ChapterFinish({
   memberKey,
   enabled,
   locked = false,
+  justFinished = false,
 }: {
   finishedThrough: number;
   info?: ChapterFinishInfo;
@@ -36,6 +37,10 @@ export function ChapterFinish({
   enabled: boolean;
   /** Build Free: the next chapter opens in Build (research card AD2, 25 Nov 2026). */
   locked?: boolean;
+  /** The page was opened right after a session finished (?opened=N). The
+   *  first chapter used to be missed: on its first mount the memory was
+   *  empty, so it only recorded (walk-through, 25 Nov 2026). */
+  justFinished?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -50,10 +55,13 @@ export function ChapterFinish({
     } catch {
       return;
     }
-    if (seen === null || !(finishedThrough > seen)) return;
+    // Open once per chapter: when this browser saw an earlier chapter, or right
+    // after the finish (?opened=N) on a first visit. A refresh never reopens it.
+    const fresh = seen === null ? justFinished : finishedThrough > seen;
+    if (!fresh) return;
     setOpen(true);
     burstAt(window.innerWidth / 2, window.innerHeight / 3);
-  }, [enabled, info, finishedThrough, memberKey]);
+  }, [enabled, info, finishedThrough, memberKey, justFinished]);
 
   if (!open || !info) return null;
   return (

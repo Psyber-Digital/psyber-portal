@@ -365,6 +365,7 @@ export async function PortalScreen({
               finishedThrough={finishedThrough}
               enabled
               locked={tier === "foundations"}
+              justFinished={Number(searchParams?.opened) === finishedThrough}
               memberKey={user.id.slice(0, 8)}
               names={contactsList.length}
               points={points}
