@@ -317,7 +317,9 @@ export async function PortalScreen({
           onSale={buildOnSale()}
         />
       )}
-      {profile?.tier === "foundations" && !ladderStep && !buildOnSale() && (
+      {/* Not twice: the Session 1 finished card carries this line on Today. */}
+      {profile?.tier === "foundations" && !ladderStep && !buildOnSale() &&
+        !(view === "today" && freeFinished && !profile?.wants_one_on_one) && (
         <p className="psy-card mb-6 p-5 text-sm text-slate">
           {profile && savingWaiting(profile) ? SAVING_WAITS : OPENS_SOON}
         </p>
@@ -542,6 +544,44 @@ export async function PortalScreen({
 
       {view === "today" && !showNextMove && (
         <>
+          {/* Session 1 done on Build Free: celebrate, then the next move is
+              joining Build (Don, card BT1, 25 Nov 2026: "a card that
+              congratulates them for finishing and then give them the next task
+              as signing up to Build Full ... keep the momentum going").
+              One-on-one choosers get their call card instead. */}
+          {tier === "foundations" && freeFinished && !profile?.wants_one_on_one && (
+            <div className="mx-auto mt-2 max-w-[720px]">
+              <section className="overflow-hidden rounded-[22px] border border-[#ffb36b] bg-[linear-gradient(160deg,#FFA54A_0%,#FF8D1E_45%,#E8780F_100%)] p-6 text-[#1a0d00] shadow-card sm:p-8">
+                <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-[#4a2600]">
+                  Chapter 1 complete 🎉
+                </div>
+                <h2 className="mt-1 font-disp text-[26px] font-semibold leading-tight sm:text-[32px]">
+                  You cleared the road!
+                </h2>
+                <p className="mt-2 max-w-[56ch] text-[15px] leading-relaxed text-[#2e1700]">{CHAPTERS[1].done}</p>
+                <div className="mt-5 rounded-xl bg-[#0B1220] p-5 text-off">
+                  <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-orange">Your next move</div>
+                  <p className="mt-1 font-disp text-[20px] font-semibold leading-snug">
+                    Join <Brand name="Build" tm /> and keep your momentum going!
+                  </p>
+                  <p className="mt-1.5 text-[14.5px] leading-relaxed text-sec">
+                    Chapter 2 is waiting: choose your niche and beat {CHAPTERS[2].villain}. Sessions 2 to 7, a live
+                    drop-in every week, and room for your whole list.
+                  </p>
+                  {buildOnSale() ? (
+                    <a href="/portal/billing" className="psy-btn mt-4 inline-block">Join <Brand name="Build" tm /> now</a>
+                  ) : (
+                    <>
+                      <p className="mt-3 text-[14px] text-off">
+                        {profile && savingWaiting(profile) ? SAVING_WAITS : OPENS_SOON}
+                      </p>
+                      <a href="/build" target="_blank" rel="noopener" className="psy-btn mt-4 inline-block">See what&rsquo;s in <Brand name="Build" tm /></a>
+                    </>
+                  )}
+                </div>
+              </section>
+            </div>
+          )}
           {banners}
           {journey}
           {sessionWork}
