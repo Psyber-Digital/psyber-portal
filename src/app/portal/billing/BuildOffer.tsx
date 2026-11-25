@@ -61,7 +61,7 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
       <header className="max-w-[640px]">
         <div className="psy-eyebrow text-orange">Introducing <Brand name="Build" tm /></div>
         <h1 className="mt-2 font-disp text-[28px] font-semibold leading-[1.2] sm:text-[34px]">
-          Launch your coaching program on your own, and never get stuck!
+          Launch your coaching program in your own time, and never get stuck!
         </h1>
         <p className="mt-4 text-[15px] leading-relaxed text-slate">
           Going it alone has its pitfalls. Not knowing where to start. Too much information.

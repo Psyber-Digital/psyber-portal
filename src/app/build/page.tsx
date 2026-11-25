@@ -34,7 +34,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Build™ · Psyber Digital",
   description:
-    "Launch your coaching program, one move at a time. Build runs on Next Move, a method designed to supercharge your progress.",
+    "Launch your coaching program in your own time, one move at a time. Build runs on Next Move, a method designed to supercharge your progress.",
 };
 
 // Short on purpose (Don: "I don't want long passages of text").
@@ -76,8 +76,12 @@ export default function BuildPage() {
           Launch your coaching program.{" "}
           <span className="bg-[linear-gradient(90deg,#FFA54A,#FF8D1E)] bg-clip-text text-transparent">One move at a time.</span>
         </h1>
-        <p className="mx-auto mt-5 max-w-[560px] text-[17px] leading-relaxed text-sec">
-          Go it alone and never get stuck again! <Brand name="Build" /> runs on Next Move: the method we designed to supercharge your progress.
+        {/* Key message (Don, Codex VOICE-20261125-1, 25 Nov 2026). */}
+        <p className="mx-auto mt-4 font-disp text-[22px] font-semibold text-orange sm:text-[26px]">
+          Do it in your own time.
+        </p>
+        <p className="mx-auto mt-3 max-w-[560px] text-[17px] leading-relaxed text-sec">
+          No fixed schedule. Start when it suits you, and move at the pace your caseload allows. Go it alone and never get stuck again! <Brand name="Build" /> runs on Next Move: the method we designed to supercharge your progress.
         </p>
         <div className="mx-auto mt-7 flex max-w-[460px] flex-col gap-3 sm:flex-row">
           <Link href="/join" className="psy-btn flex-1 justify-center py-3.5 text-[15px]">
@@ -97,8 +101,9 @@ export default function BuildPage() {
 
       {/* Three promises, in Don's words (N1 note, 22 Nov 2026). */}
       <Reveal>
-      <section className="mt-14 grid gap-3 sm:grid-cols-3">
+      <section className="mt-14 grid gap-3 sm:grid-cols-2">
         {[
+          ["⏱", "Do it in your own time.", "No fixed schedule. Evenings, weekends, between clients: you choose."],
           ["🧭", "Don’t get stuck.", "Always know what to do next."],
           ["📦", "Everything in one place.", "All the resources you need, packaged in Next Move."],
           ["🎯", "Progress becomes fun.", "Your moves score points. Every chapter levels you up."],
