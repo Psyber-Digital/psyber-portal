@@ -253,7 +253,12 @@ export function NextMove({
                         // Names are all that's left: say so big (Don, BT1 and S2, 25 Nov 2026).
                         <span className="block text-[19px] leading-snug text-orange">
                           Add {gate!.namesNeeded} more {gate!.namesNeeded === 1 ? "name" : "names"} to your list
-                          {meet ? ` and Session ${session + 1} opens!` : ` to finish Session ${session}!`}
+                          {/* Session 2 still asks the niche question before Session 3 opens (voice-guard, 25 Nov). */}
+                          {!meet
+                            ? ` to finish Session ${session}!`
+                            : session === 2
+                              ? ", then choose your niche and Session 3 opens!"
+                              : ` and Session ${session + 1} opens!`}
                         </span>
                       ) : (
                         <>Before you finish Session {session}</>

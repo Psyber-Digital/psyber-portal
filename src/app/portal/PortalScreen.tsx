@@ -449,9 +449,12 @@ export async function PortalScreen({
         <p className="mb-6 rounded-xl border border-[#2f6b45] bg-[#13281c] px-4 py-3 text-[15px] text-[#c8f3d5]" role="status">
           <b className="font-semibold text-[#9be7b0]">Session {Number(searchParams.opened)} finished!</b>{" "}
           {tier === "build" ? (
-            <>Session {Number(searchParams.opened) + 1} is open. Here&rsquo;s your next move.</>
+            <>
+              Session {Number(searchParams.opened) + 1} is open: time to{" "}
+              {(CHAPTERS[Number(searchParams.opened) + 1]?.title ?? "make your next move").toLowerCase()}!
+            </>
           ) : (
-            <>Sessions 2 to 7, and the weekly drop-in, open in <Brand name="Build" tm />.</>
+            <>Your next move is just below.</>
           )}
         </p>
       )}
@@ -558,15 +561,22 @@ export async function PortalScreen({
                 <h2 className="mt-1 font-disp text-[26px] font-semibold leading-tight sm:text-[32px]">
                   You cleared the road!
                 </h2>
-                <p className="mt-2 max-w-[56ch] text-[15px] leading-relaxed text-[#2e1700]">{CHAPTERS[1].done}</p>
+                <p className="mt-2 max-w-[56ch] text-[15px] leading-relaxed text-[#2e1700]">
+                  You named what could slow you down, you planned for it, and your first step has a date. That&rsquo;s real
+                  work, done!
+                </p>
                 <div className="mt-5 rounded-xl bg-[#0B1220] p-5 text-off">
                   <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-orange">Your next move</div>
                   <p className="mt-1 font-disp text-[20px] font-semibold leading-snug">
-                    Join <Brand name="Build" tm /> and keep your momentum going!
+                    {buildOnSale() ? (
+                      <>Join <Brand name="Build" tm /> and choose your niche next!</>
+                    ) : (
+                      <><Brand name="Build" tm /> opens soon, and Chapter 2 is waiting!</>
+                    )}
                   </p>
                   <p className="mt-1.5 text-[14.5px] leading-relaxed text-sec">
-                    Chapter 2 is waiting: choose your niche and beat {CHAPTERS[2].villain}. Sessions 2 to 7, a live
-                    drop-in every week, and room for your whole list.
+                    Choose your niche and beat {CHAPTERS[2].villain}. Then Sessions 3 to 7, all the way to launch, a live
+                    drop-in every week, and room for your whole list!
                   </p>
                   {buildOnSale() ? (
                     <a href="/portal/billing" className="psy-btn mt-4 inline-block">Join <Brand name="Build" tm /> now</a>
