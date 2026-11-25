@@ -95,6 +95,7 @@ export function NextMove({
   tickedToday = new Set(),
   streak,
   teaser,
+  picture,
 }: {
   session: number;
   /** e.g. "Niche". */
@@ -137,6 +138,8 @@ export function NextMove({
   streak?: { days: number; doneToday: boolean };
   /** The next chapter, shown after each move; locked on Build Free (card AD). */
   teaser?: { number: number; title: string; villain: string; locked: boolean; coached?: boolean };
+  /** The chapter's diagram and its one-line caption (card PU). */
+  picture?: { src: string; caption: string };
 }) {
   if (moves.length === 0) return null;
 
@@ -168,46 +171,6 @@ export function NextMove({
         </p>
       )}
 
-    {/* Level and points at the top (Don, card BT1, 24 Nov 2026). Level = chapter; the bar is how far through it. */}
-      <div className="mx-0.5 mt-5 flex items-center gap-3 rounded-[14px] border border-line bg-panel px-3.5 py-3">
-        <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] font-disp text-[18px] font-bold text-[#241100]">
-          {session}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-baseline justify-between gap-2 text-[13px]">
-            <b className="font-disp font-semibold text-off">
-              Level {session}
-              {streak && (
-                <span className={`ml-2 rounded-full px-2 py-0.5 text-[12px] ${streak.doneToday ? "bg-orange/20 text-orange" : "bg-line text-sec"}`}>
-                  {streak.days > 0
-                    // True every day it shows: one missed day is forgiven, so no false deadline (voice-guard, 25 Nov).
-                    ? `🔥 ${streak.days}-day streak${streak.doneToday ? "" : `: make it ${streak.days + 1} today!`}`
-                    : "🔥 Start a streak today"}
-                </span>
-              )}
-              {streak && streak.days >= 3 && (
-                // Streak bonus (card IM = A): points count double from day 3.
-                <span className="ml-1.5 rounded-full bg-[#16391f] px-2 py-0.5 text-[12px] text-[#9be7b0]">×2 points</span>
-              )}
-            </b>
-            <span className="text-mut">
-              {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
-            </span>
-          </div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-            <i
-              className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
-              // A head start in Session 1: signing up counts as the first step
-              // (endowed progress, Nunes & Dreze 2006; Don, card AD, 25 Nov 2026).
-              style={{ width: `${Math.round(((doneCount + (session === 1 ? 1 : 0)) / Math.max(moves.length + (session === 1 ? 1 : 0), 1)) * 100)}%` }}
-            />
-          </div>
-          {session === 1 && doneCount < 2 && (
-            <p className="mt-1.5 text-[12px] text-sec">Head start! Joining counted as your first step ✓</p>
-          )}
-        </div>
-      </div>
-
       {/* The chapter: where the hero is, and the villain in the way. */}
       <div className="mx-0.5 mt-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -221,11 +184,32 @@ export function NextMove({
         </div>
         {chapter && (
           <>
-            <h2 className="mt-0.5 font-disp text-[22px] font-semibold leading-tight text-off sm:text-[24px]">{chapter.title}</h2>
-            <p className="mt-1 text-[14px] leading-relaxed text-sec">{chapter.recap}</p>
-            <p className="mt-2 text-[13.5px] leading-relaxed text-mut">
-              The question: <span className="text-sec">{chapter.question}</span>
-            </p>
+            {/* The villain, right under the chapter line (Don, card PU, 25 Nov 2026). */}
+            <div className="relative mt-2.5 rounded-[14px] border border-[#5b2a3d] bg-[linear-gradient(135deg,#2a1420,#1b1424)] py-3 pl-[50px] pr-4">
+              <span
+                className="absolute left-3.5 top-3 grid h-[26px] w-[26px] place-items-center rounded-lg bg-[#ff5d73] text-[15px] text-[#2a0b12]"
+                aria-hidden="true"
+              >
+                ⚔
+              </span>
+              <span className="block font-disp text-[10.5px] font-semibold uppercase tracking-[1.4px] text-[#ff8fa0]">
+                The villain this chapter
+              </span>
+              <b className="mt-px block font-disp text-[15px] font-semibold text-off">{chapter.villain}</b>
+              <i className="mt-0.5 block text-[13px] text-sec">&ldquo;{chapter.says}&rdquo;</i>
+              <span className="mt-1.5 block text-[13px] text-[#9be7b0]">How you beat it: {chapter.beat}</span>
+            </div>
+            {/* The chapter in words, and its picture beside it on a wider screen (card PU). */}
+            <div className="mt-4 sm:grid sm:grid-cols-[1fr_250px] sm:items-start sm:gap-5">
+              <div>
+                <h2 className="font-disp text-[22px] font-semibold leading-tight text-off sm:text-[24px]">{chapter.title}</h2>
+                <p className="mt-1 text-[14px] leading-relaxed text-sec">{chapter.recap}</p>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-mut">
+                  The question: <span className="text-sec">{chapter.question}</span>
+                </p>
+              </div>
+              {picture && <ChapterPicture picture={picture} className="hidden sm:block" />}
+            </div>
           </>
         )}
       </div>
@@ -457,24 +441,10 @@ export function NextMove({
         </>
       )}
 
-      {/* The chapter's villain, the road and your numbers, under the move (member test, 19 Nov). */}
+      {picture && <ChapterPicture picture={picture} className="mx-0.5 mt-6 sm:hidden" />}
+
+      {/* The road and your numbers, under the move (member test, 19 Nov). */}
       <div className="mx-0.5 mt-6">
-        {chapter && (
-            <div className="relative mt-4 rounded-[14px] border border-[#5b2a3d] bg-[linear-gradient(135deg,#2a1420,#1b1424)] py-3 pl-[50px] pr-4">
-              <span
-                className="absolute left-3.5 top-3 grid h-[26px] w-[26px] place-items-center rounded-lg bg-[#ff5d73] text-[15px] text-[#2a0b12]"
-                aria-hidden="true"
-              >
-                ⚔
-              </span>
-              <span className="block font-disp text-[10.5px] font-semibold uppercase tracking-[1.4px] text-[#ff8fa0]">
-                The villain this chapter
-              </span>
-              <b className="mt-px block font-disp text-[15px] font-semibold text-off">{chapter.villain}</b>
-              <i className="mt-0.5 block text-[13px] text-sec">&ldquo;{chapter.says}&rdquo;</i>
-              <span className="mt-1.5 block text-[13px] text-[#9be7b0]">How you beat it: {chapter.beat}</span>
-            </div>
-        )}
 
         {/* The road: seven chapters, from you to your first paying coaching client. */}
         <div className="mt-5 flex items-center" aria-hidden="true">
@@ -577,5 +547,91 @@ export function NextMove({
         </ol>
       </details>
     </>
+  );
+}
+
+/** Level, streak and points, under the logo at the top left (Don, card PU,
+ *  25 Nov 2026: "move levels/points to below logo (top left)"). */
+export function LevelBar({
+  session,
+  moves,
+  ticked,
+  sessionFinished,
+  parked = new Set(),
+  points = 0,
+  streak,
+}: {
+  session: number;
+  moves: Move[];
+  ticked: Set<string>;
+  sessionFinished: boolean;
+  parked?: Set<string>;
+  points?: number;
+  streak?: { days: number; doneToday: boolean };
+}) {
+  if (moves.length === 0) return null;
+  const isDone = (m: Move) => (m.finish ? sessionFinished : ticked.has(m.id));
+  const doneCount = moves.filter(isDone).length;
+  const current =
+    moves.find((m) => !isDone(m) && !m.finish && !parked.has(m.id)) ??
+    moves.find((m) => !isDone(m) && !m.finish) ??
+    moves.find((m) => !isDone(m));
+  const index = current ? moves.indexOf(current) : moves.length;
+  return (
+      <div className="flex max-w-[520px] items-center gap-3 rounded-[14px] border border-line bg-panel px-3.5 py-3">
+        <span className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] font-disp text-[18px] font-bold text-[#241100]">
+          {session}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline justify-between gap-2 text-[13px]">
+            <b className="font-disp font-semibold text-off">
+              Level {session}
+              {streak && (
+                <span className={`ml-2 rounded-full px-2 py-0.5 text-[12px] ${streak.doneToday ? "bg-orange/20 text-orange" : "bg-line text-sec"}`}>
+                  {streak.days > 0
+                    // True every day it shows: one missed day is forgiven, so no false deadline (voice-guard, 25 Nov).
+                    ? `🔥 ${streak.days}-day streak${streak.doneToday ? "" : `: make it ${streak.days + 1} today!`}`
+                    : "🔥 Start a streak today"}
+                </span>
+              )}
+              {streak && streak.days >= 3 && (
+                // Streak bonus (card IM = A): points count double from day 3.
+                <span className="ml-1.5 rounded-full bg-[#16391f] px-2 py-0.5 text-[12px] text-[#9be7b0]">×2 points</span>
+              )}
+            </b>
+            <span className="text-mut">
+              {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
+            </span>
+          </div>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
+            <i
+              className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
+              // A head start in Session 1: signing up counts as the first step
+              // (endowed progress, Nunes & Dreze 2006; Don, card AD, 25 Nov 2026).
+              style={{ width: `${Math.round(((doneCount + (session === 1 ? 1 : 0)) / Math.max(moves.length + (session === 1 ? 1 : 0), 1)) * 100)}%` }}
+            />
+          </div>
+          {session === 1 && doneCount < 2 && (
+            <p className="mt-1.5 text-[12px] text-sec">Head start! Joining counted as your first step ✓</p>
+          )}
+        </div>
+      </div>
+  );
+}
+
+function ChapterPicture({ picture, className = "" }: { picture: { src: string; caption: string }; className?: string }) {
+  return (
+    <figure className={className}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={picture.src}
+        alt={picture.caption}
+        width={1200}
+        height={640}
+        loading="lazy"
+        className="h-auto w-full rounded-[14px] border border-line"
+      />
+      <figcaption className="mt-2 text-[12.5px] leading-relaxed text-mut">{picture.caption}</figcaption>
+    </figure>
   );
 }

@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
-export function Header({ name, role }: { name: string; role: "client" | "admin" }) {
+export function Header({ name, role, below }: { name: string; role: "client" | "admin"; below?: ReactNode }) {
   return (
-    <header className="mb-8 flex items-center justify-between gap-3 border-b border-line pb-6">
+    <header className="mb-8 flex flex-wrap items-center justify-between gap-x-3 gap-y-3 border-b border-line pb-6">
       <Image
         src="/wordmark.png"
         alt="Psyber Digital"
@@ -40,6 +41,8 @@ export function Header({ name, role }: { name: string; role: "client" | "admin" 
           </button>
         </form>
       </div>
+      {/* Under the logo, top left: level and points on Today (card PU). */}
+      {below && <div className="w-full">{below}</div>}
     </header>
   );
 }

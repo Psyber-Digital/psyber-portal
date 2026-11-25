@@ -20,7 +20,7 @@ import { FinishForm } from "./components/FinishForm";
 import { NicheLaneCheck } from "./components/NicheLaneCheck";
 import { ScrollTopOnChange } from "./components/ScrollTopOnChange";
 import { Brand } from "./components/Brand";
-import { NextMove, type MoveLinks } from "./components/NextMove";
+import { NextMove, LevelBar, type MoveLinks } from "./components/NextMove";
 import { Journey, shortTitle } from "./components/Journey";
 import { Milestones } from "./components/Milestones";
 import { ThisWeekToolkit } from "./components/ThisWeek";
@@ -34,7 +34,7 @@ import { weekVideo } from "@/lib/videos";
 import { VimeoEmbed } from "./components/VimeoEmbed";
 import { ChapterFinish } from "./components/ChapterFinish";
 import { JoinBuild } from "./components/JoinBuild";
-import { CHAPTERS } from "@/lib/story";
+import { CHAPTERS, CHAPTER_PICTURE } from "@/lib/story";
 import { streakOf } from "@/lib/streak";
 import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal, streakBonus } from "@/lib/points";
 import { sessionGate } from "@/lib/gates";
@@ -487,7 +487,23 @@ export async function PortalScreen({
 
   return (
     <div className="relative z-10 mx-auto max-w-[1060px] px-4 pb-16 pt-6 sm:px-5 sm:pb-24 sm:pt-7">
-      <Header name={profile?.full_name || "Client"} role="client" />
+      <Header
+        name={profile?.full_name || "Client"}
+        role="client"
+        below={
+          view === "today" && showNextMove && current ? (
+            <LevelBar
+              session={tasting ? 2 : current.number}
+              moves={tasting ? tasteMoves : moves}
+              ticked={ticked}
+              sessionFinished={tasting ? false : sessionFinished}
+              parked={parked}
+              points={points}
+              streak={streakOf([...(tickRows ?? []), ...pointRows])}
+            />
+          ) : undefined
+        }
+      />
       {profile?.tier === "build" && <ScrollTopOnChange value={profile.completed_week ?? 0} />}
       <PortalNav
         badge={uncollected ?? 0}
@@ -579,6 +595,7 @@ export async function PortalScreen({
               )
             }
             chapter={CHAPTERS[tasting ? 2 : current.number]}
+            picture={CHAPTER_PICTURE[tasting ? 2 : current.number]}
             points={points}
             justDone={justDone}
             welcomeBack={welcomeBack}

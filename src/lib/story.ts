@@ -94,3 +94,15 @@ export const CHAPTERS: Record<number, Chapter> = {
 };
 
 export const chapterOf = (n: number): Chapter | undefined => CHAPTERS[n];
+
+/** One approved diagram per chapter, from Diagrams/library, used unchanged
+ *  (Don, card PU, 25 Nov 2026: "use some images - the screen lacks them"). */
+export const CHAPTER_PICTURE: Record<number, { src: string; caption: string }> = {
+  1: { src: "/chapters/ch1.png", caption: "A lifeguard and a swimming coach both know the water. One pulls you out of trouble, the other helps you swim further." },
+  2: { src: "/chapters/ch2.png", caption: "Speak to everyone and you can\u2019t get their attention. Speak to one group and you\u2019re heard." },
+  3: { src: "/chapters/ch3.png", caption: "Your core message: I help [your niche] achieve [the transformation] by [your approach]." },
+  4: { src: "/chapters/ch4.png", caption: "Your transformation question becomes four to six modules, each with three to five units." },
+  5: { src: "/chapters/ch5.png", caption: "One session: one objective, three to five key points, one exercise, one action. That\u2019s enough to deliver it." },
+  6: { src: "/chapters/ch6.png", caption: "Five questions, then the offer." },
+  7: { src: "/chapters/ch7.png", caption: "One announcement to everyone on your list, two follow-ups, then stop." },
+};
