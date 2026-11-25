@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { sendDueUpsell } from "@/lib/upsellEmails";
 import { movesFor } from "@/lib/moves";
 import { sessionGate } from "@/lib/gates";
-import { buildOnSale } from "@/lib/sale";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 // Finishing a session, shared by the finish button (finishActions.ts) and by
@@ -38,10 +37,11 @@ export async function finishCore(week: number, laneOk = false): Promise<string |
   const { data, error } = await supabase.rpc("finish_session", { p_week: week });
   if (error) console.error("finish_session failed:", error.message);
 
-  // Build not on sale yet (Don, 21 Nov 2026): finish_session (0016) starts the
-  // seven-day $99 clock in the database. Undo it for this member only, so the
-  // clock starts fresh, with its emails, on the day Build goes on sale.
-  if (data === "finished_free" && !buildOnSale()) {
+  // finish_session (0016) still starts the old seven-day $99 clock in the
+  // database. The yearly launch ladder (lib/ladder.ts) replaced that offer, so
+  // undo it always, on sale or not (research check, 25 Nov 2026). Left running,
+  // it would hide a one-on-one chooser's "Book a call" card after Session 1.
+  if (data === "finished_free") {
     const { data: auth } = await supabase.auth.getUser();
     if (auth.user) {
       const { error: undoErr } = await createAdminClient()
