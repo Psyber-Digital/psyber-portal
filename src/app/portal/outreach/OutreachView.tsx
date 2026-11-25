@@ -49,9 +49,13 @@ export function OutreachView({
   serverToday,
   weekCutoff,
   freeListFull = false,
+  free = false,
 }: {
   // A Foundations member at the 50-name cap (Don, board m02, 5 Nov 2026).
   freeListFull?: boolean;
+  /** Build Free: the goal on this page is the free list's 50, not the method's 250
+   *  (deep dive, card DD = A, 25 Nov 2026). The CRM-style tiles wait for Build. */
+  free?: boolean;
   contacts: Contact[];
   serverToday: string;
   // ISO timestamp for "7 days ago", computed on the server and passed in so the
@@ -126,14 +130,20 @@ export function OutreachView({
 
       <section className="psy-card mb-4 p-5 sm:p-6">
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center">
-          <TargetRing count={stats.total} target={LIST_TARGET} thisWeek={stats.thisWeek} />
+          <TargetRing count={stats.total} target={free ? 50 : LIST_TARGET} thisWeek={stats.thisWeek} />
 
           <div className="min-w-0 flex-1 text-center sm:text-left">
             <div className="flex flex-wrap items-center justify-center gap-2.5 sm:justify-start">
               <h2 className="font-disp text-[15px] font-semibold text-off">
-                {stats.total >= LIST_TARGET
-                  ? "Target hit. That's a list worth working."
-                  : `${LIST_TARGET - stats.total} to go`}
+                {free
+                  ? stats.total >= 50
+                    ? "Your free list is full!"
+                    : stats.total >= 25
+                      ? `Only ${50 - stats.total} ${50 - stats.total === 1 ? "space" : "spaces"} left on Build™ Free!`
+                      : `${stats.total} of 50 on your free list`
+                  : stats.total >= LIST_TARGET
+                    ? "Target hit. That's a list worth working."
+                    : `${LIST_TARGET - stats.total} to go`}
               </h2>
               <button
                 onClick={() => setGuideOpen(true)}
@@ -160,12 +170,14 @@ export function OutreachView({
                 tone={stats.uncategorised ? "orange" : undefined}
               />
               <Stat label="Contacted" value={stats.contacted} />
-              <Stat label="Offers made" value={stats.offers} />
-              <Stat
-                label="Converted"
-                value={stats.converted}
-                tone={stats.converted ? "good" : undefined}
-              />
+              {!free && <Stat label="Offers made" value={stats.offers} />}
+              {!free && (
+                <Stat
+                  label="Converted"
+                  value={stats.converted}
+                  tone={stats.converted ? "good" : undefined}
+                />
+              )}
             </div>
             {stats.dueToday > 0 && (
               <p className="mt-3.5 text-[12.5px] font-medium text-orange">
@@ -181,7 +193,7 @@ export function OutreachView({
         <div className="psy-card mb-4 flex flex-wrap items-center justify-between gap-3 p-5">
           <p className="max-w-[60ch] text-sm leading-relaxed text-slate">
             <span className="font-semibold text-off">Your list is full.</span>{" "}
-            <Brand name="Foundations" tm /> holds 50 names, and the method works toward 250.
+            <Brand name="Build" tm /> Free holds 50 names, and the method works toward 250.
             Join <Brand name="Build" tm /> to keep adding.
           </p>
           <a href="/portal/billing" className="psy-btn">Join Build™</a>

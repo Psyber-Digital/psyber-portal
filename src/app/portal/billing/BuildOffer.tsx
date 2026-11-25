@@ -87,6 +87,12 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
           )}
           <div className="psy-card p-6">
             <form action={startCheckout}>
+              {/* Separate renewal consent, apart from the terms (adviser Q2,
+                  approved by Don in m06). Checked again on the server. */}
+              <label className="mb-4 flex items-start gap-2.5 text-[13px] leading-relaxed text-slate">
+                <input type="checkbox" name="accept_renewal" required className="mt-1" />
+                <span>I agree my <Brand name="Build" /> membership renews automatically until I cancel.</span>
+              </label>
               <button
                 name="plan"
                 value="yearly"
@@ -105,12 +111,6 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
                 <span className="psy-btn mt-4 block w-full text-center">Join Build™</span>
               </button>
 
-              {/* Separate renewal consent, apart from the terms (adviser Q2,
-                  approved by Don in m06). Checked again on the server. */}
-              <label className="mt-5 flex items-start gap-2.5 text-[13px] leading-relaxed text-slate">
-                <input type="checkbox" name="accept_renewal" required className="mt-1" />
-                <span>I agree my <Brand name="Build" /> membership renews automatically until I cancel.</span>
-              </label>
             </form>
 
             {/* Risk reversal: terms 4.3 (14 days). */}
@@ -119,7 +119,7 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
                 <path fill="currentColor" d="M10 1.5 3 4.2v5c0 4.3 3 7.9 7 9.3 4-1.4 7-5 7-9.3v-5zm-1.3 12-3.4-3.4 1.4-1.4 2 2 4.4-4.4 1.4 1.4z" />
               </svg>
               <span>
-                <b className="text-off">14-day full refund.</b> Change your mind? Ask within 14 days of
+                <b className="block font-disp text-[16px] text-off">14-day full refund.</b> Change your mind? Ask within 14 days of
                 paying and get every cent back (terms apply).
               </span>
             </div>

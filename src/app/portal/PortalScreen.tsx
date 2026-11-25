@@ -337,6 +337,7 @@ export async function PortalScreen({
           nextOff={ladderStep.next?.off}
           yearly={PRICE.yearly}
           onSale={buildOnSale()}
+          slim
         />
       )}
       {/* Not twice: the Session 1 finished card carries this line on Today. */}
@@ -528,6 +529,7 @@ export async function PortalScreen({
           nextOff={ladderStep.next?.off}
           yearly={PRICE.yearly}
           onSale={buildOnSale()}
+          slim
         />
             </div>
           )}

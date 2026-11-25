@@ -58,9 +58,10 @@ export default async function OutreachPage() {
         <b className="text-off">One rule, and it is the only one:</b> your current
         therapy clients don’t go on this list. Former clients can — as connectors,
         not as clients. Ask them who they know; you never coach them yourself.
-        That relationship keeps its own standing long after the last session. If
-        you are unsure about someone, bring them to a session rather than deciding
-        it alone.
+        That relationship keeps its own standing long after the last session.{" "}
+        {profile?.tier === "foundations"
+          ? "If you are unsure about someone, leave them off for now."
+          : "If you are unsure about someone, bring them to a session rather than deciding it alone."}
       </p>
       {/* Two paragraphs merged into one, 11 Aug 2026. They said the same thing from
           two angles — 105 words to establish "start now, everyone counts, don't send
@@ -101,6 +102,7 @@ export default async function OutreachPage() {
       <OutreachView
         contacts={(data ?? []) as Contact[]}
         freeListFull={profile?.tier === "foundations" && (data?.length ?? 0) >= 50}
+        free={profile?.tier === "foundations"}
         serverToday={new Date().toISOString().slice(0, 10)}
         weekCutoff={new Date(Date.now() - 7 * 86_400_000).toISOString()}
       />
