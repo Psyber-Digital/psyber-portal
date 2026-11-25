@@ -498,6 +498,15 @@ export function NextMove({
                 Your contact list: {list.names}
                 {namesMin > list.names ? ` · ${namesMin} needed to finish Session ${session}` : ""} · goal {list.target}
               </b>
+              {/* Small-area framing near the free cap (research card AD2, 25 Nov 2026):
+                  below halfway, count what's there; from halfway, count what's left. */}
+              {list.target === 50 && list.names >= 25 && (
+                <span className="block font-disp text-[12.5px] font-semibold text-orange">
+                  {list.names >= 50
+                    ? "Your free list is full! Build™ has room for your whole list."
+                    : `Only ${50 - list.names} ${50 - list.names === 1 ? "space" : "spaces"} left on Build™ Free!`}
+                </span>
+              )}
               <span className="text-[12.5px] text-sec">
                 {list.thisWeek > 0 ? `+${list.thisWeek} this week. ` : ""}Not your current therapy clients. Former therapy clients can go on, only to ask who they know.
               </span>

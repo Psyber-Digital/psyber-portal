@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { burstAt } from "./burst";
 
 // The level-up: shown once, full screen, the first time this browser sees a
-// chapter finished (board m18, 19 Nov 2026). Never on the free Session 1
-// finish, because that one starts the $99 offer: the caller passes
-// enabled=false for Foundations. The memory is a per-viewer convenience in
+// chapter finished (board m18, 19 Nov 2026). Shown on the free Session 1
+// finish too, since 25 Nov 2026: the $99 offer is gone, and a peak at the end
+// is the moment members remember (research card AD2). There the next chapter
+// shows locked, and the button leads to the "Join Build" card on Today. The memory is a per-viewer convenience in
 // browser storage; if storage is blocked nothing shows, which is safe. The
 // first visit only records where the member is, so nobody gets an old one.
 
@@ -25,6 +26,7 @@ export function ChapterFinish({
   points,
   memberKey,
   enabled,
+  locked = false,
 }: {
   finishedThrough: number;
   info?: ChapterFinishInfo;
@@ -32,6 +34,8 @@ export function ChapterFinish({
   points: number;
   memberKey: string;
   enabled: boolean;
+  /** Build Free: the next chapter opens in Build (research card AD2, 25 Nov 2026). */
+  locked?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -80,7 +84,11 @@ export function ChapterFinish({
         <p className="mt-2 text-[14px] leading-relaxed text-sec">{info.done}</p>
         {info.next && (
           <p className="mt-3 font-disp text-[13px] font-semibold leading-snug text-orange">
-            Next villain: {info.next.villain}. Chapter {info.next.number}, {info.next.title}, shows you how to beat it.
+            {locked ? (
+              <>🔒 Next villain: {info.next.villain}. Chapter {info.next.number}, {info.next.title}, opens in Build™.</>
+            ) : (
+              <>Next villain: {info.next.villain}. Chapter {info.next.number}, {info.next.title}, shows you how to beat it.</>
+            )}
           </p>
         )}
         <div className="my-4 grid grid-cols-3 gap-1.5">
@@ -96,7 +104,7 @@ export function ChapterFinish({
           ))}
         </div>
         <button type="button" className="psy-btn-orange w-full" onClick={() => setOpen(false)}>
-          {info.next ? `On to Chapter ${info.next.number}` : "Keep going"}
+          {locked ? "See my next move" : info.next ? `On to Chapter ${info.next.number}` : "Keep going"}
         </button>
       </div>
     </div>

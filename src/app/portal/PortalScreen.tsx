@@ -355,6 +355,32 @@ export async function PortalScreen({
     </>
   );
 
+  // The level-up. Build Free gets it too, with Chapter 2 locked (research card AD2,
+  // 25 Nov 2026). Rendered on Today whether or not the move card is showing.
+  const chapterFinish = user && (finishedThrough >= 1 && CHAPTERS[finishedThrough] && (
+            <ChapterFinish
+              finishedThrough={finishedThrough}
+              enabled
+              locked={tier === "foundations"}
+              memberKey={user.id.slice(0, 8)}
+              names={contactsList.length}
+              points={points}
+              info={{
+                number: finishedThrough,
+                villain: CHAPTERS[finishedThrough].villain,
+                done: CHAPTERS[finishedThrough].done,
+                moves: movesFor(finishedThrough, tier).length,
+                next: CHAPTERS[finishedThrough + 1]
+                  ? {
+                      number: finishedThrough + 1,
+                      title: CHAPTERS[finishedThrough + 1].title,
+                      villain: CHAPTERS[finishedThrough + 1].villain,
+                    }
+                  : undefined,
+              }}
+            />
+          ));
+
   const finishNode = current
     ? tier === "build" ? (
         <FinishForm
@@ -540,29 +566,7 @@ export async function PortalScreen({
           {badges.length > 0 && (
             <Milestones badges={badges} momentum={momentum} memberKey={user.id.slice(0, 8)} />
           )}
-          {/* The level-up. Never for Foundations: their Session 1 finish starts the $99 offer. */}
-          {finishedThrough >= 1 && CHAPTERS[finishedThrough] && (
-            <ChapterFinish
-              finishedThrough={finishedThrough}
-              enabled={tier !== "foundations"}
-              memberKey={user.id.slice(0, 8)}
-              names={contactsList.length}
-              points={points}
-              info={{
-                number: finishedThrough,
-                villain: CHAPTERS[finishedThrough].villain,
-                done: CHAPTERS[finishedThrough].done,
-                moves: movesFor(finishedThrough, tier).length,
-                next: CHAPTERS[finishedThrough + 1]
-                  ? {
-                      number: finishedThrough + 1,
-                      title: CHAPTERS[finishedThrough + 1].title,
-                      villain: CHAPTERS[finishedThrough + 1].villain,
-                    }
-                  : undefined,
-              }}
-            />
-          )}
+          {chapterFinish}
           <p className="mt-6 text-center text-[13px] text-mut">
             Your program and The List are in the menu above.
           </p>
@@ -578,6 +582,7 @@ export async function PortalScreen({
               congratulates them for finishing and then give them the next task
               as signing up to Build Full ... keep the momentum going").
               One-on-one choosers get their call card instead. */}
+          {tier === "foundations" && chapterFinish}
           {tier === "foundations" && freeFinished && !profile?.wants_one_on_one && (
             <div className="mx-auto mt-2 max-w-[720px]">
               <section className="overflow-hidden rounded-[22px] border border-[#ffb36b] bg-[linear-gradient(160deg,#FFA54A_0%,#FF8D1E_45%,#E8780F_100%)] p-6 text-[#1a0d00] shadow-card sm:p-8">
