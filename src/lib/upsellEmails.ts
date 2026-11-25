@@ -310,8 +310,8 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
           : "Do it in your own time. Your first tangible step is ready.",
         eyebrow: "Your first step",
         body: [
-          "Your Build Free account is open, and Session 1 is ready. Do it in your own time: there's no fixed schedule, so start when it suits you.",
-          { quote: "This is your first tangible step. Take it tonight." },
+          "Session 1 is open in your portal and ready for you. Do it in your own time: no fixed schedule, no class to keep up with.",
+          { quote: "This is your first tangible step. Take it tonight!" },
           "In one evening, you'll:",
           {
             list: [
@@ -338,7 +338,7 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
         eyebrow: "Your offer",
         body: [
           "With Build, you do it in your own time. No fixed schedule. You move at the pace a full caseload allows.",
-          "But your own time doesn't mean on your own. One pitfall of going it alone is months spent on the wrong thing, because one question went unanswered.",
+          "Your own time, with a live answer every week. One pitfall of going it alone is months spent on the wrong thing, because one question went unanswered.",
           { quote: "Bring your next decision to the weekly drop-in. Get help with your next move." },
           "In Build, there's a live drop-in on video every week. The time is in your portal. Bring any question about your program, like:",
           {
@@ -350,7 +350,7 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
           },
           "Can't make it live? Drop-ins are recorded, so you can catch up in the portal.",
           ...(step
-            ? [`Your first year of Build is ${price} instead of ${usd(PRICE.yearly)} until ${until}. After that, it's ${usd(nextPriceOf(step))}.`]
+            ? [`Your first year of Build is ${price} instead of ${usd(PRICE.yearly)} until ${until}. After that, your first year is ${usd(nextPriceOf(step))}.`]
             : []),
         ],
         cta: { label: "Join Build", href: JOIN },
@@ -362,7 +362,7 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
       if (!step) return draftFor("upsell_6", p, now);
       const { soon, next, now: today } = lastDay(step);
       return {
-        subject: `Last day: $${step.off} off your first year of Build`,
+        subject: `${soon.tonight ? "Last day" : "Final 24 hours"}: $${step.off} off your first year of Build`,
         preheader: `${cap(soon.at)}, your first year goes up to ${next}.`,
         eyebrow: "Your offer",
         body: [
@@ -370,9 +370,9 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
           { quote: soon.tonight ? `Tonight: ${today} for your first year. Tomorrow: ${next}.` : `Until ${soon.when}: ${today} for your first year. After that: ${next}.` },
           "Do it in your own time, with Next Move showing you one clear step at a time, plus every session, all the resources, and a live drop-in every week.",
           finished
-            ? "The rest of Session 2, where you choose your niche, opens the moment you join."
-            : "Join, finish Session 1, and Session 2, your niche, opens right after.",
-          "On the yearly plan, change your mind within 14 days of paying and you get every cent back.",
+            ? "Choosing your niche opens the moment you join."
+            : "Join, finish Session 1, and choosing your niche opens right after.",
+          "Change your mind within 14 days of paying? Ask, and you get a full refund.",
         ],
         cta: { label: `Join Build for ${today}`, href: JOIN },
         after: [priceLine(step)],
@@ -384,13 +384,13 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
       if (!step) return draftFor("upsell_6", p, now);
       const { soon, next, now: today } = lastDay(step);
       return {
-        subject: `Last day: $${step.off} off your first year of Build`,
+        subject: `${soon.tonight ? "Last day" : "Final 24 hours"}: $${step.off} off your first year of Build`,
         preheader: `${cap(soon.at)}, your first year goes up to ${next}.`,
         eyebrow: "Your offer",
         body: [
           `Your $${step.off} saving ends ${soon.at}.`,
           { quote: soon.tonight ? `Tonight: ${today} for your first year. Tomorrow: ${next}.` : `Until ${soon.when}: ${today} for your first year. After that: ${next}.` },
-          "Every session and resource to launch your coaching program in your own time, built to help you avoid the pitfalls, plus a live drop-in every week.",
+          `${soon.tonight ? "Tonight" : `Until ${soon.when}`}, ${today} opens every session, every resource and a live drop-in every week. Do it in your own time, and never lose a month to the wrong thing. ${soon.tonight ? "Tomorrow" : "After that"}, the same year costs ${usd(nextPriceOf(step) - priceOf(step))} more.`,
         ],
         cta: { label: `Join Build for ${today}`, href: JOIN },
         after: [priceLine(step)],
@@ -402,13 +402,13 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
       if (!step) return draftFor("upsell_6", p, now);
       const { soon, next, now: today } = lastDay(step);
       return {
-        subject: `Last chance: $${step.off} off your first year of Build`,
+        subject: `${soon.tonight ? "Last chance" : "Final 24 hours"}: $${step.off} off your first year of Build`,
         preheader: `After ${soon.when}, Build is ${next} a year.`,
         eyebrow: "Your offer",
         body: [
           `Your last $${step.off} off ends ${soon.at}.`,
           { quote: soon.tonight ? `Tonight: ${today} for your first year. After tonight, it's ${next}.` : `Until ${soon.when}: ${today} for your first year. After that, it's ${next}.` },
-          "Launch your coaching program in your own time. Next Move shows you one clear step at a time, with every session, all the resources and a live drop-in every week.",
+          `This is your last launch saving, and each person gets it once. ${soon.tonight ? "After tonight" : `After ${soon.when}`}, Build is full price. Launch your coaching program in your own time, with Next Move showing you one clear step at a time.`,
         ],
         cta: { label: `Join Build for ${today}`, href: JOIN },
         after: [priceLine(step)],
@@ -423,8 +423,8 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
         eyebrow: "Your next step",
         body: [
           finished
-            ? "You've finished Session 1. Your next move is Session 2: your niche."
-            : "Your next move is Session 1, then Session 2: your niche.",
+            ? "Your niche is the decision everything else is built on: your message, your price, your first conversation. You've finished Session 1. Next is Session 2, where you make it."
+            : "Your niche is the decision everything else is built on: your message, your price, your first conversation. Your next move is Session 1, then Session 2, where you make it.",
           { quote: "Every week you wait is another week your program isn't for sale." },
           "The sessions ahead take it the whole way:",
           {
@@ -443,7 +443,9 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
         cta: { label: "Join Build", href: JOIN },
         ps: {
           link: {
-            before: finished ? "Join Build and open the rest of Session 2 tonight:" : "Join Build and take your next step tonight:",
+            before: finished
+              ? "Join Build tonight, and choosing your niche opens straight away:"
+              : "Join Build tonight, and every session after Session 1 opens as you go:",
             href: JOIN,
             after: ".",
           },
@@ -457,11 +459,11 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
         subject: "Session 1 done. Your niche is next",
         preheader: step
           ? `Your first year of Build for ${price} until ${until}.`
-          : "The rest of Session 2, your niche, opens the moment you join.",
+          : "Choosing your niche opens the moment you join.",
         eyebrow: step ? "Your offer" : "Your next step",
         body: [
-          "You finished Session 1. You have a plan for what could knock you off course, and your contact list is started. Everything ahead builds on it.",
-          "Next is Session 2: your niche. You can start it now, free. Choosing your niche opens in Build.",
+          "You finished Session 1! You've got a plan for the weeks that try to knock you off course, and your contact list has started. That's real work, and it's done.",
+          "Next is Session 2: your niche. You can start it now in your portal. Choosing your niche opens in Build.",
           ...(step ? [{ quote: `Your first year of Build for ${price} instead of ${usd(PRICE.yearly)}. Until ${until}.` }] : []),
           "With Build, you do it in your own time: no fixed schedule, at the pace a full caseload allows. You get all the resources you need, plus a live drop-in every week.",
           "We designed Build for people who want to go it alone, because they don't need constant support, and who want to avoid the pitfalls. Too much information. Second-guessing every decision. Months spent on the wrong thing. Here's how Build tackles them:",
@@ -486,7 +488,7 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
           link: step
             ? { before: `Join by ${until} to save $${step.off}:`, href: JOIN, after: "." }
             : { before: "Join Build here:", href: JOIN, after: "." },
-          text: "The rest of Session 2 opens the moment you join.",
+          text: "Choosing your niche opens the moment you join.",
         },
       };
 
@@ -498,7 +500,7 @@ export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Dr
         eyebrow: "Your contact list",
         body: [
           "You've put 50 names on your list. That's real work.",
-          { quote: "Build Free holds 50 names. The method works toward 250." },
+          { quote: "Your current plan holds 50 names. The method works toward 250." },
           "Your list is where the method looks for your first clients, so this is no time to stop adding to it. To add more, join Build.",
           "We designed Build for people who want to go it alone and avoid the pitfalls. You get every session, all the resources, and a live drop-in every week.",
           step
