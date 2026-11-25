@@ -19,6 +19,8 @@ export type Badge = {
   icon: BadgeIcon;
   tone: "orange" | "blue";
   earned: boolean;
+  /** How far towards it, for badges you can count (card IM = A, 25 Nov 2026). */
+  progress?: { have: number; need: number; unit: string };
 };
 
 export type Momentum = { movesDone: number; weeksInMotion: number; names: number };
@@ -74,8 +76,10 @@ export function badgesOf(
   const announced = list.some((c) => c.correspondence !== "" || c.first_contact_date);
   const conversation = list.some((c) => ["call_booked", "offer_made", "converted"].includes(c.status));
   const client = list.some((c) => c.status === "converted");
-  const b = (key: string, name: string, how: string, icon: BadgeIcon, tone: Badge["tone"], earned: boolean): Badge =>
-    ({ key, name, how, icon, tone, earned: earned || kept.has(badgeTickId(key)) });
+  const b = (
+    key: string, name: string, how: string, icon: BadgeIcon, tone: Badge["tone"], earned: boolean,
+    progress?: Badge["progress"],
+  ): Badge => ({ key, name, how, icon, tone, earned: earned || kept.has(badgeTickId(key)), progress });
   return [
     b("s1", "Foundations Laid", "Finish Session 1", "found", "orange", finished(1, profile)),
     b("s2", "Niche Chosen", "Finish Session 2", "compass", "orange", finished(2, profile)),
@@ -84,11 +88,11 @@ export function badgesOf(
     b("announced", "Announced", "Send your announcement", "mega", "blue", announced),
     b("s5", "First Coaching Session Built", "Finish Session 5", "build", "orange", finished(5, profile)),
     b("s6", "Offer Priced", "Finish Session 6", "tag", "orange", finished(6, profile)),
-    b("ten", "First Ten", "Ten people from your list contacted", "send", "blue", contacted >= 10),
+    b("ten", "First Ten", "Ten people from your list contacted", "send", "blue", contacted >= 10, { have: contacted, need: 10, unit: "contacted" }),
     b("conversation", "First Conversation", "First discovery call booked", "chat", "blue", conversation),
     b("client", "First Coaching Client", "Your first paying client signed", "star", "orange", client),
-    b("fifty", "Fifty Names", "50 names on your list", "people", "blue", momentum.names >= 50),
+    b("fifty", "Fifty Names", "50 names on your list", "people", "blue", momentum.names >= 50, { have: momentum.names, need: 50, unit: "names" }),
     b("s7", "Launched", "Finish Session 7", "flag", "orange", finished(7, profile)),
-    b("steady", "Steady Hand", "A move done in any four weeks", "steady", "blue", momentum.weeksInMotion >= 4),
+    b("steady", "Steady Hand", "A move done in any four weeks", "steady", "blue", momentum.weeksInMotion >= 4, { have: momentum.weeksInMotion, need: 4, unit: "weeks" }),
   ];
 }

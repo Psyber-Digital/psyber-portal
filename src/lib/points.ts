@@ -13,7 +13,9 @@
 import { MOVES, type Move } from "./moves";
 import { easternToday, type DueContact } from "./dueMoves";
 
-export const POINTS = { video: 5, sheet: 20, name: 10, message: 15, tenDay: 25, call: 50 } as const;
+export const POINTS = { video: 5, sheet: 20, name: 10, message: 15, tenDay: 25, call: 50, sprint: 10 } as const;
+/** Sprints that earn points per day (card IM, 25 Nov 2026). */
+export const SPRINTS_PER_DAY = 2;
 export const POINT_TICK = /^s1-p-/;
 const MESSAGES_PER_DAY = 10;
 const TEN_DAYS_PER_WEEK = 4;
@@ -40,11 +42,33 @@ function tickPoints(id: string): number {
   if (id.startsWith("s1-p-m-") || id.startsWith("s1-p-r-")) return POINTS.message;
   if (id.startsWith("s1-p-d-")) return POINTS.tenDay;
   if (id.startsWith("s1-p-c-")) return POINTS.call;
+  if (id.startsWith("s1-p-s-")) return POINTS.sprint;
   return 0;
 }
 
 export function pointsTotal(ticks: { move_id: string }[]): number {
   return ticks.reduce((sum, t) => sum + tickPoints(t.move_id), 0);
+}
+
+/**
+ * The streak bonus (Don, card IM = A, 25 Nov 2026): points earned on a day
+ * when the member's streak had reached 3 days or more count double. Worked
+ * out from the dates of real moves, with the same forgiving rule as
+ * lib/streak.ts (one missed day between moves is let off).
+ */
+export function streakBonus(ticks: { move_id: string; done_at: string }[]): number {
+  const AUTO = /^s1-p-|badge/;
+  const active = [...new Set(ticks.filter((t) => !AUTO.test(t.move_id)).map((t) => easternDay(t.done_at)))].sort();
+  const run = new Map<string, number>();
+  let prev = "";
+  let count = 0;
+  for (const day of active) {
+    const gap = prev ? Math.round((Date.parse(`${day}T12:00:00Z`) - Date.parse(`${prev}T12:00:00Z`)) / 86400000) : 99;
+    count = gap <= 2 ? count + 1 : 1;
+    run.set(day, count);
+    prev = day;
+  }
+  return ticks.reduce((sum, t) => ((run.get(easternDay(t.done_at)) ?? 0) >= 3 ? sum + tickPoints(t.move_id) : sum), 0);
 }
 
 const STAGE: Record<string, number> = { "": 0, message_1: 1, follow_up_1: 2, follow_up_2: 3 };

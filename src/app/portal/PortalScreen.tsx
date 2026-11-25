@@ -35,7 +35,7 @@ import { VimeoEmbed } from "./components/VimeoEmbed";
 import { ChapterFinish } from "./components/ChapterFinish";
 import { CHAPTERS } from "@/lib/story";
 import { streakOf } from "@/lib/streak";
-import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal } from "@/lib/points";
+import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal, streakBonus } from "@/lib/points";
 import { sessionGate } from "@/lib/gates";
 import { buildOnSale, OPENS_SOON, SAVING_WAITS } from "@/lib/sale";
 import { currentStep, PRICE, savingWaiting } from "@/lib/ladder";
@@ -275,7 +275,10 @@ export async function PortalScreen({
     if (ptsErr) console.error("keep points failed:", ptsErr.message);
     else keptPointTicks = newPointTicks;
   }
-  const points = pointsTotal([...(tickRows ?? []), ...pointRows, ...keptPointTicks.map((move_id) => ({ move_id }))]);
+  const points =
+    pointsTotal([...(tickRows ?? []), ...pointRows, ...keptPointTicks.map((move_id) => ({ move_id }))]) +
+    // Double points on streak days 3 and up (Don, card IM = A, 25 Nov 2026).
+    streakBonus([...(tickRows ?? []), ...pointRows]);
 
   // The encouragement line: the move ticked in the last three minutes.
   const recent = (tickRows ?? [])

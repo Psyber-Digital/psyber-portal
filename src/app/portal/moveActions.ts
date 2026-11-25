@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { ALL_MOVE_IDS, PARK_COOKIE } from "@/lib/moves";
-import { DUE_TICK_PATTERN } from "@/lib/dueMoves";
+import { DUE_TICK_PATTERN, easternToday } from "@/lib/dueMoves";
+import { SPRINTS_PER_DAY } from "@/lib/points";
 
 // "Your next move": the member marks a move done, or takes the tick back.
 // Runs as the member, so RLS (0017) keeps every tick their own.
@@ -66,5 +67,26 @@ export async function parkMove(formData: FormData) {
   const current = (jar.get(PARK_COOKIE)?.value ?? "").split(",").filter((id) => ALL_MOVE_IDS.has(id));
   const next = [...current.filter((id) => id !== move), move].slice(-40);
   jar.set(PARK_COOKIE, next.join(","), { path: "/portal", maxAge: 60 * 60 * 24 * 60, sameSite: "lax", httpOnly: true });
+  revalidatePath("/portal");
+}
+
+// A finished focus sprint (Don, card IM = A, 25 Nov 2026): kept as a point
+// tick, at most SPRINTS_PER_DAY a day, so the timer can't be farmed.
+export async function keepSprint() {
+  const supabase = createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return;
+  const day = easternToday().replace(/-/g, "");
+  for (let k = 1; k <= SPRINTS_PER_DAY; k++) {
+    const { data, error } = await supabase
+      .from("move_ticks")
+      .upsert({ user_id: auth.user.id, move_id: `s1-p-s-${day}-${k}` }, { onConflict: "user_id,move_id", ignoreDuplicates: true })
+      .select("move_id");
+    if (error) {
+      console.error("keepSprint failed:", error.message);
+      return;
+    }
+    if (data && data.length > 0) break; // this slot was new: one sprint kept
+  }
   revalidatePath("/portal");
 }

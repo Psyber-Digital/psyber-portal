@@ -8,6 +8,7 @@ import { movePoints } from "@/lib/points";
 import type { Gate } from "@/lib/gates";
 import { FocusSound } from "./FocusSound";
 import { ScheduleMove } from "./ScheduleMove";
+import { SprintTimer } from "./SprintTimer";
 
 // "Your next move": the centre of the portal (Don, board r01, 18 Nov 2026:
 // "make the cards more centre... aesthetically pleasing... fun"). Today's dated
@@ -184,6 +185,10 @@ export function NextMove({
                     : "🔥 Start a streak today"}
                 </span>
               )}
+              {streak && streak.days >= 3 && (
+                // Streak bonus (card IM = A): points count double from day 3.
+                <span className="ml-1.5 rounded-full bg-[#16391f] px-2 py-0.5 text-[12px] text-[#9be7b0]">×2 points</span>
+              )}
             </b>
             <span className="text-mut">
               {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
@@ -336,6 +341,8 @@ export function NextMove({
                     </div>
                   ) : null}
                   {/* Pick a time for it (Don, card AD, 25 Nov 2026). */}
+                  {/* Sprint timer (Don, card IM = A, 25 Nov 2026). */}
+                  {!isDone(shown) && !looking && <SprintTimer key={`sprint-${shown.id}`} />}
                   {!isDone(shown) && !looking && (
                     <ScheduleMove key={shown.id} title={shown.title} mins={shown.mins} url={`https://portal.psyberdigital.com/portal?move=${shown.id}#card`} />
                   )}

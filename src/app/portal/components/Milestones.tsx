@@ -33,7 +33,12 @@ export function Milestones({
 }) {
   const earned = badges.filter((b) => b.earned).length;
   // Only the next badge to earn says how; the rest show it on hover or tap.
-  const next = badges.find((b) => !b.earned);
+  // Prefer the countable badge nearest to done, so the bar has a clear finish
+  // line (goal gradient; card IM = A, 25 Nov 2026).
+  const countable = badges
+    .filter((b) => !b.earned && b.progress && b.progress.have > 0)
+    .sort((a, b) => b.progress!.have / b.progress!.need - a.progress!.have / a.progress!.need);
+  const next = countable[0] ?? badges.find((b) => !b.earned);
   return (
     <section className="psy-card mt-6 p-5 sm:p-6" aria-labelledby="progress-title">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -55,6 +60,20 @@ export function Milestones({
       {next && (
         <p className="mt-4 text-[13px] text-sec">
           Next milestone: <b className="font-semibold text-off">{next.name}</b>. {next.how}.
+          {next.progress && (
+            <>
+              {" "}
+              <b className="text-orange">
+                {Math.max(next.progress.need - next.progress.have, 0)} more to unlock!
+              </b>
+              <span className="mt-1.5 block h-1.5 overflow-hidden rounded-full bg-line">
+                <i
+                  className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)]"
+                  style={{ width: `${Math.min(100, Math.round((next.progress.have / next.progress.need) * 100))}%` }}
+                />
+              </span>
+            </>
+          )}
         </p>
       )}
       <ul className="mt-4 grid grid-cols-4 gap-x-2 gap-y-4 sm:grid-cols-7">
@@ -64,6 +83,11 @@ export function Milestones({
             <span className={`mt-1.5 block font-disp text-[11.5px] font-semibold leading-tight ${b.earned ? "text-off" : "text-mut"}`}>
               {b.name}
             </span>
+            {!b.earned && b.progress && b.progress.have > 0 && (
+              <span className="mt-0.5 block text-[10.5px] text-sec">
+                {Math.min(b.progress.have, b.progress.need)}/{b.progress.need}
+              </span>
+            )}
             <span className="sr-only">{b.earned ? "Earned." : `Not yet. ${b.how}.`}</span>
           </li>
         ))}
