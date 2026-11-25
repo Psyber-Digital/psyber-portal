@@ -29,7 +29,7 @@ async function partsFor(s: PlanSession): Promise<Part[]> {
     const answers: Part["answers"] = [];
     sec.querySelectorAll("input, textarea").forEach((el) => {
       const v = el.id ? saved[el.id] : undefined;
-      if (typeof v !== "string" || !v.trim()) return;
+      if (typeof v !== "string" || !v.trim() || /^deck-/.test(el.id)) return;
       let label = (doc.querySelector(`label[for="${el.id}"]`)?.textContent || "").trim();
       if (!label) {
         const cell = el.closest("td");
@@ -40,6 +40,16 @@ async function partsFor(s: PlanSession): Promise<Part[]> {
           label = (table.querySelectorAll("thead th")[col]?.textContent || "").trim();
         }
       }
+      answers.push({ label: label.replace(/\s+/g, " "), value: v.trim() });
+    });
+    // Rows added with "+ Add row" are not in the static page: find their table here.
+    Object.keys(saved).forEach((k) => {
+      const m = k.match(/^x(\w+?)_(\d+)_(\d+)$/);
+      const v = saved[k];
+      if (!m || typeof v !== "string" || !v.trim()) return;
+      const table = sec.querySelector(`table[data-x="${m[1]}"]`);
+      if (!table) return;
+      const label = (table.querySelectorAll("thead th")[Number(m[3]) - 1]?.textContent || "").trim();
       answers.push({ label: label.replace(/\s+/g, " "), value: v.trim() });
     });
     if (answers.length) parts.push({ title, answers });

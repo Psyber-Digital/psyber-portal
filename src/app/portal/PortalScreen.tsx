@@ -291,7 +291,7 @@ export async function PortalScreen({
   const recent = (tickRows ?? [])
     .filter((t) => moves.some((m) => m.id === t.move_id) && Date.now() - new Date(t.done_at).getTime() < 3 * 60 * 1000)
     .sort((a, b) => b.done_at.localeCompare(a.done_at))[0];
-  const recentMove = recent ? moves.find((m) => m.id === recent.move_id) : undefined;
+  const recentMove = recent ? [...moves, ...tasteMoves].find((m) => m.id === recent.move_id) : undefined;
   const justDone = recentMove ? { title: recentMove.title, points: movePoints(recentMove) } : null;
 
   // Back after a week or more. last_activity_at is read before this visit stamps it.
@@ -560,7 +560,19 @@ export async function PortalScreen({
             }
             due={due}
             finish={
-              tasting && profile ? (
+              tasting && profile?.wants_one_on_one ? (
+                <div className="text-off">
+                  <p className="text-[14.5px] leading-relaxed text-sec">
+                    You asked about one-on-one support. Let&rsquo;s choose your niche together on a call!
+                  </p>
+                  <a href={STRATEGY_CALL_URL} target="_blank" rel="noopener" className="psy-btn mt-3 inline-block">
+                    Book a call
+                  </a>
+                  <p className="mt-2 text-[12.5px] text-slate">
+                    Prefer to go it alone? <a href="/portal/billing" className="underline">See Build™</a>
+                  </p>
+                </div>
+              ) : tasting && profile ? (
                 <JoinBuild profile={profile} names={contactsList.length} movesDone={momentum.movesDone} points={points} />
               ) : (
                 finishNode
@@ -573,7 +585,7 @@ export async function PortalScreen({
             namesMin={tasting || sessionFinished || (tier !== "build" && tier !== "foundations") ? 0 : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).namesMin}
             gate={tasting ? undefined : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined)}
             viewId={searchParams?.move}
-            streak={streakOf(tickRows ?? [])}
+            streak={streakOf([...(tickRows ?? []), ...pointRows])}
             teaser={
               CHAPTERS[(tasting ? 2 : current.number) + 1]
                 ? {

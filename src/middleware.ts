@@ -69,7 +69,7 @@ export async function middleware(request: NextRequest) {
       // Session 1 is finished, its Working Sheet and Principle Card open too.
       const taste =
         n === 2 && profile?.tier === "foundations" && Boolean(profile.session1_finished_at) &&
-        /^\/session-02\/Session-02-(Working-Sheet|Principle-Card)/.test(path);
+        /^\/session-02\/Session-02-(Working-Sheet\.html|Principle-Card\.html|Principle-Card-Print-BW\.pdf)$/.test(path);
       if (!profile || (profile.access_week < n && !taste) || !week) {
         return new NextResponse("This session isn't open for you yet.", {
           status: 403,

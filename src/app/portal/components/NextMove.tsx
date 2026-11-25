@@ -58,7 +58,7 @@ function OpenLink({
       // A sheet opens on the part this move is about, highlighted (Don, card BT1, 24 Nov 2026).
       href={kind === "sheet" && where ? `${href}#part=${encodeURIComponent(where)}` : href}
       target={same ? undefined : kind === "sheet" ? "psy-sheet" : "_blank"}
-      rel={same ? undefined : "noopener noreferrer"}
+      rel={same || kind === "sheet" ? undefined : "noopener noreferrer"}
       className={
         onOrange
           ? "inline-block rounded-xl border border-[#1a0d00]/30 bg-white/30 px-5 py-3 font-disp text-[14.5px] font-semibold text-[#1a0d00] hover:bg-white/45"
