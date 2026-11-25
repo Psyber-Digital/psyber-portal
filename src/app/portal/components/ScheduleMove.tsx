@@ -47,14 +47,14 @@ export function ScheduleMove({ title, mins, url }: { title: string; mins?: strin
   if (!open) {
     return (
       <button type="button" onClick={() => setOpen(true)} className="mt-3 text-[13.5px] font-semibold underline decoration-dotted underline-offset-2">
-        📅 Not now? Pick a time for it
+        📅 Lock in a time for this move
       </button>
     );
   }
   return (
     <div className="mt-3 rounded-xl bg-[#0B1220]/85 p-4 text-[14px] text-off">
       <b className="font-disp font-semibold">When will you do this move?</b>
-      <p className="mt-1 text-[13px] text-sec">Pick a time, and it goes in your calendar. A set time makes it far more likely to happen!</p>
+      <p className="mt-1 text-[13px] text-sec">Pick a time, and it goes in your calendar. A set time makes it much more likely to happen!</p>
       <input
         type="datetime-local"
         value={when}

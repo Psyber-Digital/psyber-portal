@@ -522,6 +522,7 @@ export async function PortalScreen({
                     title: CHAPTERS[current.number + 1].title,
                     villain: CHAPTERS[current.number + 1].villain,
                     locked: tier === "foundations",
+                    coached: tier !== "foundations" && tier !== "build",
                   }
                 : undefined
             }

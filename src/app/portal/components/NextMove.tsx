@@ -135,7 +135,7 @@ export function NextMove({
   /** Days in a row with a move done (Don, card AD, 25 Nov 2026). */
   streak?: { days: number; doneToday: boolean };
   /** The next chapter, shown after each move; locked on Build Free (card AD). */
-  teaser?: { number: number; title: string; villain: string; locked: boolean };
+  teaser?: { number: number; title: string; villain: string; locked: boolean; coached?: boolean };
 }) {
   if (moves.length === 0) return null;
 
@@ -179,7 +179,8 @@ export function NextMove({
               {streak && (
                 <span className={`ml-2 rounded-full px-2 py-0.5 text-[12px] ${streak.doneToday ? "bg-orange/20 text-orange" : "bg-line text-sec"}`}>
                   {streak.days > 0
-                    ? `🔥 ${streak.days}-day streak${streak.doneToday ? "" : ": keep it alive today!"}`
+                    // True every day it shows: one missed day is forgiven, so no false deadline (voice-guard, 25 Nov).
+                    ? `🔥 ${streak.days}-day streak${streak.doneToday ? "" : `: make it ${streak.days + 1} today!`}`
                     : "🔥 Start a streak today"}
                 </span>
               )}
@@ -197,7 +198,7 @@ export function NextMove({
             />
           </div>
           {session === 1 && doneCount < 2 && (
-            <p className="mt-1.5 text-[12px] text-sec">Head start: signing up counted as your first step ✓</p>
+            <p className="mt-1.5 text-[12px] text-sec">Head start! Joining counted as your first step ✓</p>
           )}
         </div>
       </div>
@@ -240,7 +241,8 @@ export function NextMove({
             {teaser.locked ? (
               <>It opens in <a href="/build" target="_blank" rel="noopener" className="font-semibold text-orange underline">Build™</a>.</>
             ) : (
-              <>Finish this chapter to face it.</>
+              // One-on-one clients' sessions open with Don, not by finishing (voice-guard, 25 Nov).
+              teaser.coached ? <>You face it at your next session!</> : <>Finish this chapter to face it!</>
             )}
           </span>
         </div>
