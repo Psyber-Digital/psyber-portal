@@ -7,6 +7,7 @@ import type { Chapter } from "@/lib/story";
 import { movePoints } from "@/lib/points";
 import type { Gate } from "@/lib/gates";
 import { FocusSound } from "./FocusSound";
+import { ScheduleMove } from "./ScheduleMove";
 
 // "Your next move": the centre of the portal (Don, board r01, 18 Nov 2026:
 // "make the cards more centre... aesthetically pleasing... fun"). Today's dated
@@ -91,6 +92,8 @@ export function NextMove({
   namesMin = 0,
   viewId,
   tickedToday = new Set(),
+  streak,
+  teaser,
 }: {
   session: number;
   /** e.g. "Niche". */
@@ -129,6 +132,10 @@ export function NextMove({
   namesMin?: number;
   /** A card the member stepped back to (?move=id). */
   viewId?: string;
+  /** Days in a row with a move done (Don, card AD, 25 Nov 2026). */
+  streak?: { days: number; doneToday: boolean };
+  /** The next chapter, shown after each move; locked on Build Free (card AD). */
+  teaser?: { number: number; title: string; villain: string; locked: boolean };
 }) {
   if (moves.length === 0) return null;
 
@@ -167,7 +174,16 @@ export function NextMove({
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-baseline justify-between gap-2 text-[13px]">
-            <b className="font-disp font-semibold text-off">Level {session}</b>
+            <b className="font-disp font-semibold text-off">
+              Level {session}
+              {streak && (
+                <span className={`ml-2 rounded-full px-2 py-0.5 text-[12px] ${streak.doneToday ? "bg-orange/20 text-orange" : "bg-line text-sec"}`}>
+                  {streak.days > 0
+                    ? `🔥 ${streak.days}-day streak${streak.doneToday ? "" : ": keep it alive today!"}`
+                    : "🔥 Start a streak today"}
+                </span>
+              )}
+            </b>
             <span className="text-mut">
               {points} {points === 1 ? "point" : "points"} · {current ? `Move ${index + 1} of ${moves.length}` : `${moves.length} of ${moves.length} done`}
             </span>
@@ -175,9 +191,14 @@ export function NextMove({
           <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
             <i
               className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-700"
-              style={{ width: `${Math.round((doneCount / Math.max(moves.length, 1)) * 100)}%` }}
+              // A head start in Session 1: signing up counts as the first step
+              // (endowed progress, Nunes & Dreze 2006; Don, card AD, 25 Nov 2026).
+              style={{ width: `${Math.round(((doneCount + (session === 1 ? 1 : 0)) / Math.max(moves.length + (session === 1 ? 1 : 0), 1)) * 100)}%` }}
             />
           </div>
+          {session === 1 && doneCount < 2 && (
+            <p className="mt-1.5 text-[12px] text-sec">Head start: signing up counted as your first step ✓</p>
+          )}
         </div>
       </div>
 
@@ -208,6 +229,21 @@ export function NextMove({
           <b className="font-semibold text-[#9be7b0]">Done{justDone.points > 0 ? `. +${justDone.points} points` : ""}.</b>{" "}
           {current ? <>Here&rsquo;s your next move.</> : null}
         </p>
+      )}
+      {justDone && teaser && (
+        // Curiosity gap: the next chapter, just out of reach (Don, card AD, 25 Nov 2026).
+        <div className="mx-0.5 mt-3 flex items-center gap-3 rounded-xl border border-[#5b2a3d] bg-[linear-gradient(135deg,#2a1420,#1b1424)] px-4 py-3 text-[14px]">
+          <span className="text-[20px]" aria-hidden="true">{teaser.locked ? "🔒" : "⚔"}</span>
+          <span className="text-sec">
+            <b className="font-disp font-semibold text-off">Chapter {teaser.number}: {teaser.title}.</b>{" "}
+            {teaser.villain} is waiting.{" "}
+            {teaser.locked ? (
+              <>It opens in <a href="/build" target="_blank" rel="noopener" className="font-semibold text-orange underline">Build™</a>.</>
+            ) : (
+              <>Finish this chapter to face it.</>
+            )}
+          </span>
+        </div>
       )}
 
       <div id="card" className="relative mt-4 scroll-mt-4 pb-5">
@@ -297,6 +333,10 @@ export function NextMove({
                       <OpenLink kind={shown.opens} href={links[shown.opens]} where={shown.where} onOrange />
                     </div>
                   ) : null}
+                  {/* Pick a time for it (Don, card AD, 25 Nov 2026). */}
+                  {!isDone(shown) && !looking && (
+                    <ScheduleMove title={shown.title} mins={shown.mins} url={`https://portal.psyberdigital.com/portal?move=${shown.id}#card`} />
+                  )}
                   {isDone(shown) ? (
                     <div className="mt-4 flex flex-wrap items-center gap-3">
                       <span className="font-disp text-[15px] font-semibold text-[#14361f]">✓ You did this one</span>

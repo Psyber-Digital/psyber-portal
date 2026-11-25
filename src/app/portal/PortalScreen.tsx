@@ -34,6 +34,7 @@ import { weekVideo } from "@/lib/videos";
 import { VimeoEmbed } from "./components/VimeoEmbed";
 import { ChapterFinish } from "./components/ChapterFinish";
 import { CHAPTERS } from "@/lib/story";
+import { streakOf } from "@/lib/streak";
 import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal } from "@/lib/points";
 import { sessionGate } from "@/lib/gates";
 import { buildOnSale, OPENS_SOON, SAVING_WAITS } from "@/lib/sale";
@@ -513,6 +514,17 @@ export async function PortalScreen({
             namesMin={sessionFinished || (tier !== "build" && tier !== "foundations") ? 0 : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).namesMin}
             gate={sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined)}
             viewId={searchParams?.move}
+            streak={streakOf(tickRows ?? [])}
+            teaser={
+              CHAPTERS[current.number + 1]
+                ? {
+                    number: current.number + 1,
+                    title: CHAPTERS[current.number + 1].title,
+                    villain: CHAPTERS[current.number + 1].villain,
+                    locked: tier === "foundations",
+                  }
+                : undefined
+            }
             tickedToday={new Set((tickRows ?? []).filter((t) => easternToday(new Date(t.done_at)) === easternToday()).map((t) => t.move_id))}
             list={{
               names: contactsList.length,
