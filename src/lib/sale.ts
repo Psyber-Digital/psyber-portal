@@ -5,8 +5,9 @@
 //   - no Build-selling email sends, and nobody's launch saving runs: the
 //     ladder (lib/ladder.ts) starts at BUILD_SALE_STARTS_AT for anyone who
 //     joined before it (Don, card D2 = A). Set both on sale day.
-//   - the old $99 first-month clock (0016) is still reset by finishSession, so
-//     its leftover fields stay empty; the ladder replaced it
+//   - the old $99 first-month clock (0016) is reset by finishCore every time,
+//     on sale or not; the ladder replaced it. The upgrade emails must drop
+//     their 'start_offer' step before UPSELL_BUILD_EMAILS is turned on.
 //   - the one-on-one track's call invitations (emails A, B, C) still send
 // Turn it on in the live project's settings on the day Build goes on sale.
 // On sale only when the sale date is set too, so a page can never promise a

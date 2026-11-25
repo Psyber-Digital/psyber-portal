@@ -15,6 +15,23 @@ function pad(n: number) {
 function stamp(d: Date) {
   return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
 }
+// The calendar-file rules (RFC 5545, portal-qa 25 Nov): DTSTAMP in UTC, and
+// lines folded at 75 octets.
+function utcStamp(d: Date) {
+  return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+function fold(line: string) {
+  const out: string[] = [];
+  let rest = line;
+  while (new TextEncoder().encode(rest).length > 73) {
+    let cut = 73;
+    while (new TextEncoder().encode(rest.slice(0, cut)).length > 73) cut -= 1;
+    out.push(rest.slice(0, cut));
+    rest = " " + rest.slice(cut);
+  }
+  out.push(rest);
+  return out.join("\r\n");
+}
 function defaultTime() {
   const d = new Date();
   d.setDate(d.getDate() + 1);
@@ -25,7 +42,7 @@ function defaultTime() {
 export function ScheduleMove({ title, mins, url }: { title: string; mins?: string; url: string }) {
   const [open, setOpen] = useState(false);
   const [when, setWhen] = useState(defaultTime);
-  const minutes = Math.min(Math.max(parseInt(mins ?? "", 10) || 30, 10), 120);
+  const minutes = Math.min(Math.max(parseInt((mins ?? "").replace(/^\D+/, ""), 10) || 30, 10), 120);
   const start = new Date(when);
   const end = new Date(start.getTime() + minutes * 60000);
   const name = `Next move: ${title}`;
@@ -36,11 +53,11 @@ export function ScheduleMove({ title, mins, url }: { title: string; mins?: strin
   const ics = [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Psyber Digital//Build//EN", "BEGIN:VEVENT",
     `UID:${stamp(start)}-${Math.random().toString(36).slice(2)}@psyberdigital.com`,
-    `DTSTAMP:${stamp(new Date())}`, `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
+    `DTSTAMP:${utcStamp(new Date())}`, `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
     `SUMMARY:${name.replace(/[,;]/g, " ")}`, `DESCRIPTION:${details.replace(/[,;]/g, " ")}`,
     "BEGIN:VALARM", "TRIGGER:-PT10M", "ACTION:DISPLAY", "DESCRIPTION:Your next move", "END:VALARM",
     "END:VEVENT", "END:VCALENDAR",
-  ].join("\r\n");
+  ].map(fold).join("\r\n");
   const icsHref = `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`;
   const valid = !Number.isNaN(start.getTime());
 

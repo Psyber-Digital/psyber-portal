@@ -337,7 +337,7 @@ export function NextMove({
                   ) : null}
                   {/* Pick a time for it (Don, card AD, 25 Nov 2026). */}
                   {!isDone(shown) && !looking && (
-                    <ScheduleMove title={shown.title} mins={shown.mins} url={`https://portal.psyberdigital.com/portal?move=${shown.id}#card`} />
+                    <ScheduleMove key={shown.id} title={shown.title} mins={shown.mins} url={`https://portal.psyberdigital.com/portal?move=${shown.id}#card`} />
                   )}
                   {isDone(shown) ? (
                     <div className="mt-4 flex flex-wrap items-center gap-3">
