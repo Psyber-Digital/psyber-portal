@@ -249,7 +249,15 @@ export function NextMove({
                 ) : (
                   <div className="mt-5 rounded-xl bg-[#0B1220] p-4 text-[14px] leading-relaxed text-sec">
                     <b className="block font-disp text-[14.5px] font-semibold text-off">
-                      Before you finish Session {session}
+                      {gate!.movesLeft.length === 0 && gate!.namesNeeded > 0 ? (
+                        // Names are all that's left: say so big (Don, BT1 and S2, 25 Nov 2026).
+                        <span className="block text-[19px] leading-snug text-orange">
+                          Add {gate!.namesNeeded} more {gate!.namesNeeded === 1 ? "name" : "names"} to your list
+                          {meet ? ` and Session ${session + 1} opens!` : ` to finish Session ${session}!`}
+                        </span>
+                      ) : (
+                        <>Before you finish Session {session}</>
+                      )}
                     </b>
                     <ul className="mt-2 grid gap-1.5">
                       {gate!.movesLeft.length > 0 && (

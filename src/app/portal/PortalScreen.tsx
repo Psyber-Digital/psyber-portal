@@ -14,6 +14,7 @@ import { BookingPanel } from "./components/BookingPanel";
 import { pad, stripWeekPrefix } from "@/lib/week";
 import { touchActivity } from "@/lib/activity";
 import { finishSession } from "./finishActions";
+import { finishCore } from "@/lib/finishCore";
 import { deadlineDay, offerOpen, STRATEGY_CALL_URL } from "@/lib/upsellEmails";
 import { FinishForm } from "./components/FinishForm";
 import { NicheLaneCheck } from "./components/NicheLaneCheck";
@@ -51,7 +52,7 @@ export async function PortalScreen({
   searchParams,
   view = "today",
 }: {
-  searchParams?: { week?: string; joined?: string; move?: string };
+  searchParams?: { week?: string; joined?: string; move?: string; opened?: string };
   view?: PortalView;
 }) {
   const supabase = createClient();
@@ -237,6 +238,19 @@ export async function PortalScreen({
   // Today or Program sees it earned, under the member's own login, so they only
   // go up. Unticking a move does take that move's own points back.
   const nameTarget = tier === "foundations" ? 50 : 250;
+  // The next session opens by itself once every move is done and the list has
+  // its names: no extra button (Don, cards BT1 and S2, 25 Nov 2026: "Session 2
+  // still doesn't open"). Session 2 keeps its button, because it asks the lane
+  // question; Session 7 keeps its button, because it ends the program.
+  const autoFinish =
+    view === "today" && Boolean(current) && !viewingPast && !sessionFinished &&
+    (tier === "build" ? ![2, 7].includes(current!.number) : tier === "foundations" ? current!.number === 1 : false);
+  if (autoFinish && sessionGate(current!.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).ok) {
+    const result = await finishCore(current!.number);
+    if (result === "opened" || result === "finished_free" || result === "last") {
+      redirect(`/portal?opened=${current!.number}`);
+    }
+  }
   const newPointTicks = current ? pointTicksToKeep(contactsList, [...(tickRows ?? []), ...pointRows], nameTarget) : [];
   let keptPointTicks: string[] = [];
   if (newPointTicks.length && user) {
@@ -427,6 +441,18 @@ export async function PortalScreen({
         clinic={profile?.tier === "build"}
         oneOnOne={profile?.tier === "foundations" || profile?.tier === "build"}
       />
+
+      {/* The session just finished by itself (Don, BT1 and S2, 25 Nov 2026). */}
+      {view === "today" && searchParams?.opened && Number(searchParams.opened) >= 1 && (
+        <p className="mb-6 rounded-xl border border-[#2f6b45] bg-[#13281c] px-4 py-3 text-[15px] text-[#c8f3d5]" role="status">
+          <b className="font-semibold text-[#9be7b0]">Session {Number(searchParams.opened)} finished!</b>{" "}
+          {tier === "build" ? (
+            <>Session {Number(searchParams.opened) + 1} is open. Here&rsquo;s your next move.</>
+          ) : (
+            <>Sessions 2 to 7, and the weekly drop-in, open in <Brand name="Build" tm />.</>
+          )}
+        </p>
+      )}
 
       {/* Straight from Stripe's payment page (billing sends them here). */}
       {profile?.tier === "build" && searchParams?.joined && (
