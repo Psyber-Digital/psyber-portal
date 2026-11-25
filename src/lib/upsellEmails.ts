@@ -2,18 +2,35 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { emailShellHtml, escHtml, paragraphsHtml, portalUrl } from "@/lib/email";
 import { sendOnce, type Kind, type Rendered } from "@/lib/buildEmails";
+import { currentStep, ladderStart, PRICE, type Step } from "@/lib/ladder";
 import { buildOnSale } from "@/lib/sale";
 
-// Upsell emails to Foundations members. Wording approved by Don on board card
-// m03, 5 Nov 2026: Offer-Ladder/build/FOUNDATIONS-UPSELL-draft.md. Change the
-// words there first, get his approval, then here.
+// Upgrade emails to Build Free members (the tier is still "foundations" in
+// code). Wording: Offer-Ladder/build/FOUNDATIONS-UPSELL-ladder-draft.md (v3,
+// yearly only), approved for the $300 launch week on card EM (25 Nov 2026).
+// The one-on-one emails A, B and C keep the wording Don approved on card m03
+// (5 Nov 2026). Change the words in the drafts first, get his approval, then here.
+// Every email as it renders: Offer-Ladder/build/UPGRADE-EMAILS-READY.md.
 //
 // Two tracks, chosen by the sign-up question:
-//   "Yes, tell me more"  A, B, C (one-on-one), then the Build emails from day 14
-//   "Not right now"      1 to 7 (Build)
-// Email 8 goes to either track when the free list fills.
+//   "Yes, tell me more"  A, B, C (one-on-one) in the 14 days after sign-up,
+//                        then the Build emails below
+//   "Not right now"      the Build emails below
+// The Build emails follow the launch ladder (lib/ladder.ts), counted from
+// ladderStart: sign-up, or the day Build went on sale for anyone who joined
+// before. Every price and deadline comes from currentStep, so it is always the
+// real one. The numbers are the draft's:
+//   1 Session 1 is ready          ladder days 2 to 4, Session 1 not finished
+//   2 The weekly drop-in          ladder days 5 to 6
+//   3, 4, 5 Last day of $300, $200, $100 off: the final 24 hours of that step
+//   6 Your niche                  from ladder day 28, at full price
+//   7 Session 1 done              once Session 1 is finished: the moment it is,
+//                                 or on sale day for anyone who finished before
+//   8 Your list is full           once the list holds 50 names
 // Nobody gets these once they join Build, unsubscribe, or have a call booked.
 // People who used to pay for Build get none of them.
+// The old $99 first-month clock (0016) is retired: nothing here starts it,
+// and finishCore undoes it.
 //
 // Unlike the Build member emails, these are marketing, so each one carries an
 // unsubscribe link and a postal address.
@@ -23,8 +40,10 @@ const POSTAL_ADDRESS = "EdInfinitum Ltd, trading as Psyber Digital, 71-75 Shelto
 const ET = "America/New_York";
 const DAY = 24 * 60 * 60 * 1000;
 
-const OFFER_TERMS =
-  "$99 for your first month, then $149 a month. Renews automatically until you cancel. Cancel online any time.";
+// The ladder emails log under their own ref, so nothing sent under the old
+// $99 wording (ref "1") can stop the new email with the same kind going out.
+const LADDER_REF = "ladder";
+const ONE_ON_ONE: UpsellKind[] = ["upsell_a", "upsell_b", "upsell_c"];
 
 export type UpsellKind = Extract<Kind, `upsell_${string}`>;
 
@@ -33,22 +52,18 @@ export type UpsellPerson = {
   id: string;
   email: string | null;
   full_name: string | null;
+  tier: string | null;
+  lapsed_at: string | null;
   created_at: string;
   wants_one_on_one: boolean | null;
   session1_finished_at: string | null;
-  offer_started_at: string | null;
-  offer_ends_at: string | null;
   list_full_at: string | null;
 };
 const FIELDS =
-  "id, email, full_name, created_at, wants_one_on_one, session1_finished_at, offer_started_at, offer_ends_at, list_full_at";
+  "id, email, full_name, tier, lapsed_at, created_at, wants_one_on_one, session1_finished_at, list_full_at";
 
-// The calendar date in Eastern time, as yyyy-mm-dd.
-function etDate(d: Date) {
-  return d.toLocaleDateString("en-CA", { timeZone: ET });
-}
-
-// The offer ends at midnight, so the date people read is the day before.
+// The old $99 first-month offer's helpers. No email uses them now. The portal
+// pages still import them, so they stay as they were.
 export function deadlineDay(endsAt: string) {
   return new Date(new Date(endsAt).getTime() - 60_000).toLocaleDateString("en-US", {
     timeZone: ET,
@@ -56,45 +71,101 @@ export function deadlineDay(endsAt: string) {
     day: "numeric",
   });
 }
-
 export function offerOpen(p: { offer_ends_at: string | null }, now = new Date()) {
   return Boolean(p.offer_ends_at && now.getTime() < new Date(p.offer_ends_at).getTime());
 }
 
-// What this person is due today, or "start_offer" if their clock must start
-// first. Pure, so every path can be tested without a database. Emails already
-// sent are skipped by the log, so a due email that has gone is simply not resent.
-export function dueEmail(p: UpsellPerson, now = new Date()): UpsellKind | "start_offer" | null {
-  const t = now.getTime();
-  const days = (t - new Date(p.created_at).getTime()) / DAY;
-  const yes = p.wants_one_on_one === true;
+// ---- Deadlines, always read from the real step end -------------------------
 
-  if (yes && days < 14) {
-    if (days >= 7) return "upsell_c";
-    if (days >= 3) return "upsell_b";
-    return "upsell_a";
-  }
-
-  if (!p.session1_finished_at) {
-    const start = yes ? 14 : 2;
-    if (days >= start + 5) return "upsell_2";
-    if (days >= start) return "upsell_1";
-    return null;
-  }
-
-  if (!p.offer_started_at || !p.offer_ends_at) return "start_offer";
-
-  if (offerOpen(p, now)) {
-    const last = new Date(new Date(p.offer_ends_at).getTime() - 60_000);
-    if (etDate(now) === etDate(last)) return "upsell_6";
-    if (etDate(new Date(t + DAY)) === etDate(last)) return "upsell_5";
-    if (t - new Date(p.offer_started_at).getTime() >= 3 * DAY) return "upsell_4";
-    return "upsell_3";
-  }
-
-  if (t - new Date(p.session1_finished_at).getTime() >= 21 * DAY) return "upsell_7";
-  return null;
+// The calendar date in Eastern time, as yyyy-mm-dd.
+function etDate(d: Date) {
+  return d.toLocaleDateString("en-CA", { timeZone: ET });
 }
+function etDay(d: Date) {
+  return d.toLocaleDateString("en-US", { timeZone: ET, month: "long", day: "numeric" });
+}
+// "3:14pm", "9am", or "midnight". Minutes are cut, never rounded up, so the
+// time we print is never later than the real end.
+function etClock(d: Date) {
+  const s = d.toLocaleTimeString("en-US", { timeZone: ET, hour: "numeric", minute: "2-digit", hour12: true });
+  if (/^12:00[\s ]*AM$/i.test(s)) return "midnight";
+  return s.replace(/[\s ]*(AM|PM)$/i, (_, m: string) => m.toLowerCase()).replace(/:00(?=[ap]m)/, "");
+}
+function isEtMidnight(d: Date) {
+  return etClock(d) === "midnight";
+}
+
+// For "until {date}". A step that ends at midnight Eastern is shown as
+// "midnight Eastern at the end of December 3", so nobody reads "December 4" and
+// thinks December 4 is still included, and the time printed is the real end.
+export function untilText(endsAt: Date) {
+  if (isEtMidnight(endsAt)) return `midnight Eastern at the end of ${etDay(new Date(endsAt.getTime() - 60_000))}`;
+  return `${etDay(endsAt)} at ${etClock(endsAt)} Eastern`;
+}
+
+// For the last-day emails, which go in the final 24 hours of a step:
+// "midnight Eastern tonight", "3:14pm Eastern today", "9am Eastern tomorrow".
+export function endsSoon(endsAt: Date, now: Date) {
+  const clock = etClock(endsAt);
+  const lastMinute = new Date(endsAt.getTime() - 60_000);
+  if (clock === "midnight" && etDate(lastMinute) === etDate(now))
+    return { tonight: true, at: "at midnight Eastern tonight", when: "midnight Eastern tonight" };
+  const word = etDate(endsAt) === etDate(now) ? "today" : etDate(endsAt) === etDate(new Date(now.getTime() + DAY)) ? "tomorrow" : `on ${etDay(endsAt)}`;
+  return { tonight: false, at: `at ${clock} Eastern ${word}`, when: `${clock} Eastern ${word}` };
+}
+
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const priceOf = (step: Step | null) => PRICE.yearly - (step?.off ?? 0);
+const nextPriceOf = (step: Step) => PRICE.yearly - (step.next?.off ?? 0);
+const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+
+// ---- Who is due what --------------------------------------------------------
+
+const LAST_DAY: Record<number, UpsellKind> = { 300: "upsell_3", 200: "upsell_4", 100: "upsell_5" };
+
+// Every email this person could be sent now, most important first. Pure, so
+// every path can be tested without a database. The sender sends the first one
+// not already in the log, so each email goes once and a sent one is never
+// resent. At most one email goes per run.
+export function dueEmails(p: UpsellPerson, now = new Date()): UpsellKind[] {
+  // Never anyone on Build, and never anyone who has paid for it before.
+  if ((p.tier && p.tier !== "foundations") || p.lapsed_at) return [];
+
+  const t = now.getTime();
+  const sinceSignup = (t - new Date(p.created_at).getTime()) / DAY;
+  const start = ladderStart(p);
+  const ladderOn = Boolean(start && t >= start.getTime());
+  const step = ladderOn ? currentStep(p, now) : null;
+  const full: UpsellKind[] = p.list_full_at && ladderOn ? ["upsell_8"] : [];
+
+  // One-on-one choosers: the call invitations for their first 14 days after
+  // sign-up, whether Build is on sale or not. Unchanged from card m03.
+  if (p.wants_one_on_one === true && sinceSignup < 14) {
+    const abc: UpsellKind = sinceSignup >= 7 ? "upsell_c" : sinceSignup >= 3 ? "upsell_b" : "upsell_a";
+    return [abc, ...full];
+  }
+
+  if (!start || !ladderOn) return [];
+  const d = (t - start.getTime()) / DAY;
+  const finished = Boolean(p.session1_finished_at);
+  const out: UpsellKind[] = [];
+
+  // A real deadline inside 24 hours beats everything else.
+  if (step && step.endsAt.getTime() - t <= DAY) out.push(LAST_DAY[step.off]);
+  if (finished) out.push("upsell_7");
+  out.push(...full);
+  if (step && step.off === 300 && d >= 1 && d < 4 && !finished) out.push("upsell_1");
+  if (step && d >= 4 && d < 6) out.push("upsell_2");
+  if (!step && d >= 27) out.push("upsell_6");
+  return out.filter(Boolean);
+}
+
+/** The first email due now, or null. */
+export function dueEmail(p: UpsellPerson, now = new Date()): UpsellKind | null {
+  return dueEmails(p, now)[0] ?? null;
+}
+
+// ---- Unsubscribe ------------------------------------------------------------
 
 // Unsubscribe links are signed, so nobody can unsubscribe someone else.
 export function unsubscribeToken(userId: string) {
@@ -111,6 +182,8 @@ export function unsubscribeUrl(userId: string) {
   return portalUrl(`/unsubscribe?u=${encodeURIComponent(userId)}&t=${unsubscribeToken(userId)}`);
 }
 
+// ---- The words --------------------------------------------------------------
+
 type Block = string | { quote: string } | { list: string[] };
 type Link = { before: string; href: string; after?: string };
 type Draft = {
@@ -125,15 +198,35 @@ type Draft = {
 
 const OPEN_SESSION = { label: "Open Session 1", href: portalUrl("/portal") };
 const BOOK = { label: "Book a call", href: STRATEGY_CALL_URL };
-const CLAIM = { label: "Claim my $99 first month", href: portalUrl("/portal/billing") };
 const JOIN = portalUrl("/portal/billing");
+// "Do it in your own time" is a headline Build message (Codex VOICE-20261125-1).
+// It is about the pace of the work, never about putting off joining.
+const BUILD_OWN_TIME =
+  "In Build, you keep doing it in your own time, at the pace a full caseload allows. Next Move shows you one clear step at a time, so you always know what to do next. And a live drop-in every week means you're never stuck on your own.";
 const GUARANTEE =
   "We stay with you until your first paying coaching client signs, as long as you do the work and keep at it. That's our 90-Day Guarantee.";
 
-export function draftFor(kind: UpsellKind, p: Pick<UpsellPerson, "offer_ends_at" | "wants_one_on_one">, now = new Date()): Draft {
-  const open = offerOpen(p, now);
-  const deadline = p.offer_ends_at ? deadlineDay(p.offer_ends_at) : "";
-  const session1 = OPEN_SESSION.href;
+// The line under the button. With a saving, the first year's price; then the full price.
+function priceLine(step: Step | null) {
+  return step
+    ? `${usd(priceOf(step))} your first year, then ${usd(PRICE.yearly)} a year. Renews automatically each year until you cancel. Cancel online any time.`
+    : `${usd(PRICE.yearly)} a year. Renews automatically each year until you cancel. Cancel online any time.`;
+}
+
+export type DraftPerson = Pick<UpsellPerson, "created_at" | "lapsed_at" | "wants_one_on_one" | "session1_finished_at">;
+
+export function draftFor(kind: UpsellKind, p: DraftPerson, now = new Date()): Draft {
+  const step = currentStep(p, now);
+  const until = step ? untilText(step.endsAt) : "";
+  const price = usd(priceOf(step));
+  const finished = Boolean(p.session1_finished_at);
+
+  // The last-day emails, 3 to 5, share one shape.
+  const lastDay = (s: Step) => {
+    const soon = endsSoon(s.endsAt, now);
+    const next = usd(nextPriceOf(s));
+    return { soon, next, now: usd(priceOf(s)) };
+  };
 
   switch (kind) {
     case "upsell_a":
@@ -207,13 +300,17 @@ export function draftFor(kind: UpsellKind, p: Pick<UpsellPerson, "offer_ends_at"
         cta: { label: "Pick a time", href: STRATEGY_CALL_URL },
         ps: { link: { before: "Pick a time for your call here:", href: STRATEGY_CALL_URL, after: "." } },
       };
+
+    // 1. Session 1 is ready (ladder day 2).
     case "upsell_1":
       return {
         subject: "Session 1 is ready for you",
-        preheader: "Your first tangible step. Finish it, and your first month of Build is $99.",
+        preheader: step
+          ? `Do it in your own time. And $${step.off} off your first year of Build until ${until}.`
+          : "Do it in your own time. Your first tangible step is ready.",
         eyebrow: "Your first step",
         body: [
-          "Your Foundations account is open, and Session 1 is ready.",
+          "Your Build Free account is open, and Session 1 is ready. Do it in your own time: there's no fixed schedule, so start when it suits you.",
           { quote: "This is your first tangible step. Take it tonight." },
           "In one evening, you'll:",
           {
@@ -223,67 +320,27 @@ export function draftFor(kind: UpsellKind, p: Pick<UpsellPerson, "offer_ends_at"
               "Start your contact list, where the method looks for your first clients",
             ],
           },
-          "Finish Session 1 and there's a reward. Your first month of Build is $99 instead of $149, and you'll have 7 days to claim it.",
+          ...(step
+            ? [`Join Build by ${until} and you save $${step.off}: your first year is ${price} instead of ${usd(PRICE.yearly)}.`, BUILD_OWN_TIME]
+            : [BUILD_OWN_TIME]),
         ],
         cta: OPEN_SESSION,
-        ps: {
-          link: { before: "Session 1 is waiting:", href: session1, after: "." },
-          text: "Questions first? Reply, and it comes straight to me.",
-        },
+        ps: { text: "Questions first? Reply, and it comes straight to me." },
       };
+
+    // 2. The weekly drop-in (ladder day 5).
     case "upsell_2":
       return {
-        subject: "You're one evening from starting your coaching program",
-        preheader: "Finish Session 1 and your first month of Build is $99.",
-        eyebrow: "Your first step",
-        body: [
-          "A short one. You opened your account a week ago. That was the commitment. Session 1 is what turns it into a start.",
-          { quote: "One evening. One video. One Working Sheet." },
-          "When you mark it complete, your 7-day Build offer begins: your first month for $99 instead of $149.",
-          "Every week you wait is another week your income stays tied to your therapy hours.",
-        ],
-        cta: OPEN_SESSION,
-      };
-    case "upsell_3":
-      return {
-        subject: "Session 1 done. Your Build offer is open",
-        preheader: `Your first month for $99 instead of $149. It ends on ${deadline}.`,
-        eyebrow: "Your offer",
-        body: [
-          "You finished Session 1. You have a plan for what could knock you off course, and your contact list is started. Everything ahead builds on it.",
-          "Next is Session 2: your niche. It opens in Build.",
-          { quote: `Your first month of Build for $99 instead of $149. Until ${deadline}.` },
-          "Launch your coaching program at your own pace, with all the resources you need, plus a live drop-in every week.",
-          "We designed Build for people who want to go it alone, because they don't need constant support, and who want to avoid the pitfalls. Too much information. Second-guessing every decision. Months spent on the wrong thing. Here's how Build tackles them:",
-          {
-            list: [
-              "Every session in order, each with its video, Working Sheet and Principle Card",
-              "Only what matters next: each session opens as you finish the one before",
-              "A live drop-in on video every week, for help before a wrong turn costs you weeks",
-              "Recordings of the drop-ins, so you can catch up after a busy week",
-              "No limit on your contact list. Foundations holds 50 names, and the method works toward 250",
-            ],
-          },
-          "Work through the program, and you'll have a coaching program you own: who it's for, what it offers, what it costs, and who you'll talk to first.",
-          `After ${deadline}, the first month goes back to $149. This offer doesn't come back.`,
-          ...(p.wants_one_on_one ? ["If you'd still like one-on-one support, you can book a call from your account."] : []),
-        ],
-        cta: CLAIM,
-        after: [OFFER_TERMS],
-        ps: {
-          link: { before: `Claim your $99 first month by ${deadline}:`, href: JOIN, after: "." },
-          text: "Session 2 opens the moment you join.",
-        },
-      };
-    case "upsell_4":
-      return {
         subject: "Your next question doesn't have to wait",
-        preheader: `A live answer every week, with Build. Your $99 first month ends on ${deadline}.`,
+        preheader: step
+          ? `Do it in your own time, with a live answer every week. ${price} for your first year until ${until}.`
+          : "Do it in your own time, with a live answer every week.",
         eyebrow: "Your offer",
         body: [
-          "One pitfall of going it alone is months spent on the wrong thing, because one question went unanswered.",
-          { quote: "Bring your next decision to Wednesday's drop-in. Get help with your next move." },
-          "In Build, there's a live drop-in on video every Wednesday at 12pm Eastern. Bring any question about your program, like:",
+          "With Build, you do it in your own time. No fixed schedule. You move at the pace a full caseload allows.",
+          "But your own time doesn't mean on your own. One pitfall of going it alone is months spent on the wrong thing, because one question went unanswered.",
+          { quote: "Bring your next decision to the weekly drop-in. Get help with your next move." },
+          "In Build, there's a live drop-in on video every week. The time is in your portal. Bring any question about your program, like:",
           {
             list: [
               "The two niches you're torn between",
@@ -291,49 +348,83 @@ export function draftFor(kind: UpsellKind, p: Pick<UpsellPerson, "offer_ends_at"
               "The first message you're about to send",
             ],
           },
-          "Can't make it live? Drop-ins are recorded, so you can catch up on the members' site.",
-          `Your first month is $99 instead of $149 until ${deadline}.`,
+          "Can't make it live? Drop-ins are recorded, so you can catch up in the portal.",
+          ...(step
+            ? [`Your first year of Build is ${price} instead of ${usd(PRICE.yearly)} until ${until}. After that, it's ${usd(nextPriceOf(step))}.`]
+            : []),
         ],
-        cta: CLAIM,
-        after: [OFFER_TERMS],
-        ps: {
-          link: { before: `Join by ${deadline} and bring your first question to the next drop-in:`, href: JOIN, after: "." },
-        },
+        cta: { label: "Join Build", href: JOIN },
+        after: [priceLine(step)],
       };
-    case "upsell_5":
+
+    // 3. Last day: $300 off (the final 24 hours of week 1).
+    case "upsell_3": {
+      if (!step) return draftFor("upsell_6", p, now);
+      const { soon, next, now: today } = lastDay(step);
       return {
-        subject: "Your $50 saving ends tomorrow",
-        preheader: `After ${deadline}, your first month of Build goes back to $149.`,
+        subject: `Last day: $${step.off} off your first year of Build`,
+        preheader: `${cap(soon.at)}, your first year goes up to ${next}.`,
         eyebrow: "Your offer",
         body: [
-          "Tomorrow, your Build offer ends.",
-          { quote: `After ${deadline}, your first month costs $149, not $99. This offer doesn't come back.` },
-          "Here's where you stand. You've finished Session 1. Session 2, your niche, is next, and it's closed until you join.",
-          "Join by tomorrow and you keep the $50, with every session, every resource and a live drop-in every week.",
+          `Your $${step.off} saving ends ${soon.at}.`,
+          { quote: soon.tonight ? `Tonight: ${today} for your first year. Tomorrow: ${next}.` : `Until ${soon.when}: ${today} for your first year. After that: ${next}.` },
+          "Do it in your own time, with Next Move showing you one clear step at a time, plus every session, all the resources, and a live drop-in every week.",
+          finished
+            ? "The rest of Session 2, where you choose your niche, opens the moment you join."
+            : "Join, finish Session 1, and Session 2, your niche, opens right after.",
+          "On the yearly plan, change your mind within 14 days of paying and you get every cent back.",
         ],
-        cta: CLAIM,
-        after: [OFFER_TERMS],
+        cta: { label: `Join Build for ${today}`, href: JOIN },
+        after: [priceLine(step)],
       };
+    }
+
+    // 4. Last day: $200 off (the final 24 hours of week 2).
+    case "upsell_4": {
+      if (!step) return draftFor("upsell_6", p, now);
+      const { soon, next, now: today } = lastDay(step);
+      return {
+        subject: `Last day: $${step.off} off your first year of Build`,
+        preheader: `${cap(soon.at)}, your first year goes up to ${next}.`,
+        eyebrow: "Your offer",
+        body: [
+          `Your $${step.off} saving ends ${soon.at}.`,
+          { quote: soon.tonight ? `Tonight: ${today} for your first year. Tomorrow: ${next}.` : `Until ${soon.when}: ${today} for your first year. After that: ${next}.` },
+          "Every session and resource to launch your coaching program in your own time, built to help you avoid the pitfalls, plus a live drop-in every week.",
+        ],
+        cta: { label: `Join Build for ${today}`, href: JOIN },
+        after: [priceLine(step)],
+      };
+    }
+
+    // 5. Last chance: $100 off (the final 24 hours of week 3).
+    case "upsell_5": {
+      if (!step) return draftFor("upsell_6", p, now);
+      const { soon, next, now: today } = lastDay(step);
+      return {
+        subject: `Last chance: $${step.off} off your first year of Build`,
+        preheader: `After ${soon.when}, Build is ${next} a year.`,
+        eyebrow: "Your offer",
+        body: [
+          `Your last $${step.off} off ends ${soon.at}.`,
+          { quote: soon.tonight ? `Tonight: ${today} for your first year. After tonight, it's ${next}.` : `Until ${soon.when}: ${today} for your first year. After that, it's ${next}.` },
+          "Launch your coaching program in your own time. Next Move shows you one clear step at a time, with every session, all the resources and a live drop-in every week.",
+        ],
+        cta: { label: `Join Build for ${today}`, href: JOIN },
+        after: [priceLine(step)],
+      };
+    }
+
+    // 6. Your niche (ladder day 28, full price, no countdown).
     case "upsell_6":
-      return {
-        subject: "Last day: your first month of Build for $99",
-        preheader: "It ends at midnight Eastern tonight.",
-        eyebrow: "Your offer",
-        body: [
-          "Your $99 first month ends at midnight Eastern tonight.",
-          { quote: "At midnight, $99 becomes $149. This offer doesn't come back." },
-          "Session 2 opens the moment you join.",
-        ],
-        cta: CLAIM,
-        after: [OFFER_TERMS],
-      };
-    case "upsell_7":
       return {
         subject: "Your next decision: your niche",
         preheader: "Everything after Session 2 depends on that decision.",
         eyebrow: "Your next step",
         body: [
-          "You finished Session 1 three weeks ago. Your next move is Session 2: your niche.",
+          finished
+            ? "You've finished Session 1. Your next move is Session 2: your niche."
+            : "Your next move is Session 1, then Session 2: your niche.",
           { quote: "Every week you wait is another week your program isn't for sale." },
           "The sessions ahead take it the whole way:",
           {
@@ -347,15 +438,59 @@ export function draftFor(kind: UpsellKind, p: Pick<UpsellPerson, "offer_ends_at"
             ],
           },
           "We designed Build for people who want to go it alone and avoid the pitfalls. You get every session, all the resources, and a live drop-in every week.",
-          "It's $149 a month. Cancel online any time before your next payment. Or go yearly for $1,197, with a 14-day full refund. Both plans renew automatically until you cancel.",
+          `It's ${usd(PRICE.yearly)} a year, under $84 a month, with a 14-day full refund. It renews automatically each year until you cancel.`,
         ],
         cta: { label: "Join Build", href: JOIN },
         ps: {
-          link: { before: "Join Build and open Session 2 tonight:", href: JOIN, after: "." },
+          link: {
+            before: finished ? "Join Build and open the rest of Session 2 tonight:" : "Join Build and take your next step tonight:",
+            href: JOIN,
+            after: ".",
+          },
           text: "Have a question first? Reply, and it comes straight to me.",
         },
-        after: [],
       };
+
+    // 7. Session 1 done (when they finish it, or on sale day if they already had).
+    case "upsell_7":
+      return {
+        subject: "Session 1 done. Your niche is next",
+        preheader: step
+          ? `Your first year of Build for ${price} until ${until}.`
+          : "The rest of Session 2, your niche, opens the moment you join.",
+        eyebrow: step ? "Your offer" : "Your next step",
+        body: [
+          "You finished Session 1. You have a plan for what could knock you off course, and your contact list is started. Everything ahead builds on it.",
+          "Next is Session 2: your niche. You can start it now, free. Choosing your niche opens in Build.",
+          ...(step ? [{ quote: `Your first year of Build for ${price} instead of ${usd(PRICE.yearly)}. Until ${until}.` }] : []),
+          "With Build, you do it in your own time: no fixed schedule, at the pace a full caseload allows. You get all the resources you need, plus a live drop-in every week.",
+          "We designed Build for people who want to go it alone, because they don't need constant support, and who want to avoid the pitfalls. Too much information. Second-guessing every decision. Months spent on the wrong thing. Here's how Build tackles them:",
+          {
+            list: [
+              "Every session in order, each with its video, Working Sheet and Principle Card",
+              "Only what matters next: each session opens as you finish the one before",
+              "A live drop-in on video every week, for help before a wrong turn costs you weeks",
+              "Recordings of the drop-ins, so you can catch up after a busy week",
+              "No limit on your contact list. Build Free holds 50 names, and the method works toward 250",
+            ],
+          },
+          "Work through the program, and you'll have a coaching program you own: who it's for, what it offers, what it costs, and who you'll talk to first.",
+          ...(step
+            ? [step.next ? `After ${until}, your first year is ${usd(nextPriceOf(step))}.` : `After ${until}, it's ${usd(PRICE.yearly)} a year.`]
+            : []),
+          ...(p.wants_one_on_one ? ["If you'd still like one-on-one support, you can book a call from your account."] : []),
+        ],
+        cta: { label: "Join Build", href: JOIN },
+        after: [priceLine(step)],
+        ps: {
+          link: step
+            ? { before: `Join by ${until} to save $${step.off}:`, href: JOIN, after: "." }
+            : { before: "Join Build here:", href: JOIN, after: "." },
+          text: "The rest of Session 2 opens the moment you join.",
+        },
+      };
+
+    // 8. Your list is full (at 50 names).
     case "upsell_8":
       return {
         subject: "Your list is full: 50 names",
@@ -363,24 +498,29 @@ export function draftFor(kind: UpsellKind, p: Pick<UpsellPerson, "offer_ends_at"
         eyebrow: "Your contact list",
         body: [
           "You've put 50 names on your list. That's real work.",
-          { quote: "Foundations holds 50 names. The method works toward 250." },
+          { quote: "Build Free holds 50 names. The method works toward 250." },
           "Your list is where the method looks for your first clients, so this is no time to stop adding to it. To add more, join Build.",
           "We designed Build for people who want to go it alone and avoid the pitfalls. You get every session, all the resources, and a live drop-in every week.",
-          open
-            ? `Your first month is $99 instead of $149 until ${deadline}. Then it's $149 a month, renewing automatically until you cancel. Cancel online any time.`
-            : "It's $149 a month, and you can cancel online any time. It renews automatically until you cancel.",
+          step
+            ? `Your first year is ${price} instead of ${usd(PRICE.yearly)} until ${until}. It renews automatically each year until you cancel. Cancel online any time.`
+            : `It's ${usd(PRICE.yearly)} a year, and you can cancel online any time. It renews automatically each year until you cancel.`,
         ],
         cta: { label: "Join Build and keep adding", href: JOIN },
       };
   }
 }
 
+// ---- Rendering --------------------------------------------------------------
+
+// Build: ™ on every mention. The free plan shows as "Build™ Free" (Brand.tsx).
 const tm = (s: string) =>
   s.replace(/\bBuild\b(?!™)/g, "Build™").replace(/\bFoundations\b(?!™)/, "Foundations™");
-// Build: bold orange with ™ every time. Foundations: orange, ™ on first mention.
+// Build: bold orange with ™ every time. Build Free: orange, with its Build part
+// bold with ™, as in the portal. Foundations: orange, ™ on first mention.
 function brandHtml(escaped: string, seen: { foundations: boolean }) {
   return escaped
-    .replace(/\bBuild\b/g, '<strong style="color:#F08328;">Build™</strong>')
+    .replace(/\bBuild\b(?! Free)/g, '<strong style="color:#F08328;">Build™</strong>')
+    .replace(/\bBuild Free\b/g, '<span style="color:#F08328;"><strong>Build™</strong> Free</span>')
     .replace(/\bFoundations\b/g, () => {
       const mark = seen.foundations ? "" : "™";
       seen.foundations = true;
@@ -390,7 +530,7 @@ function brandHtml(escaped: string, seen: { foundations: boolean }) {
 
 export function renderUpsell(
   kind: UpsellKind,
-  p: Pick<UpsellPerson, "id" | "email" | "full_name" | "offer_ends_at" | "wants_one_on_one">,
+  p: Pick<UpsellPerson, "id" | "email" | "full_name"> & DraftPerson,
   now = new Date(),
 ): Rendered {
   const d = draftFor(kind, p, now);
@@ -419,7 +559,7 @@ export function renderUpsell(
         d.ps.link
           ? `${b(d.ps.link.before)} <a href="${escHtml(d.ps.link.href)}" style="color:#1E90FF;">${escHtml(d.ps.link.href.replace(/^https?:\/\//, ""))}</a>${d.ps.link.after ?? ""}`
           : ""
-      }${d.ps.text ? ` ${b(d.ps.text)}` : ""}`
+      }${d.ps.text ? `${d.ps.link ? " " : ""}${b(d.ps.text)}` : ""}`
     : null;
 
   const footerHtml = `You're getting this because you have a Psyber Digital account. <a href="${escHtml(unsub)}" style="color:#5a6784;">Unsubscribe</a> from these emails.<br>${escHtml(POSTAL_ADDRESS)}`;
@@ -444,7 +584,7 @@ export function renderUpsell(
     })
     .join("\n\n");
   const psText = d.ps
-    ? `P.S. ${d.ps.link ? `${d.ps.link.before} ${d.ps.link.href}${d.ps.link.after ?? ""}` : ""}${d.ps.text ? ` ${d.ps.text}` : ""}`
+    ? `P.S. ${d.ps.link ? `${d.ps.link.before} ${d.ps.link.href}${d.ps.link.after ?? ""}` : ""}${d.ps.text ? `${d.ps.link ? " " : ""}${d.ps.text}` : ""}`
     : "";
   const text = [
     greeting,
@@ -471,10 +611,12 @@ export function renderUpsell(
   };
 }
 
-// Sends whatever this one person is due now. Used by the daily job and, so the
-// "the moment they..." emails aren't held until the next run, straight after
-// confirming an email, finishing Session 1 and filling the list.
-// Best-effort: a mail problem must never break the page that called it.
+// ---- Sending ----------------------------------------------------------------
+
+// Sends whatever this one person is due now: at most one email. Used by the
+// daily job and, so the "the moment they..." emails aren't held until the next
+// run, straight after confirming an email, finishing Session 1 and filling the
+// list. Best-effort: a mail problem must never break the page that called it.
 export async function sendDueUpsell(userId: string, now = new Date()) {
   const report: { kind: string; to: string; result: string }[] = [];
   try {
@@ -489,36 +631,26 @@ export async function sendDueUpsell(userId: string, now = new Date()) {
       .is("upsell_unsubscribed_at", null)
       .is("call_booked_at", null)
       .maybeSingle();
-    let p = data as UpsellPerson | null;
+    const p = data as UpsellPerson | null;
     if (!p?.email) return report;
 
     // Never market to an address that hasn't been confirmed.
     const { data: auth } = await admin.auth.admin.getUserById(userId);
     if (!auth.user?.email_confirmed_at) return report;
 
-    // Build not on sale yet: only the one-on-one call invitations go out, and
-    // the $99 clock never starts (Don, 21 Nov 2026).
-    // The Build-selling emails (1 to 8) still carry the old $99 offer. They stay
-    // off until the new ladder wording is approved and wired in, even once
-    // Build is on sale (Don, 22 Nov 2026: "all emails can be on hold until
-    // this is done"). UPSELL_BUILD_EMAILS="true" turns them back on.
+    // Build not on sale yet: only the one-on-one call invitations go out
+    // (Don, 21 Nov 2026). The Build-selling emails (1 to 8) also stay off
+    // until UPSELL_BUILD_EMAILS is "true" (Don, 22 Nov 2026), even once Build
+    // is on sale.
     const onSale = buildOnSale() && process.env.UPSELL_BUILD_EMAILS === "true";
-    if (p.list_full_at && onSale) {
-      const result = await sendOnce(userId, "upsell_8", "1", renderUpsell("upsell_8", p, now));
-      report.push({ kind: "upsell_8", to: p.email, result });
-    }
+    let due = dueEmails(p, now);
+    if (!onSale) due = due.filter((k) => ONE_ON_ONE.includes(k));
 
-    let due = dueEmail(p, now);
-    if (!onSale && due && !["upsell_a", "upsell_b", "upsell_c"].includes(due)) due = null;
-    if (due === "start_offer") {
-      const { data: ends } = await admin.rpc("start_first_month_offer", { p_user: userId });
-      if (!ends) return report;
-      p = { ...p, offer_started_at: now.toISOString(), offer_ends_at: ends as string };
-      due = "upsell_3";
-    }
-    if (due) {
-      const result = await sendOnce(userId, due, "1", renderUpsell(due, p, now));
-      report.push({ kind: due, to: p.email!, result });
+    for (const kind of due) {
+      const ref = ONE_ON_ONE.includes(kind) ? "1" : LADDER_REF;
+      const result = await sendOnce(userId, kind, ref, renderUpsell(kind, p, now));
+      report.push({ kind, to: p.email, result });
+      if (result !== "already") break;
     }
   } catch (e) {
     console.error("upsell email failed:", e);
