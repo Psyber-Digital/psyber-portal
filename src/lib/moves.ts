@@ -76,6 +76,10 @@ export const MOVES: Record<number, Move[]> = {
       why: "Search online the way a future client would, for example \u201chow do I get promoted\u201d, not \u201canxiety\u201d. If other coaches already sell to this group, that's good news. It's a sign people already pay for help with this." },
     { id: "s2-list", q: "Who else comes to mind?", title: "Add names to your list", opens: "list",
       why: "Keep adding as people come to mind. In Session 4 you'll tell them all you're coaching now." },
+    // Build Free's taste of Session 2 ends here (Don, card TS = A, 25 Nov 2026):
+    // the video, the card and stage 1 are free; stages 2 and 3 open in Build.
+    { id: "s2-unlock", q: "Ready to choose your niche?", title: "Unlock stages 2 and 3, and the weekly drop-in", opens: "none", finish: true, only: ["foundations"],
+      why: "Narrow your ideas with the lane test, check who already pays for help, and choose your niche. It all opens the moment you join Build\u2122." },
     // Build: choosing the niche IS finishing Session 2 (Don, r11, 29 Oct).
     { id: "s2-finish", q: "Which niche will I test first?", title: "Choose your niche", opens: "none", finish: true, only: ["build"],
       why: "Pick the one you're happiest with. Not sure? Bring all three to the drop-in, and we\u2019ll choose together." },

@@ -52,7 +52,7 @@ export async function middleware(request: NextRequest) {
     const n = parseInt(session[1], 10);
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role, access_week")
+      .select("role, access_week, tier, session1_finished_at")
       .eq("id", user.id)
       .single();
 
@@ -65,7 +65,12 @@ export async function middleware(request: NextRequest) {
         .eq("published", true)
         .maybeSingle();
 
-      if (!profile || profile.access_week < n || !week) {
+      // Build Free's taste of Session 2 (Don, card TS = A, 25 Nov 2026): once
+      // Session 1 is finished, its Working Sheet and Principle Card open too.
+      const taste =
+        n === 2 && profile?.tier === "foundations" && Boolean(profile.session1_finished_at) &&
+        /^\/session-02\/Session-02-(Working-Sheet|Principle-Card)/.test(path);
+      if (!profile || (profile.access_week < n && !taste) || !week) {
         return new NextResponse("This session isn't open for you yet.", {
           status: 403,
           headers: { "content-type": "text/plain; charset=utf-8" },

@@ -33,6 +33,7 @@ import { PARK_COOKIE } from "@/lib/moves";
 import { weekVideo } from "@/lib/videos";
 import { VimeoEmbed } from "./components/VimeoEmbed";
 import { ChapterFinish } from "./components/ChapterFinish";
+import { JoinBuild } from "./components/JoinBuild";
 import { CHAPTERS } from "@/lib/story";
 import { streakOf } from "@/lib/streak";
 import { movePoints, namesThisWeek, pointTicksToKeep, pointsTotal, streakBonus } from "@/lib/points";
@@ -118,6 +119,12 @@ export async function PortalScreen({
   const ladderStep = profile?.tier === "foundations" ? currentStep(profile) : null;
   const freeFinished =
     profile?.tier === "foundations" && !profile.lapsed_at && Boolean(profile.session1_finished_at);
+  // Build Free's taste of Session 2 (Don, card TS = A, 25 Nov 2026), and with it
+  // Today stays alive after Session 1 (card DD = A): the Session 2 video, its
+  // Principle Card and stage 1 of its sheet are free; stages 2 and 3 open in Build.
+  const tasting = freeFinished;
+  const TASTE = new Set(["s2-video", "s2-card", "s2-generate", "s2-list", "s2-unlock"]);
+  const tasteMoves = tasting ? movesFor(2, "foundations").filter((m) => TASTE.has(m.id)) : [];
 
   const filesFor = (weekId: string) => visibleFiles.filter((f) => f.week_id === weekId);
 
@@ -179,7 +186,7 @@ export async function PortalScreen({
         session: current.number,
         tier,
         ticked,
-        listMoveOpen: moves.some((m) => m.opens === "list" && /-list$/.test(m.id) && !ticked.has(m.id)),
+        listMoveOpen: (tasting ? tasteMoves : moves).some((m) => m.opens === "list" && /-list$/.test(m.id) && !ticked.has(m.id)),
       })
     : [];
   const sessionFinished =
@@ -198,7 +205,7 @@ export async function PortalScreen({
     tier === "foundations" || tier === "build" || process.env.NEXT_MOVE_FOR_ONE_ON_ONE !== "false";
   const showNextMove =
     nextMoveForTier && Boolean(current) && !viewingPast && moves.length > 0 &&
-    !(tier === "foundations" && (freeFinished || profile?.lapsed_at));
+    !(tier === "foundations" && profile?.lapsed_at);
   // On Today the countdown sits at the top; elsewhere it sits with the banners.
   const countdownOnTop = view === "today" && showNextMove && Boolean(ladderStep);
   const moveLinks: MoveLinks = current
@@ -525,32 +532,52 @@ export async function PortalScreen({
             </div>
           )}
           <NextMove
-            session={current.number}
-            sessionName={shortTitle(current.title)}
+            session={tasting ? 2 : current.number}
+            sessionName={tasting ? "Niche" : shortTitle(current.title)}
             totalSessions={outline.length || 7}
-            media={currentVideo ? <VimeoEmbed video={currentVideo} title={current.title} /> : undefined}
+            media={
+              tasting
+                ? (weekVideo(2) ? <VimeoEmbed video={weekVideo(2)!} title="Session 2: Niche" /> : undefined)
+                : currentVideo ? <VimeoEmbed video={currentVideo} title={current.title} /> : undefined
+            }
             parked={parked}
-            moves={moves}
+            moves={tasting ? tasteMoves : moves}
             ticked={ticked}
-            sessionFinished={sessionFinished}
+            sessionFinished={tasting ? false : sessionFinished}
             meet={meet}
-            links={{ ...moveLinks, video: "/portal/program#watch" }}
+            links={
+              tasting
+                ? {
+                    video: "/portal/program#watch",
+                    sheet: "/session-02/Session-02-Working-Sheet.html",
+                    card: "/session-02/Session-02-Principle-Card.html",
+                    list: "/portal/outreach",
+                    shared: "/portal/shared",
+                  }
+                : { ...moveLinks, video: "/portal/program#watch" }
+            }
             due={due}
-            finish={finishNode}
-            chapter={CHAPTERS[current.number]}
+            finish={
+              tasting && profile ? (
+                <JoinBuild profile={profile} names={contactsList.length} movesDone={momentum.movesDone} points={points} />
+              ) : (
+                finishNode
+              )
+            }
+            chapter={CHAPTERS[tasting ? 2 : current.number]}
             points={points}
             justDone={justDone}
             welcomeBack={welcomeBack}
-            namesMin={sessionFinished || (tier !== "build" && tier !== "foundations") ? 0 : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).namesMin}
-            gate={sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined)}
+            namesMin={tasting || sessionFinished || (tier !== "build" && tier !== "foundations") ? 0 : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined).namesMin}
+            gate={tasting ? undefined : sessionGate(current.number, moves, ticked, contactsList.length, nameTarget === 50 ? 50 : undefined)}
             viewId={searchParams?.move}
             streak={streakOf(tickRows ?? [])}
             teaser={
-              CHAPTERS[current.number + 1]
+              CHAPTERS[(tasting ? 2 : current.number) + 1]
                 ? {
-                    number: current.number + 1,
-                    title: CHAPTERS[current.number + 1].title,
-                    villain: CHAPTERS[current.number + 1].villain,
+                    number: (tasting ? 2 : current.number) + 1,
+                    title: CHAPTERS[(tasting ? 2 : current.number) + 1].title,
+                    villain: CHAPTERS[(tasting ? 2 : current.number) + 1].villain,
                     locked: tier === "foundations",
                     coached: tier !== "foundations" && tier !== "build",
                   }
@@ -620,7 +647,7 @@ export async function PortalScreen({
                       <p className="mt-3 text-[14px] text-off">
                         {profile && savingWaiting(profile) ? SAVING_WAITS : OPENS_SOON}
                       </p>
-                      <a href="/build" target="_blank" rel="noopener" className="psy-btn mt-4 inline-block">See what&rsquo;s in <Brand name="Build" tm /></a>
+                      <a href="/portal/billing" className="psy-btn mt-4 inline-block">See what&rsquo;s in <Brand name="Build" tm /></a>
                     </>
                   )}
                 </div>

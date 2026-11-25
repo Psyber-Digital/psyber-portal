@@ -24,7 +24,7 @@ export const LADDER = [
 
 export type Step = { off: number; coupon: string; endsAt: Date; next?: { off: number } };
 
-type Person = { created_at: string; lapsed_at?: string | null };
+export type Person = { created_at: string; lapsed_at?: string | null };
 
 /** The moment Build went (or goes) on sale, or null if not set. */
 export function saleStartsAt(): Date | null {

@@ -244,7 +244,7 @@ export function NextMove({
             <b className="font-disp font-semibold text-off">Chapter {teaser.number}: {teaser.title}.</b>{" "}
             {teaser.villain} is waiting.{" "}
             {teaser.locked ? (
-              <>It opens in <a href="/build" target="_blank" rel="noopener" className="font-semibold text-orange underline">Build™</a>.</>
+              <>It opens in <a href="/portal/billing" className="font-semibold text-orange underline">Build™</a>.</>
             ) : (
               // One-on-one clients' sessions open with Don, not by finishing (voice-guard, 25 Nov).
               teaser.coached ? <>You face it at your next session!</> : <>Finish this chapter to face it!</>

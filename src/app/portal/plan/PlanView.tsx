@@ -89,7 +89,7 @@ export function PlanView({ sessions, free }: { sessions: PlanSession[]; free: bo
               </div>
             ))}
             {!s.open && free && s.number === 2 && (
-              <a href="/build" target="_blank" rel="noopener" className="psy-btn mt-4 inline-block">
+              <a href="/portal/billing" className="psy-btn mt-4 inline-block">
                 See what&rsquo;s in Build™
               </a>
             )}
