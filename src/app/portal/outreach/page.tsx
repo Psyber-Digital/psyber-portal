@@ -61,7 +61,9 @@ export default async function OutreachPage() {
         That relationship keeps its own standing long after the last session.{" "}
         {profile?.tier === "foundations"
           ? "If you are unsure about someone, leave them off for now."
-          : "If you are unsure about someone, bring them to a session rather than deciding it alone."}
+          : profile?.tier === "build"
+            ? "If you are unsure about someone, bring them to a weekly drop-in rather than deciding it alone."
+            : "If you are unsure about someone, bring them to a session rather than deciding it alone."}
       </p>
       {/* Two paragraphs merged into one, 11 Aug 2026. They said the same thing from
           two angles — 105 words to establish "start now, everyone counts, don't send

@@ -72,10 +72,10 @@ export async function parkMove(formData: FormData) {
 
 // A finished focus sprint (Don, card IM = A, 25 Nov 2026): kept as a point
 // tick, at most SPRINTS_PER_DAY a day, so the timer can't be farmed.
-export async function keepSprint() {
+export async function keepSprint(): Promise<boolean> {
   const supabase = createClient();
   const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return;
+  if (!auth.user) return false;
   const day = easternToday().replace(/-/g, "");
   for (let k = 1; k <= SPRINTS_PER_DAY; k++) {
     const { data, error } = await supabase
@@ -84,9 +84,12 @@ export async function keepSprint() {
       .select("move_id");
     if (error) {
       console.error("keepSprint failed:", error.message);
-      return;
+      return false;
     }
-    if (data && data.length > 0) break; // this slot was new: one sprint kept
+    if (data && data.length > 0) {
+      revalidatePath("/portal");
+      return true; // this slot was new: one sprint kept
+    }
   }
-  revalidatePath("/portal");
+  return false;
 }

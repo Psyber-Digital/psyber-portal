@@ -123,7 +123,7 @@ export async function PortalScreen({
   // Today stays alive after Session 1 (card DD = A): the Session 2 video, its
   // Principle Card and stage 1 of its sheet are free; stages 2 and 3 open in Build.
   const tasting = freeFinished;
-  const TASTE = new Set(["s2-video", "s2-card", "s2-generate", "s2-list", "s2-unlock"]);
+  const TASTE = new Set(["s2-video", "s2-card", "s2-generate", "s2-lane", "s2-list", "s2-unlock"]);
   const tasteMoves = tasting ? movesFor(2, "foundations").filter((m) => TASTE.has(m.id)) : [];
 
   const filesFor = (weekId: string) => visibleFiles.filter((f) => f.week_id === weekId);

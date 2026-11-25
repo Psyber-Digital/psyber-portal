@@ -93,7 +93,11 @@ export function ChapterFinish({
         {info.next && (
           <p className="mt-3 font-disp text-[13px] font-semibold leading-snug text-orange">
             {locked ? (
-              <>🔒 Next villain: {info.next.villain}. Chapter {info.next.number}, {info.next.title}, opens in Build™.</>
+              info.next.number === 2 ? (
+                <>Next villain: {info.next.villain}. Chapter 2, {info.next.title}, starts now, free! Choosing your niche opens in Build™.</>
+              ) : (
+                <>🔒 Next villain: {info.next.villain}. Chapter {info.next.number}, {info.next.title}, opens in Build™.</>
+              )
             ) : (
               <>Next villain: {info.next.villain}. Chapter {info.next.number}, {info.next.title}, shows you how to beat it.</>
             )}
@@ -112,7 +116,7 @@ export function ChapterFinish({
           ))}
         </div>
         <button type="button" className="psy-btn-orange w-full" onClick={() => setOpen(false)}>
-          {locked ? "See my next move" : info.next ? `On to Chapter ${info.next.number}` : "Keep going"}
+          {locked && info.next?.number === 2 ? "Start Chapter 2!" : locked ? "See my next move" : info.next ? `On to Chapter ${info.next.number}` : "Keep going"}
         </button>
       </div>
     </div>

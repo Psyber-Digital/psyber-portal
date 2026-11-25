@@ -69,7 +69,10 @@ export const MOVES: Record<number, Move[]> = {
     { id: "s2-card", q: "Which idea here will I use first?", title: "Read the Principle Card, and note what stands out", mins: "5 min", opens: "card",
       why: "This session\u2019s key ideas on one page. Jot down what strikes you, and keep the card handy." },
     { id: "s2-generate", q: "Who could I help, and what change could I help them make?", title: "Generate every transformation and audience you can think of", mins: "25 min", opens: "sheet", where: "stage 1",
-      why: "Write more than feels sensible. Judge none of it yet." },
+      why: "Write more than feels sensible. Judge none of it yet. One rule even now: leave out any group you know through your therapy work." },
+    // Build Free: the lane test in the flow, free (lane-guard, 25 Nov 2026).
+    { id: "s2-lane", q: "Which ideas pass the lane test?", title: "Run the lane test on every idea", mins: "5 min", opens: "card", only: ["foundations"],
+      why: "Moving someone from well to better? Keep it! Treating something? Drop it, or translate it with the bank on your card." },
     { id: "s2-narrow", afterDay: "s2-generate", q: "Which of my niche ideas is strongest?", guide: "Give this the full twenty minutes. It's what turns a niche you guessed into one you chose.", title: "Narrow your ideas down to your top three, using the lane test", mins: "20 min", opens: "sheet", where: "stage 2",
       why: "Come back a day after stage 1, with fresh eyes. Pair each audience with a change you could help them make. Then run the lane test: keep only pairs that take people from well to better, and drop any that would mean treating a problem. Score what's left." },
     { id: "s2-research", q: "Do people already pay coaches for my top three?", title: "Research your top three: four quick checks, about 15 minutes per niche", mins: "45 min", opens: "sheet", where: "stage 3",
@@ -78,8 +81,8 @@ export const MOVES: Record<number, Move[]> = {
       why: "Keep adding as people come to mind. In Session 4 you'll tell them all you're coaching now." },
     // Build Free's taste of Session 2 ends here (Don, card TS = A, 25 Nov 2026):
     // the video, the card and stage 1 are free; stages 2 and 3 open in Build.
-    { id: "s2-unlock", q: "Ready to choose your niche?", title: "Unlock stages 2 and 3, and the weekly drop-in", opens: "none", finish: true, only: ["foundations"],
-      why: "Narrow your ideas with the lane test, check who already pays for help, and choose your niche. It all opens the moment you join Build\u2122." },
+    { id: "s2-unlock", q: "Ready to choose your niche?", title: "Choose your niche, and open Session 3 and the weekly drop-in", opens: "none", finish: true, only: ["foundations"],
+      why: "Your ideas are on the page! In Build\u2122 you narrow them, test them and choose your niche, one move at a time. Choose it and Session 3 opens on the spot, plus a live drop-in every week to choose with us." },
     // Build: choosing the niche IS finishing Session 2 (Don, r11, 29 Oct).
     { id: "s2-finish", q: "Which niche will I test first?", title: "Choose your niche", opens: "none", finish: true, only: ["build"],
       why: "Pick the one you're happiest with. Not sure? Bring all three to the drop-in, and we\u2019ll choose together." },

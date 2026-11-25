@@ -42,8 +42,10 @@ export function Countdown({
           {d}d {h}h {String(m).padStart(2, "0")}m {String(s).padStart(2, "0")}s left
         </span>
         <span className="text-[12.5px]">{nextOff ? `Then $${nextOff} off.` : "Then full price."}</span>
-        {link && onSale && (
-          <a href="/portal/billing" className="ml-auto font-semibold underline">See Build™ →</a>
+        {onSale ? (
+          link && <a href="/portal/billing" className="ml-auto font-semibold underline">See Build™ →</a>
+        ) : (
+          <span className="text-[12.5px]">Build™ opens soon.</span>
         )}
       </div>
     );

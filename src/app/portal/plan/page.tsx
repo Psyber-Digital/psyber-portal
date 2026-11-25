@@ -28,7 +28,8 @@ export default async function PlanPage() {
     number: n,
     title: CHAPTERS[n]?.title ?? `Session ${n}`,
     sheet: n === 1 ? "/session-01/Session-01-Working-Sheet.html" : weekWorkbook(n)?.href,
-    open: n <= open,
+    // Build Free's Session 2 preview is open too once Session 1 is done (lane-guard, 25 Nov 2026).
+    open: n <= open || (n === 2 && tier === "foundations" && Boolean(profile?.session1_finished_at)),
     key: `psyberB-wk${n}`,
   }));
 

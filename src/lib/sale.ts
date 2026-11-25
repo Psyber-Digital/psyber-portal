@@ -16,8 +16,8 @@ export const buildOnSale = (): boolean =>
   process.env.BUILD_ON_SALE === "true" && !Number.isNaN(Date.parse(process.env.BUILD_SALE_STARTS_AT ?? ""));
 
 export const OPENS_SOON =
-  "Build™ opens soon! Until then, Session 1 is yours, free. Dive in!";
+  "Build™ opens soon! Until then, Session 1 and a preview of Session 2 are yours, free. Dive in!";
 
 // For a free member whose launch saving hasn't started yet (card D2 = A).
 export const SAVING_WAITS =
-  "Build™ opens soon! When it does, you unlock $300 off your first year for 7 days. Until then, Session 1 is yours, free. Dive in!";
+  "Build™ opens soon! When it does, you unlock $300 off your first year for 7 days. Until then, Session 1 and a preview of Session 2 are yours, free. Dive in!";

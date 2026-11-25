@@ -91,7 +91,10 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
                   approved by Don in m06). Checked again on the server. */}
               <label className="mb-4 flex items-start gap-2.5 text-[13px] leading-relaxed text-slate">
                 <input type="checkbox" name="accept_renewal" required className="mt-1" />
-                <span>I agree my <Brand name="Build" /> membership renews automatically until I cancel.</span>
+                <span>
+                  I agree my <Brand name="Build" /> membership renews automatically until I cancel.{" "}
+                  <a href="/terms.html" target="_blank" rel="noopener" className="underline">See the full terms</a>
+                </span>
               </label>
               <button
                 name="plan"
@@ -197,9 +200,13 @@ export function BuildOffer({ step, back }: { step: Step | null; back: React.Reac
             </div>
             {timesWord && (
               <div className="psy-card p-5">
-                <p className="font-disp text-[26px] font-semibold text-off">1 client</p>
+                {/* Was "1 client at $2,500 covers your year": a pays-for-itself claim,
+                    banned by VOICE-20261124-1 (lane-guard, 25 Nov 2026). Now the approved
+                    per-client value range. */}
+                <p className="font-disp text-[26px] font-semibold text-off">$2.5K&ndash;$10K+</p>
                 <p className="mt-1 text-[13.5px] leading-relaxed text-slate">
-                  at $2,500 covers {yearWord} {timesWord}. Landing one is your work: <Brand name="Build" /> shows you the steps.
+                  per client. That&rsquo;s the value-based pricing you set for your own offer in Session 6, and{" "}
+                  <Brand name="Build" /> shows you every step!
                 </p>
               </div>
             )}

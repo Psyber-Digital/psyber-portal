@@ -13,6 +13,7 @@ export function SprintTimer() {
   const [endsAt, setEndsAt] = useState<number | null>(null);
   const [left, setLeft] = useState(0);
   const [done, setDone] = useState(false);
+  const [earned, setEarned] = useState<boolean | null>(null);
   const kept = useRef(false);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ export function SprintTimer() {
         burstAt(window.innerWidth / 2, window.innerHeight / 3);
         if (!kept.current) {
           kept.current = true;
-          keepSprint().catch(() => {});
+          keepSprint().then(setEarned).catch(() => setEarned(false));
         }
         return;
       }
@@ -39,8 +40,8 @@ export function SprintTimer() {
   if (done) {
     return (
       <p className="mt-3 rounded-xl bg-[#0B1220]/85 px-4 py-3 text-[14px] text-off" role="status">
-        <b className="text-[#9be7b0]">Sprint done! +10 points.</b> Tick the move when it&rsquo;s finished, or start another sprint.{" "}
-        <button type="button" className="font-semibold underline" onClick={() => { setDone(false); kept.current = false; setEndsAt(Date.now() + SPRINT_MIN * 60000); }}>
+        <b className="text-[#9be7b0]">{earned ? "Sprint done! +10 points." : earned === false ? "Sprint done! (Your two point-earning sprints for today are used.)" : "Sprint done!"}</b> Tick the move when it&rsquo;s finished, or start another sprint.{" "}
+        <button type="button" className="font-semibold underline" onClick={() => { setDone(false); setEarned(null); kept.current = false; setEndsAt(Date.now() + SPRINT_MIN * 60000); }}>
           Go again
         </button>
       </p>
