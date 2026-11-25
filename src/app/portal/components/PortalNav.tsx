@@ -12,6 +12,7 @@ const TABS = [
   { href: "/portal", label: "Today" },
   { href: "/portal/program", label: "Program" },
   { href: "/portal/outreach", label: "The List" },
+  { href: "/portal/plan", label: "My plan" },
   { href: "/portal/shared", label: "Shared Files" },
 ];
 
