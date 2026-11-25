@@ -238,6 +238,17 @@ export async function PortalScreen({
   // Today or Program sees it earned, under the member's own login, so they only
   // go up. Unticking a move does take that move's own points back.
   const nameTarget = tier === "foundations" ? 50 : 250;
+  // Finished free Session 1, then paid: Session 1 is already done but nothing
+  // moved them on, so open Session 2 now (portal-qa, 25 Nov 2026). Paying
+  // (apply_build_access) keeps current_week at 1; finish_session moves it.
+  if (
+    tier === "build" && current?.number === 1 && !viewingPast &&
+    (profile?.completed_week ?? 0) >= 1 && profile?.current_week === 1
+  ) {
+    const { data: moved, error: moveErr } = await supabase.rpc("finish_session", { p_week: 1 });
+    if (moveErr) console.error("open Session 2 after paying failed:", moveErr.message);
+    if (moved === "opened") redirect("/portal?opened=1");
+  }
   // The next session opens by itself once every move is done and the list has
   // its names: no extra button (Don, cards BT1 and S2, 25 Nov 2026: "Session 2
   // still doesn't open"). Session 2 keeps its button, because it asks the lane
@@ -325,7 +336,8 @@ export async function PortalScreen({
         </p>
       )}
 
-      {profile?.tier === "foundations" && buildOnSale() && !ladderStep && (
+      {profile?.tier === "foundations" && buildOnSale() && !ladderStep &&
+        !(view === "today" && freeFinished && !profile?.wants_one_on_one) && (
         <a
           href="/portal/billing"
           className="psy-card mb-6 flex flex-wrap items-center justify-between gap-3 p-5"
@@ -445,7 +457,8 @@ export async function PortalScreen({
       />
 
       {/* The session just finished by itself (Don, BT1 and S2, 25 Nov 2026). */}
-      {view === "today" && searchParams?.opened && Number(searchParams.opened) >= 1 && (
+      {view === "today" && searchParams?.opened && Number(searchParams.opened) >= 1 &&
+        (tier !== "build" || current?.number === Number(searchParams.opened) + 1) && (
         <p className="mb-6 rounded-xl border border-[#2f6b45] bg-[#13281c] px-4 py-3 text-[15px] text-[#c8f3d5]" role="status">
           <b className="font-semibold text-[#9be7b0]">Session {Number(searchParams.opened)} finished!</b>{" "}
           {tier === "build" ? (
