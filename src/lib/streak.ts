@@ -5,7 +5,7 @@ import { easternToday } from "./dueMoves";
 // kept as ticks by the page itself, so they don't count. A streak stays alive
 // until the end of the day after the last move, so nobody loses it at breakfast,
 // and one missed day between moves is forgiven.
-const AUTO = /^s1-p-|badge/;
+const AUTO = /^s1-p-(?!n-)|badge/; // names added count (card DD = A, 25 Nov 2026)
 
 function dayBefore(day: string): string {
   const d = new Date(`${day}T12:00:00Z`);

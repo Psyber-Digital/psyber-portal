@@ -57,7 +57,7 @@ export function pointsTotal(ticks: { move_id: string }[]): number {
  * lib/streak.ts (one missed day between moves is let off).
  */
 export function streakBonus(ticks: { move_id: string; done_at: string }[]): number {
-  const AUTO = /^s1-p-|badge/;
+  const AUTO = /^s1-p-(?!n-)|badge/; // names added count, as in lib/streak.ts
   const active = [...new Set(ticks.filter((t) => !AUTO.test(t.move_id)).map((t) => easternDay(t.done_at)))].sort();
   const run = new Map<string, number>();
   let prev = "";

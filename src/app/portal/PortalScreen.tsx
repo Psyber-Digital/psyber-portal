@@ -597,7 +597,13 @@ export async function PortalScreen({
           {/* Progress sits under the card (Don, board m16, 18 Nov 2026:
               "gamification keeps them motivated"). Its pop-up comes with it. */}
           {badges.length > 0 && (
-            <Milestones badges={badges} momentum={momentum} memberKey={user.id.slice(0, 8)} />
+            <Milestones
+              // Build Free shows the milestones it can reach, not 13 mostly
+              // locked ones (calmer screen, card DD = A, 25 Nov 2026).
+              badges={tier === "foundations" ? badges.filter((b) => ["s1", "fifty", "steady"].includes(b.key)) : badges}
+              momentum={momentum}
+              memberKey={user.id.slice(0, 8)}
+            />
           )}
           {chapterFinish}
           <p className="mt-6 text-center text-[13px] text-mut">

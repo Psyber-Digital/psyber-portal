@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 export type PlanSession = { number: number; title: string; sheet?: string; open: boolean; key: string };
-type Part = { title: string; answers: string[] };
+type Part = { title: string; answers: { label: string; value: string }[] };
 
 // Reads each open session's Working Sheet (same site, signed in), takes the
 // section headings and field ids, and fills them from what the sheet saved in
@@ -23,10 +23,24 @@ async function partsFor(s: PlanSession): Promise<Part[]> {
   doc.querySelectorAll("section").forEach((sec, i) => {
     const head = sec.querySelector("h2, h3");
     const title = (head?.textContent || `Part ${i + 1}`).replace(/\s+/g, " ").trim().replace(/^\d+\s*/, "");
-    const answers: string[] = [];
+    // Each answer keeps its own label, so the plan reads as a plan, not as
+    // loose lines (card DD = A, 25 Nov 2026): the field's <label>, or else
+    // the heading of its table column.
+    const answers: Part["answers"] = [];
     sec.querySelectorAll("input, textarea").forEach((el) => {
       const v = el.id ? saved[el.id] : undefined;
-      if (typeof v === "string" && v.trim()) answers.push(v.trim());
+      if (typeof v !== "string" || !v.trim()) return;
+      let label = (doc.querySelector(`label[for="${el.id}"]`)?.textContent || "").trim();
+      if (!label) {
+        const cell = el.closest("td");
+        const row = cell?.parentElement;
+        const table = el.closest("table");
+        if (cell && row && table) {
+          const col = Array.prototype.indexOf.call(row.children, cell);
+          label = (table.querySelectorAll("thead th")[col]?.textContent || "").trim();
+        }
+      }
+      answers.push({ label: label.replace(/\s+/g, " "), value: v.trim() });
     });
     if (answers.length) parts.push({ title, answers });
   });
@@ -83,7 +97,10 @@ export function PlanView({ sessions, free }: { sessions: PlanSession[]; free: bo
                 <div className="font-disp text-[12px] font-semibold uppercase tracking-[1.2px] text-orange">{p.title}</div>
                 <ul className="mt-1.5 grid gap-1 text-[14.5px] leading-relaxed text-off">
                   {p.answers.map((a, i) => (
-                    <li key={i}>{a}</li>
+                    <li key={i}>
+                      {a.label && <span className="mr-1.5 text-[12.5px] font-semibold text-sec">{a.label}:</span>}
+                      {a.value}
+                    </li>
                   ))}
                 </ul>
               </div>

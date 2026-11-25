@@ -57,7 +57,7 @@ function OpenLink({
     <a
       // A sheet opens on the part this move is about, highlighted (Don, card BT1, 24 Nov 2026).
       href={kind === "sheet" && where ? `${href}#part=${encodeURIComponent(where)}` : href}
-      target={same ? undefined : "_blank"}
+      target={same ? undefined : kind === "sheet" ? "psy-sheet" : "_blank"}
       rel={same ? undefined : "noopener noreferrer"}
       className={
         onOrange
@@ -342,7 +342,7 @@ export function NextMove({
                   ) : null}
                   {/* Pick a time for it (Don, card AD, 25 Nov 2026). */}
                   {/* Sprint timer (Don, card IM = A, 25 Nov 2026). */}
-                  {!isDone(shown) && !looking && <SprintTimer key={`sprint-${shown.id}`} />}
+                  {!isDone(shown) && !looking && shown.opens === "sheet" && <SprintTimer key={`sprint-${shown.id}`} />}
                   {!isDone(shown) && !looking && (
                     <ScheduleMove key={shown.id} title={shown.title} mins={shown.mins} url={`https://portal.psyberdigital.com/portal?move=${shown.id}#card`} />
                   )}
