@@ -1,5 +1,7 @@
 "use client";
 
+import { Brand } from "@/app/portal/components/Brand";
+
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 // Scroll-driven pieces and the "inside every session" showcase for the public
@@ -145,45 +147,98 @@ export function SessionShowcase() {
 }
 
 function SheetDemo() {
+  // Embellished (Don, 26 Nov 2026: "a bit bland - embellish it"): a coloured
+  // header, a flip counter with points, and each row drawn as a flip from the
+  // old belief to the truer one. The sheet's own words are unchanged.
   const [picked, setPicked] = useState<number[]>([]);
   const toggle = (i: number) => setPicked((p) => (p.includes(i) ? p.filter((x) => x !== i) : [...p, i]));
+  const all = picked.length === BELIEFS.length;
   return (
-    <div className="mx-auto max-w-[720px] rounded-[18px] bg-[#F7F3EC] p-5 text-[#1d2433] shadow-2xl sm:p-7">
-      <div className="font-disp text-[11px] font-semibold uppercase tracking-[1.6px] text-[#b4621a]">Session 1 · Working Sheet</div>
-      <div className="mt-1 font-disp text-[20px] font-semibold">01 · The beliefs that will slow you down</div>
-      <p className="mt-1 text-[13.5px] text-[#5b6478]">Tap the ones that sound like you. Each comes with something truer.</p>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {BELIEFS.map((b, i) => (
-          <button
-            key={b.name}
-            onClick={() => toggle(i)}
-            className={`rounded-full border px-3 py-1.5 text-[13px] font-semibold transition ${
-              picked.includes(i) ? "border-[#e8780f] bg-[#e8780f] text-white" : "border-[#d8cfbf] bg-white text-[#1d2433] hover:border-[#e8780f]"
-            }`}
-          >
-            {picked.includes(i) ? "✓ " : "+ "}
-            {b.name}
-          </button>
-        ))}
+    <div className="mx-auto max-w-[720px] overflow-hidden rounded-[20px] bg-[#F7F3EC] text-[#1d2433] shadow-2xl ring-1 ring-[#e8780f]/30">
+      <div className="relative bg-[linear-gradient(120deg,#FFA54A,#E8780F)] px-5 py-4 text-[#241100] sm:px-7">
+        <svg className="absolute -right-4 -top-6 h-28 w-28 opacity-20" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.3 6.8 19l1-5.8L3.5 9.2l5.9-.9z" fill="currentColor" />
+        </svg>
+        <div className="flex items-center justify-between gap-3">
+          <div className="font-disp text-[11px] font-bold uppercase tracking-[1.6px]">Session 1 · Working Sheet</div>
+          <span className="rounded-full bg-[#241100]/85 px-2.5 py-0.5 font-disp text-[12px] font-bold text-[#FFD29E]">
+            +{picked.length * 5} points
+          </span>
+        </div>
+        <div className="mt-1 flex items-center gap-2.5 font-disp text-[20px] font-semibold sm:text-[22px]">
+          <span className="grid h-8 w-8 flex-none place-items-center rounded-lg bg-[#241100] text-[14px] font-bold text-[#FFA54A]">01</span>
+          The beliefs that will slow you down
+        </div>
       </div>
-      <div className="mt-4 space-y-3">
-        {picked.length === 0 && (
-          <div className="rounded-[12px] border border-dashed border-[#d8cfbf] p-4 text-center text-[13.5px] text-[#8a92a3]">
-            Your rows appear here.
+
+      <div className="p-5 sm:p-7">
+        <p className="text-[13.5px] text-[#5b6478]">Tap the ones that sound like you. Each comes with something truer.</p>
+
+        <div className="mt-3 flex items-center gap-3">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#e8dfd0]">
+            <i
+              className="block h-full rounded-full bg-[linear-gradient(90deg,#FF8D1E,#1E90FF)] transition-[width] duration-500"
+              style={{ width: `${(picked.length / BELIEFS.length) * 100}%` }}
+            />
+          </div>
+          <span className="flex-none font-disp text-[12.5px] font-semibold text-[#b4621a]">
+            {picked.length} of {BELIEFS.length}
+          </span>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {BELIEFS.map((b, i) => (
+            <button
+              key={b.name}
+              onClick={() => toggle(i)}
+              className={`rounded-full border-2 px-3.5 py-1.5 text-[13px] font-semibold shadow-sm transition ${
+                picked.includes(i)
+                  ? "border-[#e8780f] bg-[linear-gradient(120deg,#FFA54A,#E8780F)] text-[#241100]"
+                  : "border-[#e6d9c4] bg-white text-[#1d2433] hover:-translate-y-0.5 hover:border-[#e8780f]"
+              }`}
+            >
+              {picked.includes(i) ? "✓ " : "+ "}
+              {b.name}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 space-y-3">
+          {picked.length === 0 && (
+            <div className="flex items-center justify-center gap-2 rounded-[14px] border-2 border-dashed border-[#e6d9c4] p-5 text-center text-[13.5px] text-[#8a92a3]">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+              Your rows appear here.
+            </div>
+          )}
+          {picked.map((i) => (
+            <div
+              key={i}
+              className="grid animate-[fadeIn_.35s_ease] items-stretch gap-2 rounded-[14px] bg-white p-3 shadow-sm ring-1 ring-[#efe6d6] sm:grid-cols-[1fr_auto_1fr] sm:p-4"
+            >
+              <div className="rounded-[10px] bg-[#f3eee6] p-3">
+                <div className="text-[11px] font-semibold uppercase tracking-[1px] text-[#8a92a3]">The belief</div>
+                <div className="mt-0.5 text-[14px] italic text-[#5b6478] line-through decoration-[#e8780f]/50">“{BELIEFS[i].sounds}”</div>
+              </div>
+              <div className="grid place-items-center text-[#e8780f]" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" className="rotate-90 sm:rotate-0">
+                  <path d="M5 12h12M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+              <div className="rounded-[10px] border-l-4 border-[#e8780f] bg-[#fff6ec] p-3">
+                <div className="text-[11px] font-semibold uppercase tracking-[1px] text-[#b4621a]">Something truer</div>
+                <div className="mt-0.5 text-[14px] font-medium">{BELIEFS[i].truer}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {all && (
+          <div className="mt-4 animate-[fadeIn_.35s_ease] rounded-[14px] bg-[#13281c] px-4 py-3 text-center font-disp text-[14.5px] font-semibold text-[#9be7b0]">
+            ✓ All three flipped! That&rsquo;s +15 points in <Brand name="Build" tm />.
           </div>
         )}
-        {picked.map((i) => (
-          <div key={i} className="grid animate-[fadeIn_.35s_ease] gap-2 rounded-[12px] bg-white p-4 sm:grid-cols-2">
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-[1px] text-[#8a92a3]">The belief</div>
-              <div className="mt-0.5 text-[14px] italic">“{BELIEFS[i].sounds}”</div>
-            </div>
-            <div>
-              <div className="text-[11px] font-semibold uppercase tracking-[1px] text-[#b4621a]">Something truer</div>
-              <div className="mt-0.5 text-[14px]">{BELIEFS[i].truer}</div>
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
