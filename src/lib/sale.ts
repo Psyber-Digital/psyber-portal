@@ -12,8 +12,14 @@
 // Turn it on in the live project's settings on the day Build goes on sale.
 // On sale only when the sale date is set too, so a page can never promise a
 // saving the ladder can't give (lane-guard, 22 Nov 2026).
-export const buildOnSale = (): boolean =>
-  process.env.BUILD_ON_SALE === "true" && !Number.isNaN(Date.parse(process.env.BUILD_SALE_STARTS_AT ?? ""));
+// The sale opens by itself at BUILD_SALE_STARTS_AT, so both settings can be
+// put in place the day before (Friday sale setup, 26 Nov 2026). Every page
+// that asks is rendered per request, so no redeploy is needed at the hour.
+export const buildOnSale = (now: number = Date.now()): boolean => {
+  if (process.env.BUILD_ON_SALE !== "true") return false;
+  const start = Date.parse(process.env.BUILD_SALE_STARTS_AT ?? "");
+  return !Number.isNaN(start) && now >= start;
+};
 
 export const OPENS_SOON =
   "Build™ opens soon! Until then, Session 1 and a preview of Session 2 are yours, free. Dive in!";
