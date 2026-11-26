@@ -6,6 +6,7 @@ import type { WeekVideo } from "@/lib/videos";
 import { Brand } from "@/app/portal/components/Brand";
 import { BuildDemo } from "./BuildDemo";
 import { CountUp, Reveal, SessionShowcase } from "./Showcase";
+import { ScrollScore } from "./ScrollScore";
 
 // Public Build landing page. Rebuilt 22 Nov 2026 to Don's note on card N1:
 // "Don't talk about what it doesn't do ... make it sound revolutionary - a
@@ -61,10 +62,47 @@ function Dot({ n }: { n: number }) {
   );
 }
 
+// Drawn icons for the four promises (Don, 26 Nov 2026). One stroke weight, so
+// they read as a set; emoji looked different on every phone.
+function PromiseIcon({ name }: { name: string }) {
+  const p = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  return (
+    <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+      {name === "clock" && (
+        <>
+          <circle cx="12" cy="12" r="8.5" {...p} />
+          <path d="M12 7.5V12l3 2" {...p} />
+        </>
+      )}
+      {name === "compass" && (
+        <>
+          <circle cx="12" cy="12" r="8.5" {...p} />
+          <path d="M15.5 8.5l-2 5-5 2 2-5z" {...p} />
+        </>
+      )}
+      {name === "stack" && (
+        <>
+          <path d="M12 4l8 4-8 4-8-4z" {...p} />
+          <path d="M4 12l8 4 8-4" {...p} />
+          <path d="M4 16l8 4 8-4" {...p} />
+        </>
+      )}
+      {name === "trophy" && (
+        <>
+          <path d="M8 4h8v5a4 4 0 01-8 0z" {...p} />
+          <path d="M8 6H5a3 3 0 003 4M16 6h3a3 3 0 01-3 4" {...p} />
+          <path d="M12 13v4M9 20h6M10 17h4" {...p} />
+        </>
+      )}
+    </svg>
+  );
+}
+
 export default function BuildPage() {
   const onSale = buildOnSale();
   return (
     <main className="relative z-10 mx-auto w-full max-w-[960px] overflow-x-clip px-5 pb-20 pt-10">
+      <ScrollScore />
       <div className="mb-10 flex justify-center">
         <Image src="/wordmark.png" alt="Psyber Digital" width={240} height={46} priority className="h-10 w-auto" />
       </div>
@@ -99,17 +137,35 @@ export default function BuildPage() {
         </p>
       </section>
 
+      {/* The video, straight after the hero (Don, 26 Nov 2026: "move video higher up the page"). */}
+      <section className="mt-12">
+        {BUILD_VIDEO ? (
+          <VimeoEmbed video={BUILD_VIDEO} title="Introducing Build™" />
+        ) : (
+          <div
+            className="relative flex w-full items-center justify-center overflow-hidden rounded-[12px] border border-line bg-white/[0.02]"
+            style={{ paddingTop: "56.25%" }}
+          >
+            <span className="absolute inset-0 flex items-center justify-center font-disp text-lg text-sec">
+              Introducing&nbsp;<Brand name="Build" />
+            </span>
+          </div>
+        )}
+      </section>
+
       {/* Three promises, in Don's words (N1 note, 22 Nov 2026). */}
       <Reveal>
       <section className="mt-14 grid gap-3 sm:grid-cols-2">
         {[
-          ["⏱", "Do it in your own time.", "No fixed schedule. Evenings, weekends, between clients: you choose."],
-          ["🧭", "Don’t get stuck.", "Always know what to do next."],
-          ["📦", "Everything in one place.", "All the resources you need, packaged in Next Move."],
-          ["🎯", "Progress becomes fun.", "Your moves score points. Every chapter levels you up."],
+          ["clock", "Do it in your own time.", "No fixed schedule. Evenings, weekends, between clients: you choose."],
+          ["compass", "Don’t get stuck.", "Always know what to do next."],
+          ["stack", "Everything in one place.", "All the resources you need, packaged in Next Move."],
+          ["trophy", "Progress becomes fun.", "Your moves score points. Every chapter levels you up."],
         ].map(([icon, h, t]) => (
           <div key={h} className="rounded-[18px] border border-orange/30 bg-[linear-gradient(160deg,rgba(255,141,30,0.12),rgba(255,141,30,0.02))] p-5 text-center">
-            <div className="text-[30px]">{icon}</div>
+            <span className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[radial-gradient(circle_at_35%_30%,#ffd29e,#FF8D1E_55%,#c45f00)] text-[#241100] shadow-[0_8px_24px_-8px_rgba(255,141,30,0.6)]">
+              <PromiseIcon name={icon} />
+            </span>
             <div className="mt-2 font-disp text-[19px] font-semibold text-off">{h}</div>
             <div className="mt-1 text-[14px] leading-relaxed text-sec">{t}</div>
           </div>
@@ -219,20 +275,6 @@ export default function BuildPage() {
       </section>
       </Reveal>
 
-      <section className="mt-14">
-        {BUILD_VIDEO ? (
-          <VimeoEmbed video={BUILD_VIDEO} title="Introducing Build™" />
-        ) : (
-          <div
-            className="relative flex w-full items-center justify-center overflow-hidden rounded-[12px] border border-line bg-white/[0.02]"
-            style={{ paddingTop: "56.25%" }}
-          >
-            <span className="absolute inset-0 flex items-center justify-center font-disp text-lg text-sec">
-              Introducing&nbsp;<Brand name="Build" />
-            </span>
-          </div>
-        )}
-      </section>
 
       {/* What you get and the price */}
       <Reveal>
