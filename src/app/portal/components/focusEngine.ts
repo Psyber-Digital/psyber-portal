@@ -5,7 +5,7 @@
 // moving between Today, Program, The List and My plan never stops it. It only
 // stops when the member presses stop, or closes or reloads the page.
 
-const LOOP_URL = "/audio/focus-loop.mp3";
+const LOOP_URL = "/audio/focus-loop.wav"; // Life Inspired, 12 beats (Don, card FM4 = B, 26 Nov 2026)
 type State = { on: boolean; busy: boolean };
 let state: State = { on: false, busy: false };
 let ctx: AudioContext | null = null;
