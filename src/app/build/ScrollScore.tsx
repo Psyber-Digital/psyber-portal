@@ -55,7 +55,7 @@ export function ScrollScore() {
 
   return (
     <div
-      className="fixed inset-x-3 bottom-3 z-40 sm:inset-x-auto sm:right-5 sm:bottom-5 sm:w-[280px]"
+      className="fixed inset-x-3 bottom-[76px] z-40 sm:inset-x-auto sm:right-5 sm:bottom-5 sm:w-[280px]"
       role="status"
       aria-live="polite"
     >
