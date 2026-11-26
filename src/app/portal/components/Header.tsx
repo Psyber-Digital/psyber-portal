@@ -11,14 +11,14 @@ export function Header({ name, role, below }: { name: string; role: "client" | "
         width={200}
         height={38}
         priority
-        className="h-[26px] w-auto shrink-0 sm:h-[30px]"
+        className="order-1 h-[26px] w-auto shrink-0 sm:h-[30px]"
       />
       {/* min-w-0 + truncate: on a narrow phone the name shrinks with an ellipsis
           rather than pushing "Sign out" off-screen (which used to force the whole
           page wider than the viewport). The badge and button never shrink.
           At 390px even an empty name left "Sign out" 35px off-screen, so the
           badge is hidden on phones (found 30 Oct). */}
-      <div className="flex min-w-0 items-center gap-2.5 text-[13px] text-sec sm:gap-3.5">
+      <div className="order-3 flex min-w-0 items-center gap-2.5 text-[13px] text-sec sm:order-2 sm:gap-3.5">
         <span
           className={`hidden shrink-0 rounded-full px-2.5 py-1 sm:inline font-disp text-[10px] uppercase tracking-[1.5px] ${
             role === "admin"
@@ -42,7 +42,7 @@ export function Header({ name, role, below }: { name: string; role: "client" | "
         </form>
       </div>
       {/* Under the logo, top left: level and points on Today (card PU). */}
-      {below && <div className="w-full">{below}</div>}
+      {below && <div className="order-2 w-full sm:order-3">{below}</div>}
     </header>
   );
 }
