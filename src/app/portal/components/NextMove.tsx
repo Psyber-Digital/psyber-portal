@@ -619,7 +619,7 @@ export function LevelBar({
           )}
           {buildNext && (
             <a href="/portal/billing" className="mt-1.5 block text-[12px] text-sec underline decoration-dotted underline-offset-2">
-              Levels 3 to 7 open in Build™ →
+              Unlock all of Level 2, Levels 3 to 7, and your niche in Build™ →
             </a>
           )}
         </div>

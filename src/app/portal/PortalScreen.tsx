@@ -532,7 +532,7 @@ export async function PortalScreen({
       {profile?.tier === "build" && searchParams?.joined && (
         <p className="mb-6 rounded-[9px] border border-blue/30 bg-blue/10 px-4 py-3 text-sm text-sec">
           <b className="font-semibold text-off">You&rsquo;re in! Welcome to <Brand name="Build" tm />!</b> Your names, moves, points and
-          streak all came with you. Each session you finish opens the next.
+          streak all came with you. Now choose your niche. Every session you finish opens the next.
         </p>
       )}
 

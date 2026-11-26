@@ -41,14 +41,14 @@ export function JoinBuild({
         <form action={startCheckout} className="mt-4">
           {saidYes && step && (
             // Consistency: remind them of the yes they already gave (card PU).
-            <p className="mb-2 font-disp text-[15px] font-semibold text-orange">You said yes to your ${step.off} saving. Here it is!</p>
+            <p className="mb-2 font-disp text-[15px] font-semibold text-orange">You said yes, and here it is: ${step.off} off your first year!</p>
           )}
           <p className="font-disp text-[22px] font-semibold leading-tight">
             ${firstYear}{" "}
             {step && <span className="text-[15px] font-normal text-slate line-through">${PRICE.yearly}</span>}{" "}
             <span className="text-[14px] font-normal text-sec">{step ? `your first year: you save $${step.off}!` : "a year"}</span>
           </p>
-          <p className="mt-0.5 text-[13px] text-sec">That&rsquo;s ${perDay} a day.</p>
+          <p className="mt-0.5 text-[13px] text-sec">That&rsquo;s just ${perDay} a day!</p>
           <p className="mt-1 font-disp text-[14.5px] font-semibold text-[#9be7b0]">
             14-day full refund. Change your mind, get every cent back.
           </p>
