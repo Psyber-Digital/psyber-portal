@@ -500,6 +500,7 @@ export async function PortalScreen({
               parked={parked}
               points={points}
               streak={streakOf([...(tickRows ?? []), ...pointRows])}
+              buildNext={tier === "foundations"}
             />
           ) : undefined
         }
@@ -530,7 +531,8 @@ export async function PortalScreen({
       {/* Straight from Stripe's payment page (billing sends them here). */}
       {profile?.tier === "build" && searchParams?.joined && (
         <p className="mb-6 rounded-[9px] border border-blue/30 bg-blue/10 px-4 py-3 text-sm text-sec">
-          Welcome to <Brand name="Build" tm />. Each session you finish opens the next.
+          <b className="font-semibold text-off">You&rsquo;re in! Welcome to <Brand name="Build" tm />!</b> Your names, moves, points and
+          streak all came with you. Each session you finish opens the next.
         </p>
       )}
 
@@ -589,7 +591,7 @@ export async function PortalScreen({
                   </p>
                 </div>
               ) : tasting && profile ? (
-                <JoinBuild profile={profile} names={contactsList.length} movesDone={momentum.movesDone} points={points} />
+                <JoinBuild profile={profile} names={contactsList.length} movesDone={momentum.movesDone} points={points} saidYes={ticked.has("s1-badge-said-yes")} />
               ) : (
                 finishNode
               )

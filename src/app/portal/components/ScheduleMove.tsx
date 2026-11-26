@@ -42,18 +42,24 @@ function defaultTime() {
 export function ScheduleMove({ title, mins, url }: { title: string; mins?: string; url: string }) {
   const [open, setOpen] = useState(false);
   const [when, setWhen] = useState(defaultTime);
+  // The default does the work: a daily slot is the habit (card PU, 25 Nov 2026).
+  const [daily, setDaily] = useState(true);
   const minutes = Math.min(Math.max(parseInt((mins ?? "").replace(/^\D+/, ""), 10) || 30, 10), 120);
   const start = new Date(when);
   const end = new Date(start.getTime() + minutes * 60000);
-  const name = `Next move: ${title}`;
-  const details = `Your next move in Build™. Open it here: ${url}`;
+  const name = daily ? "Build™: my next move" : `Next move: ${title}`;
+  const details = daily
+    ? "Your daily slot for your next move in Build™. Open Today: https://portal.psyberdigital.com/portal"
+    : `Your next move in Build™. Open it here: ${url}`;
   const google =
     "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-    `&text=${encodeURIComponent(name)}&dates=${stamp(start)}/${stamp(end)}&details=${encodeURIComponent(details)}`;
+    `&text=${encodeURIComponent(name)}&dates=${stamp(start)}/${stamp(end)}&details=${encodeURIComponent(details)}` +
+    (daily ? `&recur=${encodeURIComponent("RRULE:FREQ=DAILY;COUNT=30")}` : "");
   const ics = [
     "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Psyber Digital//Build//EN", "BEGIN:VEVENT",
     `UID:${stamp(start)}-${Math.random().toString(36).slice(2)}@psyberdigital.com`,
     `DTSTAMP:${utcStamp(new Date())}`, `DTSTART:${stamp(start)}`, `DTEND:${stamp(end)}`,
+    ...(daily ? ["RRULE:FREQ=DAILY;COUNT=30"] : []),
     `SUMMARY:${name.replace(/[,;]/g, " ")}`, `DESCRIPTION:${details.replace(/[,;]/g, " ")}`,
     "BEGIN:VALARM", "TRIGGER:-PT10M", "ACTION:DISPLAY", "DESCRIPTION:Your next move", "END:VALARM",
     "END:VEVENT", "END:VCALENDAR",
@@ -78,6 +84,10 @@ export function ScheduleMove({ title, mins, url }: { title: string; mins?: strin
         onChange={(e) => setWhen(e.target.value)}
         className="mt-3 w-full rounded-lg border border-line bg-panel px-3 py-2 text-off sm:w-auto"
       />
+      <label className="mt-3 flex items-center gap-2 text-[13px] text-sec">
+        <input type="checkbox" checked={daily} onChange={(e) => setDaily(e.target.checked)} />
+        Same time every day for 30 days (a habit beats a one-off!)
+      </label>
       {valid && (
         <div className="mt-3 flex flex-wrap gap-2">
           <a href={google} target="_blank" rel="noopener noreferrer" className="psy-btn !px-4 !py-2 !text-[13.5px]">Google Calendar</a>

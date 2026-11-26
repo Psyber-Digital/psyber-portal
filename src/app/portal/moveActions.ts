@@ -41,6 +41,19 @@ export async function tickMove(formData: FormData) {
   revalidatePath("/portal");
 }
 
+/** "Yes, I want my saving" before Build opens (card PU, 25 Nov 2026). */
+const SAID_YES = "s1-badge-said-yes";
+export async function sayYesToBuild() {
+  const supabase = createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return;
+  const { error } = await supabase
+    .from("move_ticks")
+    .upsert({ user_id: auth.user.id, move_id: SAID_YES }, { onConflict: "user_id,move_id", ignoreDuplicates: true });
+  if (error) console.error("sayYesToBuild failed:", error.message);
+  revalidatePath("/portal");
+}
+
 export async function untickMove(formData: FormData) {
   const move = moveFrom(formData);
   if (!move) return;

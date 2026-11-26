@@ -1,5 +1,6 @@
 import { Brand } from "./Brand";
 import { startCheckout } from "../billing/actions";
+import { sayYesToBuild } from "../moveActions";
 import { buildOnSale, OPENS_SOON, SAVING_WAITS } from "@/lib/sale";
 import { currentStep, PRICE, savingWaiting, type Person as LadderPerson } from "@/lib/ladder";
 
@@ -13,15 +14,21 @@ export function JoinBuild({
   names,
   movesDone,
   points,
+  saidYes = false,
 }: {
   profile: LadderPerson;
   names: number;
   movesDone: number;
   points: number;
+  /** They said "yes, I want my saving" before the sale opened (card PU). */
+  saidYes?: boolean;
 }) {
   const onSale = buildOnSale();
   const step = currentStep(profile);
   const firstYear = step ? PRICE.yearly - step.off : PRICE.yearly;
+  // ATTRACTIVE: the year as a daily amount, true to the cent (card PU).
+  const perDay = (firstYear / 365).toFixed(2);
+  const waits = savingWaiting(profile);
 
   return (
     <div className="text-off">
@@ -32,11 +39,16 @@ export function JoinBuild({
       </p>
       {onSale ? (
         <form action={startCheckout} className="mt-4">
+          {saidYes && step && (
+            // Consistency: remind them of the yes they already gave (card PU).
+            <p className="mb-2 font-disp text-[15px] font-semibold text-orange">You said yes to your ${step.off} saving. Here it is!</p>
+          )}
           <p className="font-disp text-[22px] font-semibold leading-tight">
             ${firstYear}{" "}
             {step && <span className="text-[15px] font-normal text-slate line-through">${PRICE.yearly}</span>}{" "}
             <span className="text-[14px] font-normal text-sec">{step ? `your first year: you save $${step.off}!` : "a year"}</span>
           </p>
+          <p className="mt-0.5 text-[13px] text-sec">That&rsquo;s ${perDay} a day.</p>
           <p className="mt-1 font-disp text-[14.5px] font-semibold text-[#9be7b0]">
             14-day full refund. Change your mind, get every cent back.
           </p>
@@ -57,8 +69,19 @@ export function JoinBuild({
         </form>
       ) : (
         <>
-          <p className="mt-3 text-[14px] text-off">{savingWaiting(profile) ? SAVING_WAITS : OPENS_SOON}</p>
-          <a href="/portal/billing" className="psy-btn mt-3 inline-block">See what&rsquo;s in <Brand name="Build" tm /></a>
+          <p className="mt-3 text-[14px] text-off">{waits ? SAVING_WAITS : OPENS_SOON}</p>
+          {waits && !saidYes && (
+            // EASY + commitment: one tap now, the choice already made when it opens (card PU).
+            <form action={sayYesToBuild} className="mt-3">
+              <button className="psy-btn">Yes! I want my launch saving</button>
+            </form>
+          )}
+          {waits && saidYes && (
+            <p className="mt-3 font-disp text-[15px] font-semibold text-[#9be7b0]">
+              ✓ You said yes! Your saving is right here on Today the moment <Brand name="Build" tm /> opens.
+            </p>
+          )}
+          <a href="/portal/billing" className="mt-3 inline-block text-[13.5px] underline">See what&rsquo;s in <Brand name="Build" tm /></a>
         </>
       )}
     </div>

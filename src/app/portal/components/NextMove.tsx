@@ -560,6 +560,7 @@ export function LevelBar({
   parked = new Set(),
   points = 0,
   streak,
+  buildNext = false,
 }: {
   session: number;
   moves: Move[];
@@ -568,6 +569,8 @@ export function LevelBar({
   parked?: Set<string>;
   points?: number;
   streak?: { days: number; doneToday: boolean };
+  /** Build Free: name the levels Build opens, at eye level (card PU). */
+  buildNext?: boolean;
 }) {
   if (moves.length === 0) return null;
   const isDone = (m: Move) => (m.finish ? sessionFinished : ticked.has(m.id));
@@ -613,6 +616,11 @@ export function LevelBar({
           </div>
           {session === 1 && doneCount < 2 && (
             <p className="mt-1.5 text-[12px] text-sec">Head start! Joining counted as your first step ✓</p>
+          )}
+          {buildNext && (
+            <a href="/portal/billing" className="mt-1.5 block text-[12px] text-sec underline decoration-dotted underline-offset-2">
+              Levels 3 to 7 open in Build™ →
+            </a>
           )}
         </div>
       </div>
