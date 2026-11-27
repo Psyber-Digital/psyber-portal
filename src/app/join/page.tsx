@@ -150,6 +150,21 @@ function Question({ n, children }: { n: number; children: React.ReactNode }) {
   );
 }
 
+function Pill({ checked, onClick, children }: { checked: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={checked}
+      className={`rounded-[12px] border px-3.5 py-2.5 text-left text-[14px] leading-snug transition ${
+        checked ? "border-orange bg-orange/15 text-off" : "border-line bg-white/[0.02] text-sec hover:border-orange/60"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function JoinPage() {
   const [state, action] = useFormState(join, initial);
   const [gate, setGate] = useState<Gate>(blank);
@@ -233,83 +248,97 @@ export default function JoinPage() {
   return (
     <main className="relative z-10 mx-auto mb-16 mt-[6vh] w-full max-w-[560px] px-5">
       <Logo />
-      <form action={action} onSubmit={onSubmit} className="psy-card p-8">
-        <h1 className="font-disp text-xl font-semibold">Before you start</h1>
-        <p className="mt-1.5 text-sm leading-relaxed text-slate">
-          This program is for licensed US clinicians, practicing or retired,
-          who are building a coaching offer. Three quick questions make sure
-          it’s the right fit.
-        </p>
+      <form action={action} onSubmit={onSubmit} className="psy-card p-6 sm:p-8">
+        {/* Minimal sign-up (Don, 27 Nov 2026: "less friction... have the key
+            things there"). The lane questions keep their approved wording and
+            the server rules are unchanged; only the layout is lighter. */}
+        <h1 className="font-disp text-[22px] font-semibold">Start <Brand name="Build" tm /> Free</h1>
+        <p className="mt-1 text-sm text-slate">Session 1 and a 50-name contact list. No card needed.</p>
         {plan === "build" && (
           <p className="mt-2 text-sm leading-relaxed text-sec">
             After you confirm your email, you’ll choose your <Brand name="Build" tm /> plan.
           </p>
         )}
 
+        <div className="mt-5 grid gap-3">
+          <input
+            name="full_name"
+            className="psy-input !mt-0"
+            autoComplete="name"
+            placeholder="Full name"
+            aria-label="Full name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+          />
+          <input
+            name="email"
+            type="email"
+            autoComplete="email"
+            className="psy-input !mt-0"
+            placeholder="Email"
+            aria-label="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            name="password"
+            type="password"
+            autoComplete="new-password"
+            className="psy-input !mt-0"
+            placeholder="Password (8+ characters)"
+            aria-label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+
         <Question n={1}>
           Do you hold an independent license to practice as a mental health
           clinician in the US, or did you before you retired?
         </Question>
-        <Choice
-          name="license"
-          checked={gate.license === "independent"}
-          onChange={() => choose("license", "independent")}
-        >
-          Yes
-        </Choice>
-        <Choice
-          name="license"
-          checked={gate.license === "retired"}
-          onChange={() => choose("license", "retired")}
-        >
-          Yes, and I’m now retired from clinical work
-        </Choice>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <Pill checked={gate.license === "independent"} onClick={() => choose("license", "independent")}>Yes</Pill>
+          <Pill checked={gate.license === "retired"} onClick={() => choose("license", "retired")}>
+            Yes, and I’m now retired from clinical work
+          </Pill>
+          <Pill checked={gate.license === "training"} onClick={() => choose("license", "training")}>
+            No, I’m pre-licensed, on an associate license, or in training
+          </Pill>
+          <Pill checked={gate.license === "none"} onClick={() => choose("license", "none")}>No</Pill>
+        </div>
         {(gate.license === "independent" || gate.license === "retired") && (
-          <div className="ml-6">
-            <label className="psy-label">License type</label>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
             <select
-              className="psy-input"
+              className="psy-input !mt-0"
+              aria-label="License type"
               value={gate.license_type}
               onChange={(e) => setGate({ ...gate, license_type: e.target.value })}
             >
-              <option value="">Choose…</option>
+              <option value="">License type</option>
               {LICENSE_TYPES.map((t) => (
                 <option key={t}>{t}</option>
               ))}
             </select>
-            <label className="psy-label">State</label>
             <select
-              className="psy-input"
+              className="psy-input !mt-0"
+              aria-label="State"
               value={gate.license_state}
               onChange={(e) => setGate({ ...gate, license_state: e.target.value })}
             >
-              <option value="">Choose…</option>
-              {STATES.map((s) => (
-                <option key={s}>{s}</option>
+              <option value="">State</option>
+              {STATES.map((st) => (
+                <option key={st}>{st}</option>
               ))}
             </select>
-            <label className="psy-label">License number</label>
             <input
-              className="psy-input"
+              className="psy-input !mt-0"
+              aria-label="License number"
+              placeholder="License number"
               value={gate.license_number}
               onChange={(e) => setGate({ ...gate, license_number: e.target.value })}
             />
           </div>
         )}
-        <Choice
-          name="license"
-          checked={gate.license === "training"}
-          onChange={() => choose("license", "training")}
-        >
-          No, I’m pre-licensed, on an associate license, or in training
-        </Choice>
-        <Choice
-          name="license"
-          checked={gate.license === "none"}
-          onChange={() => choose("license", "none")}
-        >
-          No
-        </Choice>
 
         <Question n={2}>Your coaching program</Question>
         <Tick
@@ -333,86 +362,30 @@ export default function JoinPage() {
           therapy client, or to a close family member of a current therapy
           client?
         </Question>
-        <Choice
-          name="q3"
-          checked={gate.coaches_therapy_clients === false}
-          onChange={() => choose("coaches_therapy_clients", false)}
-        >
-          No
-        </Choice>
-        <Choice
-          name="q3"
-          checked={gate.coaches_therapy_clients === true}
-          onChange={() => choose("coaches_therapy_clients", true)}
-        >
-          Yes
-        </Choice>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <Pill checked={gate.coaches_therapy_clients === false} onClick={() => choose("coaches_therapy_clients", false)}>No</Pill>
+          <Pill checked={gate.coaches_therapy_clients === true} onClick={() => choose("coaches_therapy_clients", true)}>Yes</Pill>
+        </div>
 
-        {/* Don, 5 Nov 2026, reworded at his d6 A (21 Nov): everyone must choose
-            how they want to work. Decides the next step and the emails. Not a
-            coaching-rule question, so it's unnumbered and never refuses. */}
-        <h2 className="mt-9 font-disp text-[15px] font-semibold leading-snug text-off">
+        {/* Don, 5 Nov 2026, reworded at his d6 A (21 Nov): everyone chooses how
+            they want to work. Unnumbered, and never refuses. */}
+        <h2 className="mt-7 font-disp text-[15px] font-semibold leading-snug text-off">
           If you were to launch a coaching program, would you prefer to do it:
         </h2>
-        <Choice
-          name="one_on_one"
-          checked={gate.one_on_one === true}
-          onChange={() => setGate((g) => ({ ...g, one_on_one: true }))}
-        >
-          One-on-one, with a coach
-        </Choice>
-        <Choice
-          name="one_on_one"
-          checked={gate.one_on_one === false}
-          onChange={() => setGate((g) => ({ ...g, one_on_one: false }))}
-        >
-          On my own, with weekly drop-ins
-        </Choice>
-        <p className="mt-2 text-xs leading-relaxed text-slate">
-          Your answer decides the next step we show you and the emails we send. You can change it later.
-        </p>
-        <p className="mt-3 rounded-[9px] border border-line px-3 py-2.5 text-xs leading-relaxed text-sec">
-          Your free account is Build™ Free: Session 1, and a contact list for up to 50 names.
-          The weekly live drop-ins come with full Build™.
-        </p>
-
-        <h2 className="mt-9 font-disp text-[15px] font-semibold text-off">
-          Your account
-        </h2>
-        <label className="psy-label">Full name</label>
-        <input
-          name="full_name"
-          className="psy-input"
-          autoComplete="name"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-        />
-        <label className="psy-label">Email</label>
-        <input
-          name="email"
-          type="email"
-          autoComplete="email"
-          className="psy-input"
-          placeholder="you@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <label className="psy-label">Password</label>
-        <input
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          className="psy-input"
-          placeholder="At least 8 characters"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <Pill checked={gate.one_on_one === false} onClick={() => setGate((g) => ({ ...g, one_on_one: false }))}>
+            On my own, with weekly drop-ins
+          </Pill>
+          <Pill checked={gate.one_on_one === true} onClick={() => setGate((g) => ({ ...g, one_on_one: true }))}>
+            One-on-one, with a coach
+          </Pill>
+        </div>
 
         <input type="hidden" name="gate" value={payload} />
         <input type="hidden" name="plan" value={plan} />
 
         {/* Build terms 12.2: ticking this box is how the terms are accepted. */}
-        <label className="mt-5 flex cursor-pointer items-start gap-2.5 text-sm leading-relaxed text-off">
+        <label className="mt-6 flex cursor-pointer items-start gap-2.5 text-sm leading-relaxed text-off">
           <input
             type="checkbox"
             name="accept_terms"
@@ -423,12 +396,7 @@ export default function JoinPage() {
           <span>
             I accept the{" "}
             {TERMS_URL ? (
-              <a
-                href={TERMS_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold text-blue"
-              >
+              <a href={TERMS_URL} target="_blank" rel="noreferrer" className="font-semibold text-blue">
                 terms
               </a>
             ) : (
